@@ -315,6 +315,93 @@ details>summary::marker{color:var(--accent-text)}
 .modal.on{display:flex}
 .modal-box{background:radial-gradient(500px 200px at 50% -80px,rgba(240,166,64,.10),transparent 70%),var(--surface);border-radius:16px;box-shadow:var(--shadow);width:min(560px,100%);padding:22px 22px 18px;display:grid;gap:14px;border:1px solid var(--rule2)}
 .modal-box .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+[hidden]{display:none !important}
+
+/* ---------- умное добавление ---------- */
+.modal-box.add-box{width:min(640px,100%);gap:12px}
+.add-head{display:flex;align-items:center;gap:4px;min-height:36px}
+.add-head .h2{margin-right:auto}
+.add-head .btn.icon:first-child{margin-left:-8px}
+.add-q{max-width:none;padding:0 14px;border-radius:12px}
+.add-q input{padding:12px 0;font-size:16px}
+.add-res{display:grid;gap:14px;align-content:start;max-height:min(56vh,540px);overflow:auto;margin:0 -8px;padding:2px 8px;overscroll-behavior:contain;scrollbar-width:thin}
+.res-sec{display:grid;gap:2px}
+.res-h{display:flex;align-items:baseline;gap:8px;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 6px 4px}
+.res-h span{letter-spacing:.04em;text-transform:none;color:var(--faint);font-weight:500}
+.res{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;border:1px solid transparent;background:none;border-radius:11px;padding:6px 10px 6px 6px;transition:background .12s,border-color .12s,box-shadow .2s}
+.res:hover{background:var(--raise)}
+.res.on{background:var(--raise);border-color:color-mix(in srgb,var(--accent) 45%,var(--rule2));box-shadow:0 0 22px -8px var(--lamp-glow)}
+.res.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--raise))}
+.res.busy{cursor:progress}
+.res.busy .res-s{animation:blink 1s ease-in-out infinite}
+.res[disabled]{opacity:.5;cursor:default;background:none}
+.th{position:relative;display:block;width:40px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--c,var(--faint)) 38%,var(--sunk)),var(--sunk) 75%);box-shadow:inset 0 0 0 1px var(--rule)}
+.th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.res-t{min-width:0;display:grid;gap:2px}
+.res-t .t{font-weight:600;font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.res-t .m{display:flex;flex-wrap:wrap;gap:1px 10px;font-size:13px;color:var(--muted)}
+.res-t .m .k{display:inline-flex;align-items:center;gap:5px}
+.res-t .m .k i{width:7px;height:7px;border-radius:2px;flex:none}
+.res-t .m .o{color:var(--faint)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1.45;padding:1px 8px 1px 6px;border-radius:7px;border:1px solid var(--rule2);color:var(--muted)}
+.tag svg.i{flex:none}
+.tag svg.i{width:12px;height:12px;vertical-align:0}
+.tag.in{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--rule2))}
+.tag.rel{color:var(--accent-text);border-color:color-mix(in srgb,var(--accent) 45%,var(--rule2))}
+.res-s{display:inline-flex;align-items:center;justify-content:center;min-width:38px;font-family:var(--display);font-weight:700;font-size:14px;font-variant-numeric:lining-nums tabular-nums;color:var(--muted);padding:3px 7px;border-radius:8px;border:1px solid var(--rule2)}
+.res-s.on{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.res .badge{min-width:34px;height:34px;font-size:15px}
+.add-loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px;padding:8px 6px}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:blink 1s ease-in-out infinite;flex:none}
+.add-hint{padding:4px 6px;color:var(--muted);font-size:14.5px;display:grid;gap:12px;justify-items:start}
+.add-hint p{margin:0;max-width:58ch}
+.add-note{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;border:1px dashed var(--rule2);font-size:13.5px;color:var(--muted);justify-self:stretch}
+.add-note span{flex:1 1 260px}
+.add-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--rule);padding-top:10px;font-size:13px;margin-top:2px}
+.add-foot .btn{margin-left:auto;margin-right:-6px}
+.add-pick{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;padding:12px;border-radius:12px;border:1px solid var(--rule);
+  background:radial-gradient(420px 170px at 0 0,color-mix(in srgb,var(--c) 15%,transparent),transparent 70%),var(--sunk)}
+.add-pick .poster{width:78px;display:block}
+.pk-t{font-family:var(--display);font-size:22px;font-weight:700;line-height:1.15;letter-spacing:-.015em;overflow-wrap:anywhere}
+.pk-m{color:var(--muted);font-size:14px;margin-top:4px;overflow-wrap:anywhere}
+.pk-s{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
+.pk-s .score{display:inline-flex;gap:6px;align-items:baseline;padding:2px 8px;border:1px solid var(--rule2);border-radius:8px}
+.pk-s .score b{font-family:var(--display);color:var(--ink)}
+.attach{display:grid;gap:6px}
+.opt{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--rule2);border-radius:10px;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s,box-shadow .2s}
+.opt:hover{border-color:var(--faint)}
+.opt:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--field));box-shadow:0 0 18px -8px var(--lamp-glow)}
+.opt input{margin:3px 0 0;accent-color:var(--accent)}
+.opt b{display:block;font-weight:600}
+.opt small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.field .hint{font-size:12.5px;color:var(--faint)}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.check input{accent-color:var(--accent)}
+.ap-look{display:grid;gap:8px;padding-bottom:12px;border-bottom:1px dashed var(--rule2)}
+.ap-sug,.ap-res{display:grid;gap:2px;justify-items:stretch}
+.ap-sug:empty,.ap-res:empty{display:none}
+.ap-sug>.btn{justify-self:start;margin-top:2px}
+.ap-q{max-width:none}
+.ap-msg{margin:0;font-size:13.5px;padding:2px 6px}
+.srcs{display:grid;gap:8px;margin-top:14px}
+.src{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--sunk);flex-wrap:wrap}
+.src>div{margin-right:auto;display:grid;min-width:0}
+.src b{font-weight:600}
+.src span{font-size:13px;color:var(--muted)}
+.dotl{width:8px;height:8px;border-radius:50%;flex:none;background:var(--faint)}
+.dotl.ok{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.keyform{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;margin-top:10px;max-width:560px}
+.keyform .input{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+.keyform .input::placeholder{font-family:var(--font)}
+.seasons-row{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:center}
+.seasons-row .hint{line-height:1.35}
+.key-msg{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+.key-msg.err{color:var(--danger)}
+.key-msg:empty{display:none}
+.more-d{margin-top:12px}
+.more-d>summary{cursor:pointer;font-weight:500;color:var(--muted)}
+@media (hover:none){ .only-desk{display:none} }
 
 /* ---------- статистика ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -387,6 +474,13 @@ code{font-size:.92em;padding:1px 5px;border-radius:5px;background:var(--raise);b
   .addpart .grid{grid-template-columns:1fr 1fr}
   .addpart .grid.g2{grid-template-columns:110px 1fr}
   .addpart .grid .wide{grid-column:1/-1}
+  .modal{padding:calc(12px + env(safe-area-inset-top)) 10px 16px}
+  .modal-box.add-box{padding:16px 14px 14px}
+  .add-res{max-height:62vh}
+  .add-pick{gap:12px}
+  .add-pick .poster{width:64px}
+  .pk-t{font-size:19px}
+  .keyform{grid-template-columns:1fr}
   .kv{grid-template-columns:120px 1fr}
   .row{padding:11px 12px 11px 10px;gap:12px}
   .ygroup{font-size:20px}
@@ -518,7 +612,11 @@ const LS = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
 };
 const KEY_REMOTE = 'kinodnevnik:remote';
-const KEY_ITEMS = 'kinodnevnik:items', KEY_META = 'kinodnevnik:meta', KEY_THEME = 'kinodnevnik:theme';
+const KEY_ITEMS = 'kinodnevnik:items', KEY_META = 'kinodnevnik:meta', KEY_THEME = 'kinodnevnik:theme', KEY_CFG = 'kinodnevnik:cfg';
+/* служебная запись с настройками (ключ TMDB): лежит в той же таблице, но в списки не попадает */
+const CFG_ID = '__settings';
+const SHIKI = 'https://shikimori.io';
+const TMDB_API = 'https://api.themoviedb.org/3', TMDB_IMG = 'https://image.tmdb.org/t/p/', TMDB_SITE = 'https://www.themoviedb.org/';
 
 const CATS = {
   film:      { one: 'Фильм',        many: 'Фильмы',        group: 'film' },
@@ -571,7 +669,9 @@ const P = {
   next: '<path d="m9 6 6 6-6 6"/>',
   cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
-  star: '<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>'
+  star: '<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>',
+  back: '<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'
 };
 const I = (n, cls) => '<svg class="i' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[n] || '') + '</svg>';
 
@@ -582,6 +682,7 @@ const plural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[(a 
 const fold = s => String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/[«»"'.,:;!?()\[\]\-–—/]/g, ' ').replace(/\s+/g, ' ').trim();
 const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const year4 = y => (String(y || '').match(/\d{4}/) || [''])[0];
+const fmtScore = v => (Math.round(+v * 10) / 10).toFixed(1).replace('.', ',');
 const groupOf = it => (CATS[it.cat] || CATS.film).group;
 const lastDate = it => it.dates && it.dates.length ? it.dates[it.dates.length - 1] : '';
 const isMulti = it => Array.isArray(it.parts) && it.parts.length > 0;
@@ -636,17 +737,29 @@ function norm(it) {
 }
 
 /* ================= Состояние ================= */
-const S = { items: [], byId: new Map(), seed: { items: [] }, meta: {}, ready: false };
+const S = { items: [], byId: new Map(), seed: { items: [] }, meta: {}, cfg: {}, ready: false };
 const UI = {
   view: 'home', open: null, q: '', sub: 'all', status: 'all', extra: '', sort: 'date',
   showAll: {}, partDates: {}, editBasics: false, addPart: false, confirmDel: false, confirmPart: null, pushed: false, pendingImport: null
 };
 function reindex() { S.byId = new Map(S.items.map(it => [it.id, it])); }
+/* отделяет служебную запись от тайтлов и запоминает настройки */
+function takeCfg(list) {
+  const out = []; let found = null;
+  (list || []).forEach(x => { if (x && x.id === CFG_ID) found = x; else out.push(x); });
+  S.cfg = found && found.cfg && typeof found.cfg === 'object' ? Object.assign({}, found.cfg) : {};
+  return out;
+}
+const cfgRecord = () => ({ id: CFG_ID, cat: 'settings', title: 'Служебная запись: настройки сайта (не удалять)', status: '', dates: [], cfg: S.cfg });
+function saveCfg() {
+  if (Store.mode === 'google') { Store.cfgDirty = true; Store.schedule(); }
+  else LS.set(KEY_CFG, S.cfg);
+}
 
 /* ================= Хранилище ================= */
 const isGoogle = () => typeof google !== 'undefined' && google.script && google.script.run;
 const Store = {
-  mode: 'local', ok: true, dirty: new Set(), deleted: new Set(), timer: null, busy: false, failed: false,
+  mode: 'local', ok: true, dirty: new Set(), deleted: new Set(), timer: null, busy: false, failed: false, cfgDirty: false,
   remote: null,
   async run(fn, arg) {
     if (this.remote) {
@@ -666,12 +779,14 @@ const Store = {
     if (isGoogle() || this.remote) {
       this.mode = 'google';
       const r = JSON.parse(await this.run('getAll'));
-      return r.items || [];
+      return takeCfg(r.items || []);
     }
     this.mode = 'local';
     const test = LS.set('kinodnevnik:test', 1);
     this.ok = test;
-    return LS.get(KEY_ITEMS, null);
+    const c = LS.get(KEY_CFG, {}); S.cfg = c && typeof c === 'object' ? c : {};
+    const st = LS.get(KEY_ITEMS, null);
+    return Array.isArray(st) ? st.filter(x => !x || x.id !== CFG_ID) : st;
   },
   touch(it) {
     it.updated = new Date().toISOString();
@@ -685,7 +800,7 @@ const Store = {
     setSave('busy');
     this.timer = setTimeout(() => this.flush(), this.mode === 'google' ? 1100 : 350);
   },
-  pending() { return this.dirty.size > 0 || this.deleted.size > 0 || this.busy; },
+  pending() { return this.dirty.size > 0 || this.deleted.size > 0 || this.busy || this.cfgDirty; },
   async flush() {
     if (this.mode === 'local') {
       this.dirty.clear(); this.deleted.clear();
@@ -695,17 +810,19 @@ const Store = {
       return;
     }
     if (this.busy) { this.schedule(); return; }
-    const ids = Array.from(this.dirty), dels = Array.from(this.deleted);
-    this.dirty.clear(); this.deleted.clear();
+    const ids = Array.from(this.dirty), dels = Array.from(this.deleted), withCfg = this.cfgDirty;
+    this.dirty.clear(); this.deleted.clear(); this.cfgDirty = false;
     this.busy = true;
     try {
       const list = ids.map(id => S.byId.get(id)).filter(Boolean);
+      if (withCfg) list.push(cfgRecord());
       if (list.length) await this.run('saveItems', JSON.stringify(list));
       if (dels.length) await this.run('deleteItems', JSON.stringify(dels));
       this.failed = false;
       setSave('ok');
     } catch (e) {
       ids.forEach(id => this.dirty.add(id)); dels.forEach(id => this.deleted.add(id));
+      if (withCfg) this.cfgDirty = true;
       this.failed = true;
       setSave('err', (e && e.message) ? 'Не сохранилось: ' + e.message : 'Нет связи, повторю');
       clearTimeout(this.timer);
@@ -713,11 +830,14 @@ const Store = {
     } finally { this.busy = false; }
   },
   async replaceAll(items) {
-    S.items = items.map(norm).filter(Boolean); reindex();
+    S.items = items.filter(x => x && x.id !== CFG_ID).map(norm).filter(Boolean); reindex();
     S.meta.lastChange = new Date().toISOString(); saveMeta();
     if (this.mode === 'google') {
       setSave('busy');
-      await this.run('replaceAll', JSON.stringify(S.items));
+      // настройки (ключ TMDB) переживают загрузку из копии
+      const all = Object.keys(S.cfg).length ? S.items.concat([cfgRecord()]) : S.items;
+      await this.run('replaceAll', JSON.stringify(all));
+      this.cfgDirty = false;
       setSave('ok');
     } else {
       const ok = LS.set(KEY_ITEMS, S.items); this.ok = ok; setSave(ok ? 'ok' : 'err');
@@ -760,7 +880,7 @@ function go(view) {
 }
 function openItem(id) {
   if (!S.byId.has(id)) return;
-  UI.editBasics = false; UI.addPart = false; UI.confirmDel = false; UI.confirmPart = null;
+  UI.editBasics = false; UI.addPart = false; UI.confirmDel = false; UI.confirmPart = null; UI.apPick = null;
   const wasOpen = !!UI.open;
   UI.open = id;
   const base = UI.view === 'search' ? 'search' : UI.view;
@@ -1159,6 +1279,7 @@ function viewData() {
     '<button class="btn" data-act="export-html">' + I('download') + 'Скачать офлайн-сайт с записями</button></div>' +
     '<p class="faint" style="margin:10px 0 0;font-size:13.5px">Резервная копия — это файл .json со всеми записями. Офлайн-сайт — это этот же сайт одним файлом .html, в который уже вшиты твои записи: его можно открыть на любом компьютере без интернета.</p>' +
     '</div></div></div>';
+  h += lookupPanel();
   if (Store.remote) h += '<section class="section"><div class="panel"><div class="h2">Открыть дневник на другом устройстве</div>' +
     '<p class="muted" style="margin:6px 0 0">Скопируй ссылку подключения и открой её на телефоне (например, отправь себе в «Заметки» или через AirDrop). Она один раз запомнит, где лежат записи. Никому её не отправляй: в ней твой ключ.</p>' +
     '<div class="row-acts"><button class="btn primary" data-act="copy-connect">' + I('copy') + 'Скопировать ссылку подключения</button><button class="btn ghost" data-act="disconnect">Отключить это устройство</button></div></div></section>';
@@ -1166,8 +1287,50 @@ function viewData() {
   else h += updateGuide();
   h += '<section class="section"><div class="panel"><div class="h2">Оформление</div><div class="chips" style="margin-top:12px">' +
     [['dark', 'Кинозал'], ['light', 'Дневной сеанс'], ['auto', 'Как в системе']].map(([v, n]) => '<button class="chip" data-act="theme" data-v="' + v + '" aria-pressed="' + (theme === v) + '">' + n + '</button>').join('') + '</div></div></section>';
-  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную.</p></div></section>';
+  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме).</p>' +
+    '<p class="faint" style="margin:8px 0 0;font-size:13px" lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div></section>';
   return h;
+}
+function lookupPanel() {
+  const key = tmdbKey(), g = Store.mode === 'google';
+  let h = '<section class="section" id="tmdb"><div class="panel"><div class="h2">Поиск при добавлении</div>' +
+    '<p class="muted" style="margin:6px 0 0">Когда добавляешь тайтл, сайт сам находит его в базе и заполняет название, оригинал, год, раздел и постер. А для аниме ещё и замечает, что это продолжение того, что уже есть в дневнике.</p>' +
+    '<div class="srcs">' +
+      '<div class="src"><span class="dotl ok"></span><div><b>Аниме: Shikimori</b><span>Работает без ключа, по-русски</span></div></div>' +
+      '<div class="src"><span class="dotl' + (key ? ' ok' : '') + '"></span><div><b>Фильмы, сериалы, мультфильмы: TMDB</b><span>' + (key ? 'Подключено, ключ …' + esc(key.slice(-4)) : 'Нужен бесплатный ключ, настраивается один раз') + '</span></div>' +
+      (key ? (UI.tmdbOff ? '<span class="confirm"><span>Отключить?</span><button class="btn small danger" data-act="tmdb-off-yes">Да</button><button class="btn small ghost" data-act="tmdb-off-no">Нет</button></span>' : '<button class="btn small ghost" data-act="tmdb-off">Отключить</button>') : '') + '</div>' +
+    '</div>';
+  const form = '<form class="keyform" id="tmdbform" autocomplete="off"><label class="field"><span>Ключ API (API Key)</span><input class="input" id="tmdb-key" name="key" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="32 буквы и цифры"></label>' +
+    '<button class="btn primary" type="submit">Проверить и сохранить</button></form><p class="key-msg" id="tmdb-msg" role="status"></p>';
+  if (!key) {
+    h += '<ol class="steps">' +
+      '<li><div><p><b>Зарегистрируйся на TMDB</b> и подтверди почту: письмо приходит сразу.</p><a class="btn small" href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">' + I('ext') + 'Открыть регистрацию</a></div></li>' +
+      '<li><div><p><b>Открой настройки API</b> и создай ключ: тип <b>Developer</b>, прими условия.</p><a class="btn small" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">' + I('ext') + 'Открыть настройки API</a><p class="note" style="margin-top:6px">Если сайт откроется по-немецки, это <i>Einstellungen → API</i>. С телефона анкета работает плохо, лучше на Маке.</p></div></li>' +
+      '<li><div><p><b>Заполни короткую анкету.</b> Тип использования: личный (Personal). Название: Кинодневник. Описание: «Личный дневник фильмов». Адрес сайта: <code>' + esc(location.origin + location.pathname) + '</code></p><button class="btn small" data-act="copy-site">' + I('copy') + 'Скопировать адрес сайта</button><p class="note" style="margin-top:6px">Остальные поля заполни своими данными.</p></div></li>' +
+      '<li><div><p><b>Скопируй «Ключ API» (API Key)</b> со страницы настроек и вставь сюда. Это строка из 32 букв и цифр. Длинный «токен доступа» тоже подойдёт.</p>' + form + '</div></li>' +
+      '</ol>';
+  } else h += '<details class="more-d"><summary>Заменить ключ</summary>' + form + '</details>';
+  h += '<p class="faint" style="margin:12px 0 0;font-size:13.5px">' + (g ? 'Ключ хранится в твоей Google-таблице вместе с записями, поэтому на iPhone вводить его не придётся.' : 'Ключ хранится в этом браузере.') + ' Если базы когда-нибудь не ответят, тайтл всё равно можно добавить вручную.</p>';
+  return h + '</div></section>';
+}
+async function saveTmdbKey(form) {
+  const inp = $('#tmdb-key'), msg = $('#tmdb-msg'), btn = form.querySelector('button[type=submit]');
+  const key = String(inp.value || '').replace(/^Bearer\s+/i, '').replace(/[\s"'«»]/g, '');
+  if (!key) { msg.className = 'key-msg err'; msg.textContent = 'Вставь ключ в поле выше.'; inp.focus(); return; }
+  btn.disabled = true; msg.className = 'key-msg'; msg.textContent = 'Проверяю ключ в TMDB…';
+  try {
+    const r = await tmdb('/authentication', {}, null, key, 10000);
+    if (r && r.success === false) throw lookErr('badkey', '');
+    S.cfg.tmdb = key; saveCfg(); SEARCH_CACHE.clear();
+    UI.tmdbOff = false; renderMain();
+    const s = $('#tmdb'); if (s) { try { s.scrollIntoView({ block: 'start' }); } catch (e) {} }
+    toast('TMDB подключён. Теперь фильмы и сериалы находятся сами');
+  } catch (e) {
+    btn.disabled = false; msg.className = 'key-msg err';
+    msg.textContent = e.code === 'badkey'
+      ? 'TMDB не принял этот ключ. Нужен «Ключ API» (API Key) со страницы настроек API: строка из 32 букв и цифр.'
+      : 'Не получилось связаться с TMDB (' + (e.message || 'нет сети') + '). Проверь интернет и попробуй ещё раз.';
+  }
 }
 function syncGuide() {
   return '<section class="section"><div class="panel"><div class="h2">Мак и телефон: общий дневник через Google-таблицу</div>' +
@@ -1272,18 +1435,24 @@ function datesEditor(dates, pid) {
 }
 const toggle = (k, on, icon, label) => '<button class="chip" data-act="toggle" data-v="' + k + '" aria-pressed="' + !!on + '">' + I(icon) + label + '</button>';
 function extHTML(it) {
-  const q = encodeURIComponent, y = year4(it.year);
+  const q = encodeURIComponent, y = year4(it.year), e = it.ext || {};
+  const sc = (name, v, tip) => '<span class="score" title="' + tip + '"><span class="muted">' + name + '</span><b>' + fmtScore(v) + '</b></span>';
   let h = '<div class="ext">';
   if (it.mal || it.cat === 'anime' || it.cat === 'animefilm') {
-    if (it.aod) h += '<span class="score" title="Средняя оценка по MyAnimeList, AniList и другим базам, июль 2026"><span class="muted">Аниме-базы</span><b>' + String(it.aod.toFixed(1)).replace('.', ',') + '</b></span>';
+    if (it.aod) h += sc('Аниме-базы', it.aod, 'Средняя оценка по MyAnimeList, AniList и другим базам, июль 2026');
+    if (+e.shiki) h += sc('Shikimori', e.shiki, 'Оценка на Shikimori, когда тайтл добавлялся');
+    if (+e.tmdb) h += sc('TMDB', e.tmdb, 'Оценка на TMDB, когда тайтл добавлялся');
     h += it.mal
-      ? link('https://shikimori.one/animes/' + it.mal, 'Shikimori') + link('https://myanimelist.net/anime/' + it.mal, 'MyAnimeList')
-      : link('https://shikimori.one/animes?search=' + q(it.title), 'Найти на Shikimori');
+      ? link(SHIKI + '/animes/' + it.mal, 'Shikimori') + link('https://myanimelist.net/anime/' + it.mal, 'MyAnimeList')
+      : link(SHIKI + '/animes?search=' + q(it.title), 'Найти на Shikimori');
+    if (it.tmdb) h += link(TMDB_SITE + it.tmdb + '?language=ru-RU', 'TMDB');
   } else {
+    if (+e.tmdb) h += sc('TMDB', e.tmdb, 'Оценка на TMDB, когда тайтл добавлялся');
     const name = it.orig || it.title;
-    h += link('https://www.imdb.com/find/?s=tt&q=' + q(name + (y ? ' ' + y : '')), 'IMDb') +
+    h += link(it.imdb ? 'https://www.imdb.com/title/' + it.imdb + '/' : 'https://www.imdb.com/find/?s=tt&q=' + q(name + (y ? ' ' + y : '')), 'IMDb') +
       link('https://www.kinopoisk.ru/index.php?kp_query=' + q(it.title + (y ? ' ' + y : '')), 'Кинопоиск') +
-      link('https://www.rottentomatoes.com/search?search=' + q(name), 'Rotten Tomatoes');
+      link('https://www.rottentomatoes.com/search?search=' + q(name), 'Rotten Tomatoes') +
+      (it.tmdb ? link(TMDB_SITE + it.tmdb + '?language=ru-RU', 'TMDB') : '');
   }
   h += '</div>';
   if (!(it.mal || it.cat === 'anime' || it.cat === 'animefilm')) {
@@ -1312,10 +1481,11 @@ function partHTML(it, p) {
   if (p.year) meta.push(esc(p.year));
   if (p.progress) meta.push(esc(p.progress));
   if (p.dates && p.dates.length) meta.push('смотрел ' + esc(p.dates.map(d => fmtDate(d)).join(', ')));
-  if (p.aod) meta.push('аниме-базы ' + String(p.aod.toFixed(1)).replace('.', ','));
+  if (p.aod) meta.push('аниме-базы ' + fmtScore(p.aod));
+  else if (+p.shiki) meta.push('Shikimori ' + fmtScore(p.shiki));
   if (p.dub) meta.push(esc(p.dub));
   let h = '<div class="part" data-pid="' + esc(p.id) + '"><div class="part-h"><span class="plabel">' + esc(p.label || '—') + '</span><div><div class="ptitle">' + esc(p.title || it.title) + '</div><div class="pmeta">' + meta.map(m => '<span>' + m + '</span>').join('') + '</div></div>' +
-    (p.mal ? '<a class="btn icon ghost" href="https://shikimori.one/animes/' + p.mal + '" target="_blank" rel="noopener noreferrer" aria-label="Открыть на Shikimori" title="Shikimori">' + I('ext') + '</a>' : '<span></span>') + '</div>' +
+    (p.mal ? '<a class="btn icon ghost" href="' + SHIKI + '/animes/' + p.mal + '" target="_blank" rel="noopener noreferrer" aria-label="Открыть на Shikimori" title="Shikimori">' + I('ext') + '</a>' : '<span></span>') + '</div>' +
     '<div class="part-c"><select class="select" data-act-change="part-status" data-pid="' + esc(p.id) + '" aria-label="Статус сезона">' + STATUS_ORDER.map(s => '<option value="' + s + '"' + (p.status === s ? ' selected' : '') + '>' + STATUS[s].label + '</option>').join('') + '</select>' +
     '<select class="select" data-act-change="part-rate" data-pid="' + esc(p.id) + '" aria-label="Оценка сезона"><option value="0">Без оценки</option>' + Array.from({ length: 10 }, (_, i) => 10 - i).map(n => '<option value="' + n + '"' + (p.rating === n ? ' selected' : '') + '>' + n + ' (' + WORDS[n].toLowerCase() + ')</option>').join('') + '</select></div>' +
     '<textarea class="input" data-pf="note" data-pid="' + esc(p.id) + '" rows="1" placeholder="Как тебе этот ' + (p.kind === 'film' ? 'фильм' : p.kind === 'tv' ? 'сезон' : 'выпуск') + '?">' + esc(p.note || '') + '</textarea>' +
@@ -1328,14 +1498,19 @@ function partHTML(it, p) {
 }
 function addPartHTML(it) {
   const isAnime = it.cat === 'anime';
-  const n = (it.parts || []).filter(p => p.kind === 'tv').length + (isMulti(it) ? 1 : 2);
-  const label = isAnime ? 'ТВ-' + n : 'Сезон ' + (isMulti(it) ? n : 1);
-  return '<div class="addpart" id="addpart"><div class="grid">' +
-    '<label class="field"><span>Что это</span><select class="select" id="ap-kind">' + (isAnime ? '<option value="tv">Сезон</option><option value="film">Фильм</option><option value="ova">OVA или спешл</option>' : '<option value="tv">Сезон</option>') + '</select></label>' +
+  const pk = isAnime && UI.apPick;
+  const kind = pk ? pk.pkind : 'tv';
+  const label = nextPartLabel(it, kind);
+  let look = '';
+  if (isAnime) look = '<div class="ap-look"><div class="ap-sug" id="ap-sug">' + apSugHTML(it) + '</div>' +
+    '<label class="search ap-q" for="ap-q">' + I('search') + '<span class="sr">Поиск на Shikimori</span><input id="ap-q" type="text" autocomplete="off" spellcheck="false" placeholder="Найти сезон или фильм на Shikimori" value="' + esc(UI.apQ || '') + '"></label>' +
+    '<div class="ap-res" id="ap-res">' + apResHTML() + '</div></div>';
+  return '<div class="addpart" id="addpart">' + look + '<div class="grid">' +
+    '<label class="field"><span>Что это</span><select class="select" id="ap-kind">' + (isAnime ? [['tv', 'Сезон'], ['film', 'Фильм'], ['ova', 'OVA или спешл']].map(([v, n]) => '<option value="' + v + '"' + (v === kind ? ' selected' : '') + '>' + n + '</option>').join('') : '<option value="tv">Сезон</option>') + '</select></label>' +
     '<label class="field"><span>Метка</span><input class="input" id="ap-label" value="' + esc(label) + '"></label>' +
-    '<label class="field wide"><span>Название</span><input class="input" id="ap-title" value="' + esc(isAnime ? it.title + ' [' + label + ']' : '') + '" placeholder="' + (isAnime ? '' : 'Необязательно') + '"></label></div>' +
-    '<div class="grid g2"><label class="field"><span>Год</span><input class="input" id="ap-year" placeholder="2026"></label>' +
-    '<label class="field"><span>Статус</span><select class="select" id="ap-status">' + STATUS_ORDER.map(s => '<option value="' + s + '">' + STATUS[s].label + '</option>').join('') + '</select></label></div>' +
+    '<label class="field wide"><span>Название</span><input class="input" id="ap-title" value="' + esc(pk ? pk.title : isAnime ? it.title + ' [' + label + ']' : '') + '" placeholder="' + (isAnime ? '' : 'Необязательно') + '"></label></div>' +
+    '<div class="grid g2"><label class="field"><span>Год</span><input class="input" id="ap-year" placeholder="2026" value="' + esc(pk ? pk.year : '') + '"></label>' +
+    '<label class="field"><span>Статус</span><select class="select" id="ap-status">' + STATUS_ORDER.map(s => '<option value="' + s + '"' + (pk && pk.future && s === 'planned' ? ' selected' : '') + '>' + STATUS[s].label + '</option>').join('') + '</select></label></div>' +
     '<div class="row-acts" style="margin:0"><button class="btn primary small" data-act="add-part-save">Добавить</button><button class="btn ghost small" data-act="add-part-cancel">Отмена</button></div></div>';
 }
 function nextUnrated(exceptId) {
@@ -1343,36 +1518,445 @@ function nextUnrated(exceptId) {
     .sort((a, b) => lastDate(b).localeCompare(lastDate(a)))[0];
 }
 
+/* ================= Базы: TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме) ================= */
+const REL_OK = ['sequel', 'prequel', 'side_story', 'parent_story', 'full_story', 'spin_off', 'alternative_version', 'alternative_setting'];
+const SHIKI_KIND = { tv: 'ТВ-сериал', movie: 'Фильм', ova: 'OVA', ona: 'ONA', special: 'Спешл', tv_special: 'Спешл' };
+const SHIKI_SKIP = ['music', 'pv', 'cm'];
+const SHIKI_F = 'id malId name russian kind score status airedOn { year } releasedOn { year } franchise poster { main2xUrl mainUrl previewUrl }';
+const SEARCH_CACHE = new Map(), SEQ_CACHE = new Map();
+const lookErr = (code, msg) => Object.assign(new Error(msg), { code });
+const tmdbKey = () => String(S.cfg.tmdb || '').trim();
+const isAbort = e => e && e.name === 'AbortError';
+async function getJSON(url, opt, signal, who, ms) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), ms || 9000);
+  const stop = () => c.abort();
+  if (signal) { if (signal.aborted) c.abort(); else signal.addEventListener('abort', stop, { once: true }); }
+  let r;
+  try { r = await fetch(url, Object.assign({}, opt, { signal: c.signal })); }
+  catch (e) { if (signal && signal.aborted) throw e; throw lookErr('net', who + ' не отвечает'); }
+  finally { clearTimeout(t); if (signal) signal.removeEventListener('abort', stop); }
+  if (r.status === 401 && who === 'TMDB') throw lookErr('badkey', 'ключ TMDB не подходит');
+  if (r.status === 429) throw lookErr('busy', who + ' просит немного подождать');
+  if (!r.ok) throw lookErr('http', who + ' ответил ошибкой ' + r.status);
+  try { return await r.json(); } catch (e) { throw lookErr('http', who + ' ответил непонятно'); }
+}
+function tmdb(path, params, signal, key, ms) {
+  key = key || tmdbKey();
+  if (!key) return Promise.reject(lookErr('nokey', 'нет ключа TMDB'));
+  const u = new URL(TMDB_API + path);
+  Object.entries(Object.assign({ language: 'ru-RU' }, params || {})).forEach(([k, v]) => u.searchParams.set(k, v));
+  const opt = {};
+  // «Ключ API» (32 символа) идёт в адрес, длинный токен доступа — в заголовок
+  if (/^eyJ/.test(key)) opt.headers = { Authorization: 'Bearer ' + key }; else u.searchParams.set('api_key', key);
+  return getJSON(u.toString(), opt, signal, 'TMDB', ms);
+}
+async function shiki(query, variables, signal, ms) {
+  const j = await getJSON(SHIKI + '/api/graphql', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables }) }, signal, 'Shikimori', ms);
+  if (!j || !j.data) throw lookErr('http', 'Shikimori ответил ошибкой');
+  return j.data;
+}
+const spanYear = (y0, y1, open) => !y0 ? '' : open ? y0 + '–…' : (y1 && +y1 !== +y0 ? y0 + '–' + y1 : String(y0));
+function shikiRes(a) {
+  const k = a.kind || 'tv', y0 = a.airedOn && a.airedOn.year, y1 = a.releasedOn && a.releasedOn.year, p = a.poster || {};
+  return {
+    src: 'shiki', key: 'shiki:' + a.id, mal: +(a.malId || a.id) || null,
+    title: a.russian || a.name || '', orig: a.name || '',
+    year: k === 'movie' ? (y0 ? String(y0) : '') : spanYear(y0, y1, a.status === 'ongoing'), y: y0 ? String(y0) : '',
+    cat: k === 'movie' ? 'animefilm' : 'anime',
+    pkind: k === 'movie' ? 'film' : (k === 'tv' || k === 'ona') ? 'tv' : 'ova',
+    kindLabel: SHIKI_KIND[k] || String(k).toUpperCase(),
+    score: a.score && +a.score > 0 ? Math.round(+a.score * 10) / 10 : null,
+    img: p.main2xUrl || p.mainUrl || '', thumb: p.previewUrl || p.mainUrl || '',
+    franchise: a.franchise || '',
+    rel: (a.related || []).filter(r => r.anime && REL_OK.includes(r.relationKind)).map(r => +r.anime.id),
+    future: a.status === 'anons'
+  };
+}
+function tmdbRes(r) {
+  const kind = r.media_type === 'tv' ? 'tv' : 'movie';
+  const date = (kind === 'tv' ? r.first_air_date : r.release_date) || '';
+  const genres = r.genre_ids || (r.genres || []).map(g => g.id);
+  const anim = genres.includes(16), jp = r.original_language === 'ja';
+  const cat = kind === 'movie' ? (anim ? (jp ? 'animefilm' : 'cartoon') : 'film') : (anim ? (jp ? 'anime' : 'toon') : 'series');
+  return {
+    src: 'tmdb', key: 'tmdb:' + kind + '/' + r.id, tmdb: kind + '/' + r.id, kind, id: r.id,
+    title: r.title || r.name || '', orig: r.original_title || r.original_name || '',
+    year: date.slice(0, 4), y: date.slice(0, 4), cat, jpAnim: anim && jp,
+    score: r.vote_count >= 10 && r.vote_average ? Math.round(r.vote_average * 10) / 10 : null, votes: r.vote_count || 0,
+    img: r.poster_path ? TMDB_IMG + 'w342' + r.poster_path : '', thumb: r.poster_path ? TMDB_IMG + 'w92' + r.poster_path : '',
+    future: !!date && date > today()
+  };
+}
+async function searchShiki(q, signal) {
+  const d = await shiki('query($s:String){animes(search:$s,limit:8){' + SHIKI_F + ' related { relationKind anime { id } }}}', { s: q }, signal);
+  return (d.animes || []).filter(a => !SHIKI_SKIP.includes(a.kind)).map(shikiRes);
+}
+async function searchTMDB(q, signal) {
+  const d = await tmdb('/search/multi', { query: q, include_adult: 'false' }, signal);
+  const list = (d.results || []).filter(r => r.media_type === 'movie' || r.media_type === 'tv').map(tmdbRes);
+  // записи без постера и без голосов обычно мусор: опускаем их вниз
+  const junk = r => r.thumb && r.votes ? 0 : 1;
+  return list.map((r, i) => [r, i]).sort((a, b) => junk(a[0]) - junk(b[0]) || a[1] - b[1]).map(x => x[0]);
+}
+async function tmdbDetails(res) {
+  const d = await tmdb('/' + res.kind + '/' + res.id, { append_to_response: 'external_ids' }, null, null, 6000);
+  const out = {};
+  const imdb = d.imdb_id || (d.external_ids && d.external_ids.imdb_id);
+  if (imdb) out.imdb = imdb;
+  if (d.poster_path) out.img = TMDB_IMG + 'w342' + d.poster_path;
+  if (res.kind === 'tv') {
+    const y0 = (d.first_air_date || '').slice(0, 4), y1 = (d.last_air_date || '').slice(0, 4);
+    if (y0) out.year = spanYear(y0, y1, ['Returning Series', 'In Production', 'Planned', 'Pilot'].includes(d.status));
+    out.seasons = (d.seasons || []).filter(s => s.season_number > 0).length || d.number_of_seasons || 0;
+  }
+  return out;
+}
+/* продолжения и связанные части: идём по цепочке сиквелов до трёх шагов */
+async function fetchRelated(known) {
+  const Q = 'query($ids:String){animes(ids:$ids,limit:50){id related{relationKind anime{' + SHIKI_F + '}}}}';
+  const seen = new Set(known), found = new Map();
+  let frontier = known.slice(0, 50);
+  for (let hop = 0; hop < 3 && frontier.length; hop++) {
+    const d = await shiki(Q, { ids: frontier.join(',') });
+    const next = [];
+    (d.animes || []).forEach(a => (a.related || []).forEach(r => {
+      const x = r.anime;
+      if (!x || !REL_OK.includes(r.relationKind) || SHIKI_SKIP.includes(x.kind)) return;
+      const id = +x.id; if (seen.has(id)) return; seen.add(id);
+      const res = shikiRes(x); res.relKind = r.relationKind; found.set(id, res);
+      if (r.relationKind === 'sequel' || r.relationKind === 'prequel') next.push(id);
+    }));
+    frontier = next.slice(0, 50);
+  }
+  const rank = r => (r.relKind === 'sequel' || r.relKind === 'prequel') ? (r.pkind === 'tv' ? 0 : 1) : 2;
+  return Array.from(found.values()).sort((a, b) => rank(a) - rank(b) || (a.y || '9999').localeCompare(b.y || '9999'));
+}
+
+/* ---- что уже есть в дневнике ---- */
+function malIndex() {
+  const m = new Map();
+  S.items.forEach(it => {
+    if (it.mal) m.set(+it.mal, { it });
+    (it.parts || []).forEach(p => { if (p.mal && !m.has(+p.mal)) m.set(+p.mal, { it, p }); });
+  });
+  return m;
+}
+function inDiary(res, idx) {
+  if (res.src === 'shiki') return res.mal ? idx.get(res.mal) || null : null;
+  const byId = S.items.find(it => it.tmdb === res.tmdb);
+  if (byId) return { it: byId };
+  const t = fold(res.title), o = fold(res.orig);
+  const it = S.items.find(x => {
+    if (x.tmdb) return false;
+    const xt = fold(x.title), xo = fold(x.orig), xy = year4(x.year);
+    const same = (t && (xt === t || xo === t)) || (o && (xo === o || xt === o));
+    return same && (!res.y || !xy || xy === res.y);
+  });
+  return it ? { it } : null;
+}
+/* аниме-продолжение того, что уже записано: по связям Shikimori или по франшизе */
+function relatedInDiary(res, idx, fr) {
+  if (res.src !== 'shiki') return null;
+  for (const id of res.rel) { const m = idx.get(id); if (m && m.it.cat === 'anime') return m.it; }
+  if (!res.franchise) return null;
+  // франшиза: записанная раньше или узнанная по соседним результатам поиска
+  if (fr && fr.has(res.franchise)) return fr.get(res.franchise);
+  return S.items.find(it => it.cat === 'anime' && (it.franchise === res.franchise || (it.parts || []).some(p => p.franchise === res.franchise))) || null;
+}
+/* франшизы из результатов поиска, у которых хотя бы одна часть уже в дневнике */
+function franchiseMap(list, idx) {
+  const fr = new Map();
+  list.forEach(r => { if (r.src !== 'shiki' || !r.franchise || fr.has(r.franchise)) return; const m = r.mal && idx.get(r.mal); if (m && m.it.cat === 'anime') fr.set(r.franchise, m.it); });
+  return fr;
+}
+const matchQ = (f, t, o) => { t = fold(t); o = fold(o); return t === f || o === f ? 3 : t.startsWith(f) || o.startsWith(f) ? 2 : t.includes(f) || o.includes(f) ? 1 : 0; };
+function localMatches(q) {
+  const f = fold(q); if (!f) return [];
+  return S.items.map(it => {
+    let s = matchQ(f, it.title, it.orig);
+    if (!s && (it.parts || []).some(p => fold(p.title).includes(f) || fold(p.orig).includes(f))) s = 1;
+    return [it, s];
+  }).filter(x => x[1]).sort((a, b) => b[1] - a[1] || lastDate(b[0]).localeCompare(lastDate(a[0]))).slice(0, 3);
+}
+function nextPartLabel(it, kind) {
+  const parts = it.parts || [];
+  if (kind === 'film') { const n = parts.filter(p => p.kind === 'film').length + 1; return 'Фильм' + (n > 1 ? ' ' + n : ''); }
+  if (kind === 'ova') return 'OVA';
+  const n = parts.filter(p => p.kind === 'tv').length + (isMulti(it) ? 1 : 2);
+  return it.cat === 'anime' ? 'ТВ-' + n : 'Сезон ' + (isMulti(it) ? n : 1);
+}
+/* добавляет сезон или фильм к тайтлу; одиночное аниме сначала становится первым сезоном */
+function addPartTo(it, d) {
+  if (!isMulti(it)) {
+    it.parts = [];
+    if (it.cat === 'anime') {
+      const p0 = { id: uid('p'), label: it.slabel || 'ТВ-1', title: it.title, kind: 'tv', year: it.year, status: it.status, dub: it.dub, progress: it.progress, dates: it.dates.slice(), rating: it.rating || null };
+      ['mal', 'aod', 'img', 'orig', 'franchise'].forEach(k => { if (it[k]) p0[k] = it[k]; });
+      it.parts.push(p0); delete it.slabel; delete it.progress;
+    }
+  }
+  const p = { id: uid('p'), label: d.label, title: d.title || '', kind: d.kind || 'tv', year: d.year || '', status: d.status || 'done', dates: d.dates || [] };
+  ['dub', 'orig', 'mal', 'img', 'franchise', 'shiki'].forEach(k => { if (d[k]) p[k] = d[k]; });
+  // по году встаёт на своё место в хронологии
+  const y = year4(p.year), at = y ? it.parts.findIndex(x => year4(x.year) > y) : -1;
+  if (at >= 0) it.parts.splice(at, 0, p); else it.parts.push(p);
+  if (it.cat === 'anime') syncParts(it);
+  return p;
+}
+function dubOptions() {
+  const c = new Map();
+  S.items.forEach(it => { [it.dub].concat((it.parts || []).map(p => p.dub)).forEach(d => { d = String(d || '').trim(); if (d) c.set(d, (c.get(d) || 0) + 1); }); });
+  return Array.from(c.entries()).sort((a, b) => b[1] - a[1]).slice(0, 40).map(x => '<option value="' + esc(x[0]) + '">').join('');
+}
+const thumbHTML = (src, g) => '<span class="th" style="--c:var(--c-' + g + ')">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</span>';
+
 /* ================= Добавление ================= */
+let AD = null, addT = null;
 function openAdd(preset = {}) {
+  if (AD && AD.ctrl) AD.ctrl.abort();
+  AD = { preset, q: String(preset.title || '').trim(), seq: 0, ctrl: null, res: null, map: new Map(), active: -1, pick: null, rel: null, det: null };
+  renderAddSearch();
+  if (AD.q) onAddInput(AD.q, true);
+}
+function addCatDefault() {
+  const p = (AD && AD.preset) || {};
   const gcat = GROUPS[UI.view] ? GROUPS[UI.view].cats[0] : 'film';
-  const cat = preset.cat || (UI.view === 'cartoon' && UI.sub === 'toon' ? 'toon' : UI.view === 'anime' && UI.sub === 'animefilm' ? 'animefilm' : gcat);
-  const st = preset.status || (UI.view === 'watchlist' ? 'planned' : 'done');
+  return p.cat || (UI.view === 'cartoon' && UI.sub === 'toon' ? 'toon' : UI.view === 'anime' && UI.sub === 'animefilm' ? 'animefilm' : gcat);
+}
+const addStatusDefault = () => (AD && AD.preset && AD.preset.status) || (UI.view === 'watchlist' ? 'planned' : 'done');
+function renderAddSearch() {
   const m = $('#modal');
-  m.innerHTML = '<form class="modal-box" id="addform" autocomplete="off"><div class="h2">Новый тайтл</div>' +
-    '<label class="field"><span>Название</span><input class="input" name="title" required value="' + esc(preset.title || '') + '" placeholder="Как называется"></label>' +
-    '<div class="two"><label class="field"><span>Раздел</span><select class="select" name="cat">' + Object.keys(CATS).map(c => '<option value="' + c + '"' + (c === cat ? ' selected' : '') + '>' + CATS[c].one + '</option>').join('') + '</select></label>' +
-    '<label class="field"><span>Год выхода</span><input class="input" name="year" inputmode="numeric" placeholder="2026"></label></div>' +
-    '<label class="field"><span>Оригинальное название</span><input class="input" name="orig" placeholder="Необязательно, но помогает искать на IMDb"></label>' +
-    '<div class="two"><label class="field"><span>Статус</span><select class="select" name="status">' + STATUS_ORDER.map(s => '<option value="' + s + '"' + (s === st ? ' selected' : '') + '>' + STATUS[s].label + '</option>').join('') + '</select></label>' +
-    '<label class="field" id="seasonsfield"><span>Сколько сезонов отметить</span><input class="input" name="seasons" type="number" min="0" max="40" value="0"></label></div>' +
-    '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="today"' + (st === 'done' ? ' checked' : '') + '> Отметить просмотр сегодня</label>' +
-    '<div class="acts"><button type="button" class="btn ghost" data-act="modal-close">Отмена</button><button type="submit" class="btn primary">Добавить и открыть</button></div></form>';
+  m.innerHTML = '<div class="modal-box add-box" id="addbox">' +
+    '<div class="add-head"><div class="h2">Новый тайтл</div><button type="button" class="btn icon ghost" data-act="modal-close" aria-label="Закрыть">' + I('close') + '</button></div>' +
+    '<label class="search add-q" for="add-q">' + I('search') + '<span class="sr">Название</span><input id="add-q" type="text" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Название фильма, сериала или аниме" value="' + esc(AD.q) + '" role="combobox" aria-expanded="true" aria-controls="add-res" aria-autocomplete="list"></label>' +
+    '<div class="add-res" id="add-res" role="listbox" aria-label="Найденные тайтлы"></div>' +
+    '<div class="add-foot"><span class="faint only-desk"><kbd>↑</kbd> <kbd>↓</kbd> выбрать, <kbd>Enter</kbd> добавить</span><button type="button" class="btn ghost small" data-act="add-manual">' + I('plus') + 'Заполнить вручную</button></div></div>';
   m.classList.add('on');
-  const upd = () => { const c = $('#addform [name=cat]').value; $('#seasonsfield').style.visibility = isSeriesLike({ cat: c }) ? 'visible' : 'hidden'; };
-  $('#addform [name=cat]').addEventListener('change', upd); upd();
-  $('#addform [name=status]').addEventListener('change', e => { $('#addform [name=today]').checked = e.target.value === 'done'; });
-  setTimeout(() => $('#addform [name=title]').focus(), 30);
+  renderAddRes();
+  const q = $('#add-q');
+  if (q) { try { q.focus({ preventScroll: true }); const n = q.value.length; q.setSelectionRange(n, n); } catch (e) {} }
+}
+function noKeyNote() {
+  return '<div class="add-note"><span>Фильмы и сериалы начнут находиться сами, когда подключишь бесплатный ключ TMDB. Это один раз и минут на пять.</span><button type="button" class="btn small" data-act="go-tmdb">Подключить</button></div>';
+}
+function errNote(e, who) {
+  if (!e) return '';
+  if (who === 'tmdb') {
+    if (e.code === 'nokey') return noKeyNote();
+    if (e.code === 'badkey') return '<div class="add-note"><span>TMDB не принял ключ, поэтому фильмы и сериалы сейчас не ищутся.</span><button type="button" class="btn small" data-act="go-tmdb">Проверить ключ</button></div>';
+    return '<div class="add-note"><span>TMDB сейчас не отвечает (' + esc(e.message) + '). Фильмы можно найти чуть позже или заполнить вручную.</span></div>';
+  }
+  return '<div class="add-note"><span>Shikimori сейчас не отвечает, поэтому аниме ищется только в TMDB.</span></div>';
+}
+function localResHTML(it) {
+  const meta = ['<span class="k"><i style="background:var(--c-' + groupOf(it) + ')"></i>' + esc(CATS[it.cat].one) + '</span>'];
+  if (it.year) meta.push('<span>' + esc(it.year) + '</span>');
+  if (isMulti(it)) meta.push('<span>' + esc(partsSummary(it)) + '</span>');
+  if (it.status !== 'done') meta.push('<span>' + esc(STATUS[it.status].label) + '</span>');
+  else if (lastDate(it)) meta.push('<span>смотрел ' + esc(fmtDate(lastDate(it))) + '</span>');
+  return '<button type="button" class="res" role="option" data-act="add-open" data-id="' + esc(it.id) + '">' + thumbHTML(it.img, groupOf(it)) +
+    '<span class="res-t"><span class="t">' + esc(it.title) + '</span><span class="m">' + meta.join('') + '</span></span>' + badge(it) + '</button>';
+}
+function remoteResHTML(r, idx, fr) {
+  AD.map.set(r.key, r);
+  const have = inDiary(r, idx), rel = !have && relatedInDiary(r, idx, fr), g = CATS[r.cat].group;
+  const meta = ['<span class="k"><i style="background:var(--c-' + g + ')"></i>' + esc(r.src === 'shiki' ? r.kindLabel : CATS[r.cat].one) + '</span>'];
+  if (r.year) meta.push('<span>' + esc(r.year) + '</span>');
+  if (r.orig && fold(r.orig) !== fold(r.title)) meta.push('<span class="o">' + esc(r.orig) + '</span>');
+  let tag = '';
+  if (have) tag = '<span class="tag in">' + I('check') + 'уже в дневнике' + (have.p ? ', ' + esc(have.p.label) : '') + '</span>';
+  else if (rel) tag = '<span class="tag rel" title="Из той же истории, что и тайтл в дневнике: добавится к нему сезоном или фильмом">' + I('link') + 'можно добавить к «' + esc(rel.title) + '»</span>';
+  return '<button type="button" class="res" role="option" data-act="add-pick" data-k="' + esc(r.key) + '">' + thumbHTML(r.thumb, g) +
+    '<span class="res-t"><span class="t">' + esc(r.title) + '</span><span class="m">' + meta.join('') + '</span>' + (tag ? '<span class="tags">' + tag + '</span>' : '') + '</span>' +
+    (r.score ? '<span class="res-s" title="' + (r.src === 'shiki' ? 'Оценка на Shikimori' : 'Оценка на TMDB') + '">' + fmtScore(r.score) + '</span>' : '<span></span>') + '</button>';
+}
+const resSec = (title, rows) => '<div class="res-sec"><div class="res-h">' + title + '</div>' + rows + '</div>';
+function renderAddRes() {
+  const box = $('#add-res'); if (!box || !AD) return;
+  const R = AD.res, q = AD.q.trim(), f = fold(q);
+  AD.map = new Map();
+  let h = '', def = -1, n = 0;
+  if (!q) {
+    box.innerHTML = '<div class="add-hint"><p>Начни вводить название, можно по-русски или в оригинале. Фильмы, сериалы и мультфильмы ищутся в TMDB, аниме в Shikimori. Выбери нужное, и название, год, раздел и постер заполнятся сами.</p>' + (tmdbKey() ? '' : noKeyNote()) + '</div>';
+    AD.active = -1; return;
+  }
+  const local = R ? R.local : [];
+  if (local.length) { h += resSec('Уже в дневнике', local.map(x => localResHTML(x[0])).join('')); n = local.length; if (local[0][1] === 3) def = 0; }
+  if (!R || R.loading) h += '<div class="add-loading"><span class="pulse"></span>Ищу ' + (tmdbKey() ? 'в TMDB и Shikimori' : 'в Shikimori') + '…</div>';
+  else if (R.short) h += '<div class="add-hint"><p>Ещё хотя бы одну букву, и начну искать в базах.</p></div>';
+  else {
+    const idx = malIndex(), shown = new Set(local.map(x => x[0].id));
+    const dup = r => { const h = inDiary(r, idx); return h && shown.has(h.it.id) && !h.p; };
+    let tm = R.tmdb || [], sh = R.shiki || [];
+    if (sh.length) tm = tm.filter(r => !r.jpAnim); // аниме берём из Shikimori: там русские названия и сезоны
+    const fr = franchiseMap(sh, idx);
+    // то, что уже показано в блоке «Уже в дневнике», второй раз не выводим
+    tm = tm.filter(r => !dup(r)).slice(0, 6); sh = sh.filter(r => !dup(r)).slice(0, 6);
+    const tS = tm.length ? matchQ(f, tm[0].title, tm[0].orig) : -1, sS = sh.length ? matchQ(f, sh[0].title, sh[0].orig) : -1;
+    const shFirst = UI.view === 'anime' ? sS >= tS : sS > tS;
+    const secT = tm.length ? resSec('Фильмы, сериалы, мультфильмы <span>TMDB</span>', tm.map(r => remoteResHTML(r, idx, fr)).join('')) : '';
+    const secS = sh.length ? resSec('Аниме <span>Shikimori</span>', sh.map(r => remoteResHTML(r, idx, fr)).join('')) : '';
+    AD.fr = fr;
+    if (def < 0 && (tm.length || sh.length)) def = n;
+    h += shFirst ? secS + secT : secT + secS;
+    h += errNote(R.tmdbErr, 'tmdb') + errNote(R.shikiErr, 'shiki');
+    if (!tm.length && !sh.length && !local.length) {
+      const both = R.shikiErr && R.tmdbErr && R.tmdbErr.code !== 'nokey';
+      h += '<div class="add-hint"><p>' + (both ? 'Базы сейчас не отвечают. Тайтл можно добавить вручную, а постер подобрать позже.' : 'В базах ничего не нашлось по запросу «' + esc(q) + '». Попробуй оригинальное название или часть названия.') + '</p>' +
+        '<button type="button" class="btn small" data-act="add-manual">' + I('plus') + 'Добавить «' + esc(q) + '» вручную</button></div>';
+    }
+  }
+  box.innerHTML = h;
+  setActive(def);
+}
+function setActive(i) {
+  const list = $$('#add-res .res');
+  AD.active = list.length ? Math.max(-1, Math.min(list.length - 1, i)) : -1;
+  const q = $('#add-q');
+  list.forEach((b, j) => { b.id = 'res-' + j; b.classList.toggle('on', j === AD.active); b.setAttribute('aria-selected', String(j === AD.active)); });
+  if (q) { if (AD.active >= 0) q.setAttribute('aria-activedescendant', 'res-' + AD.active); else q.removeAttribute('aria-activedescendant'); }
+  if (AD.active >= 0) { try { list[AD.active].scrollIntoView({ block: 'nearest' }); } catch (e) {} }
+}
+const cacheKey = q => tmdbKey().slice(-6) + '|' + fold(q);
+function onAddInput(v, now) {
+  if (!AD) return;
+  AD.q = v; const q = v.trim();
+  clearTimeout(addT);
+  if (AD.ctrl) { AD.ctrl.abort(); AD.ctrl = null; }
+  AD.seq++;
+  if (q.length < 2) { AD.res = q ? { local: localMatches(q), short: true } : null; renderAddRes(); return; }
+  const c = SEARCH_CACHE.get(cacheKey(q));
+  if (c) { AD.res = Object.assign({ local: localMatches(q) }, c); renderAddRes(); return; }
+  AD.res = { local: localMatches(q), loading: true }; renderAddRes();
+  addT = setTimeout(runAddSearch, now ? 0 : 320);
+}
+async function runAddSearch() {
+  if (!AD) return;
+  const q = AD.q.trim(); if (q.length < 2) return;
+  const seq = ++AD.seq, ctrl = AD.ctrl = new AbortController();
+  const hasKey = !!tmdbKey();
+  const [t, s] = await Promise.allSettled([hasKey ? searchTMDB(q, ctrl.signal) : Promise.reject(lookErr('nokey', 'нет ключа TMDB')), searchShiki(q, ctrl.signal)]);
+  if (!AD || seq !== AD.seq) return;
+  if ((t.status === 'rejected' && isAbort(t.reason)) || (s.status === 'rejected' && isAbort(s.reason))) return;
+  const res = { tmdb: t.status === 'fulfilled' ? t.value : [], shiki: s.status === 'fulfilled' ? s.value : [], tmdbErr: t.status === 'rejected' ? t.reason : null, shikiErr: s.status === 'rejected' ? s.reason : null };
+  if (!res.shikiErr && (!res.tmdbErr || res.tmdbErr.code === 'nokey')) {
+    SEARCH_CACHE.set(cacheKey(q), res);
+    if (SEARCH_CACHE.size > 80) SEARCH_CACHE.delete(SEARCH_CACHE.keys().next().value);
+  }
+  AD.ctrl = null;
+  AD.res = Object.assign({ local: localMatches(q) }, res);
+  renderAddRes();
+}
+function addKey(e) {
+  const list = $$('#add-res .res');
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    if (!list.length) return;
+    e.preventDefault();
+    setActive(e.key === 'ArrowDown' ? AD.active + 1 : Math.max(0, AD.active - 1));
+  } else if (e.key === 'Enter') {
+    if (e.isComposing) return;
+    e.preventDefault();
+    const q = AD.q.trim();
+    if (AD.res && AD.res.loading && q.length >= 2) { clearTimeout(addT); if (!AD.ctrl) runAddSearch(); return; }
+    if (list.length) list[AD.active >= 0 ? AD.active : 0].click();
+    else if (q) ACT['add-manual']();
+  }
+}
+async function pickResult(el) {
+  const r = AD && AD.map.get(el.dataset.k); if (!r) return;
+  const idx = malIndex(), have = inDiary(r, idx);
+  if (have) { closeModal(); openItem(have.it.id); toast('«' + have.it.title + '» уже в дневнике, открыл карточку'); return; }
+  AD.pick = r; AD.rel = relatedInDiary(r, idx, AD.fr); AD.det = null;
+  if (r.src === 'tmdb') {
+    el.classList.add('busy'); el.setAttribute('aria-busy', 'true');
+    try { AD.det = await tmdbDetails(r); } catch (e) { AD.det = null; }
+    if (!AD || AD.pick !== r) return;
+  }
+  renderAddForm();
+}
+function renderAddForm() {
+  const r = AD.pick, d = AD.det || {}, rel = AD.rel;
+  const cat = r ? r.cat : addCatDefault();
+  const st = r && r.future ? 'planned' : addStatusDefault();
+  const year = r ? (d.year || r.year) : '';
+  const orig = r && r.orig && fold(r.orig) !== fold(r.title) ? r.orig : '';
+  const img = r ? (d.img || r.img) : '';
+  const g = CATS[cat].group;
+  let h = '<form class="modal-box add-box" id="addform" autocomplete="off">' +
+    '<div class="add-head"><button type="button" class="btn icon ghost" data-act="add-back" aria-label="Назад к поиску" title="Назад к поиску">' + I('back') + '</button><div class="h2">' + (r ? 'Добавить в дневник' : 'Новый тайтл вручную') + '</div><button type="button" class="btn icon ghost" data-act="modal-close" aria-label="Закрыть">' + I('close') + '</button></div>';
+  if (r) {
+    const sub = [orig, year, r.src === 'shiki' ? r.kindLabel : CATS[cat].one].filter(Boolean).join(' · ');
+    h += '<div class="add-pick" style="--c:var(--c-' + g + ')">' + (img ? '<img class="poster" src="' + esc(img) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+      '<div><div class="pk-t">' + esc(r.title) + '</div><div class="pk-m">' + esc(sub) + '</div><div class="pk-s">' +
+      (r.score ? '<span class="score">' + (r.src === 'shiki' ? 'Shikimori' : 'TMDB') + ' <b>' + fmtScore(r.score) + '</b></span>' : '') +
+      (d.seasons ? '<span>' + d.seasons + ' ' + plural(d.seasons, ['сезон', 'сезона', 'сезонов']) + '</span>' : '') +
+      '<span class="faint">' + (r.src === 'shiki' ? 'данные Shikimori' : 'данные TMDB') + '</span></div></div></div>';
+  }
+  if (rel) {
+    const what = r.pkind === 'film' ? 'Фильмом' : r.pkind === 'tv' ? 'Сезоном' : 'Выпуском';
+    h += '<div class="attach" role="radiogroup" aria-label="Куда добавить">' +
+      '<label class="opt"><input type="radio" name="attach" value="part" checked><span><b>' + what + ' к «' + esc(rel.title) + '»</b><small>' + (isMulti(rel) ? 'Там уже ' + esc(partsSummary(rel)) : 'Сейчас там один сезон') + '. У каждой части своя оценка и даты.</small></span></label>' +
+      '<label class="opt"><input type="radio" name="attach" value="new"><span><b>Отдельным тайтлом</b><small>Своя карточка в разделе «Аниме»</small></span></label></div>';
+  }
+  h += '<label class="field"><span data-name>Название</span><input class="input" name="title" required value="' + esc(r ? r.title : AD.q) + '" placeholder="Как называется"></label>' +
+    '<div class="two"><label class="field" data-for="new"><span>Раздел</span><select class="select" name="cat">' + Object.keys(CATS).map(c => '<option value="' + c + '"' + (c === cat ? ' selected' : '') + '>' + CATS[c].one + '</option>').join('') + '</select></label>' +
+    (rel ? '<label class="field" data-for="part"><span>Метка части</span><input class="input" name="label" value="' + esc(nextPartLabel(rel, r.pkind)) + '"></label>' : '') +
+    '<label class="field"><span>Год выхода</span><input class="input" name="year" inputmode="numeric" value="' + esc(year) + '" placeholder="2026"></label></div>' +
+    '<label class="field"><span>Оригинальное название</span><input class="input" name="orig" value="' + esc(orig) + '" placeholder="Необязательно, но помогает искать на IMDb"></label>' +
+    '<div class="two"><label class="field"><span>Статус</span><select class="select" name="status">' + STATUS_ORDER.map(s => '<option value="' + s + '"' + (s === st ? ' selected' : '') + '>' + STATUS[s].label + '</option>').join('') + '</select></label>' +
+    '<label class="field"><span>Озвучка</span><input class="input" name="dub" list="dub-list" placeholder="Необязательно"><datalist id="dub-list">' + dubOptions() + '</datalist></label></div>' +
+    '<label class="field seasons" id="seasonsfield"><span>Сколько сезонов отметить отдельно</span><span class="seasons-row"><input class="input" name="seasons" type="number" min="0" max="40" value="0"><small class="hint">' + (d.seasons ? 'Всего вышло ' + d.seasons + ' ' + plural(d.seasons, ['сезон', 'сезона', 'сезонов']) + '. ' : '') + 'Ноль, если оцениваешь сериал целиком</small></span></label>' +
+    '<label class="check"><input type="checkbox" name="today"' + (st === 'done' ? ' checked' : '') + '> Отметить просмотр сегодня</label>' +
+    '<div class="acts"><button type="button" class="btn ghost" data-act="modal-close">Отмена</button><button type="submit" class="btn primary">Добавить и открыть</button></div></form>';
+  const m = $('#modal');
+  m.innerHTML = h; m.classList.add('on');
+  const form = $('#addform');
+  form.addEventListener('change', e => {
+    if (e.target.name === 'status') form.elements.today.checked = e.target.value === 'done';
+    updAddForm();
+  });
+  updAddForm();
+  setTimeout(() => { const b = r ? form.querySelector('button[type=submit]') : form.elements.namedItem('title'); if (b) b.focus(); }, 30);
+}
+function updAddForm() {
+  const form = $('#addform'); if (!form) return;
+  const E = form.elements, part = !!(E.attach && E.attach.value === 'part');
+  $$('[data-for="new"]', form).forEach(el => { el.hidden = part; });
+  $$('[data-for="part"]', form).forEach(el => { el.hidden = !part; });
+  const sf = $('#seasonsfield'); if (sf) sf.hidden = part || !isSeriesLike({ cat: E.cat.value });
+  const nm = $('[data-name]', form); if (nm) nm.textContent = part ? 'Название части' : 'Название';
 }
 function submitAdd(form) {
   const f = new FormData(form);
   const title = String(f.get('title') || '').trim(); if (!title) return;
-  const cat = f.get('cat'), status = f.get('status');
-  const it = norm({ id: uid('u'), cat, title, orig: String(f.get('orig') || '').trim(), year: String(f.get('year') || '').trim(), status, dates: f.get('today') ? [today()] : [] });
+  const r = AD && AD.pick, d = (AD && AD.det) || {}, rel = AD && AD.rel;
+  const status = String(f.get('status') || 'done'), dub = String(f.get('dub') || '').trim();
+  const year = String(f.get('year') || '').trim(), orig = String(f.get('orig') || '').trim();
+  const dates = f.get('today') ? [today()] : [];
+  if (r && rel && f.get('attach') === 'part' && S.byId.has(rel.id)) {
+    const p = addPartTo(rel, { label: String(f.get('label') || '').trim() || nextPartLabel(rel, r.pkind), title, kind: r.pkind, year, status, dub, dates, orig, mal: r.mal, img: r.img, franchise: r.franchise, shiki: r.score });
+    if (r.franchise && !rel.franchise) rel.franchise = r.franchise;
+    Store.touch(rel);
+    closeModal();
+    if (GROUPS[UI.view] && !GROUPS[UI.view].cats.includes(rel.cat) || UI.view === 'search') { UI.view = 'anime'; UI.sub = 'all'; setHash(UI.view, true); }
+    renderNav(); renderMain(); openItem(rel.id);
+    toast('«' + p.label + '» добавлен в «' + rel.title + '»');
+    return;
+  }
+  const cat = String(f.get('cat') || 'film');
+  const it = norm({ id: uid('u'), cat, title, orig, year, status, dates });
+  if (dub) it.dub = dub;
+  if (r) {
+    const img = d.img || r.img; if (img) it.img = img;
+    if (r.src === 'tmdb') { it.tmdb = r.tmdb; if (d.imdb) it.imdb = d.imdb; if (r.score) it.ext = { tmdb: r.score }; }
+    else { if (r.mal) it.mal = r.mal; if (r.franchise) it.franchise = r.franchise; if (r.score) it.ext = { shiki: r.score }; }
+  }
   const n = Math.min(40, Math.max(0, parseInt(f.get('seasons'), 10) || 0));
   if (n > 0 && isSeriesLike(it)) {
     it.parts = Array.from({ length: n }, (_, i) => ({ id: uid('p'), label: cat === 'anime' ? 'ТВ-' + (i + 1) : 'Сезон ' + (i + 1), title: cat === 'anime' ? title + (n > 1 ? ' [ТВ-' + (i + 1) + ']' : '') : '', kind: 'tv', status, dates: [] }));
-    if (f.get('today')) it.parts[n - 1].dates = [today()];
+    if (dates.length) it.parts[n - 1].dates = dates.slice();
+    if (dub) it.parts.forEach(p => { p.dub = dub; });
     if (cat === 'anime') syncParts(it);
   }
   S.items.push(it); reindex(); Store.touch(it);
@@ -1381,7 +1965,87 @@ function submitAdd(form) {
   renderNav(); renderMain(); openItem(it.id);
   toast('«' + title + '» добавлен');
 }
-function closeModal() { const m = $('#modal'); m.classList.remove('on'); m.innerHTML = ''; }
+function closeModal() {
+  const m = $('#modal'); m.classList.remove('on'); m.innerHTML = '';
+  clearTimeout(addT);
+  if (AD && AD.ctrl) AD.ctrl.abort();
+  AD = null;
+}
+
+/* ---- продолжения аниме прямо в карточке ---- */
+let apT = null;
+function apKnown(it) { return [it.mal].concat((it.parts || []).map(p => p.mal)).filter(Boolean).map(Number); }
+async function loadSequels(it) {
+  const known = apKnown(it);
+  if (!known.length) { UI.apSug = null; return; }
+  const sig = it.id + ':' + known.join(',');
+  if (SEQ_CACHE.has(sig)) { UI.apSug = SEQ_CACHE.get(sig); paintSug(); return; }
+  UI.apSug = { sig, loading: true }; paintSug();
+  let st;
+  try { st = { sig, list: await fetchRelated(known) }; SEQ_CACHE.set(sig, st); }
+  catch (e) { st = { sig, err: (e && e.message) || 'ошибка' }; }
+  if (UI.apSug && UI.apSug.sig === sig) { UI.apSug = st; paintSug(); }
+}
+function apRow(r, idx) {
+  UI.apMap.set(r.key, r);
+  const sel = UI.apPick && UI.apPick.key === r.key;
+  const meta = ['<span class="k">' + esc(r.kindLabel) + '</span>'];
+  if (r.year) meta.push('<span>' + esc(r.year) + '</span>');
+  if (r.relKind === 'sequel') meta.push('<span>продолжение</span>');
+  else if (r.relKind === 'prequel') meta.push('<span>предыстория</span>');
+  const have = idx && inDiary(r, idx);
+  return '<button type="button" class="res' + (sel ? ' sel' : '') + '" data-act="ap-pick" data-k="' + esc(r.key) + '"' + (have ? ' disabled title="Уже в дневнике"' : '') + '>' + thumbHTML(r.thumb, 'anime') +
+    '<span class="res-t"><span class="t">' + esc(r.title) + '</span><span class="m">' + meta.join('') + '</span></span>' +
+    (sel ? '<span class="res-s on">' + I('check') + '</span>' : r.score ? '<span class="res-s">' + fmtScore(r.score) + '</span>' : '<span></span>') + '</button>';
+}
+function apSugHTML(it) {
+  const s = UI.apSug;
+  if (!s || !s.sig || s.sig.split(':')[0] !== it.id) return '';
+  if (s.loading) return '<div class="add-loading"><span class="pulse"></span>Ищу продолжения на Shikimori…</div>';
+  if (s.err) return '<p class="faint ap-msg">Shikimori сейчас не отвечает. Сезон можно найти поиском ниже или заполнить вручную.</p>';
+  UI.apMap = UI.apMap || new Map();
+  const idx = malIndex();
+  const list = (s.list || []).filter(r => !idx.has(r.mal));
+  if (!list.length) return '<p class="faint ap-msg">Все продолжения с Shikimori уже в дневнике. Если вышло что-то новое, найди его поиском ниже.</p>';
+  const shown = UI.apSugAll ? list : list.slice(0, 5);
+  return '<div class="res-h">Продолжения и связанные <span>Shikimori</span></div>' + shown.map(r => apRow(r, null)).join('') +
+    (list.length > shown.length ? '<button type="button" class="btn ghost small" data-act="ap-all">Показать все ' + list.length + '</button>' : '');
+}
+function paintSug() { const el = $('#ap-sug'), it = cur(); if (el && it) el.innerHTML = apSugHTML(it); }
+function onApInput(v) {
+  UI.apQ = v; clearTimeout(apT);
+  const q = v.trim(), box = $('#ap-res'); if (!box) return;
+  if (q.length < 2) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="add-loading"><span class="pulse"></span>Ищу на Shikimori…</div>';
+  apT = setTimeout(async () => {
+    const seq = UI.apSeq = (UI.apSeq || 0) + 1;
+    let html;
+    try {
+      const list = (await searchShiki(q)).slice(0, 6);
+      if (seq !== UI.apSeq) return;
+      UI.apList = list;
+      html = apResHTML();
+    } catch (e) { if (seq !== UI.apSeq) return; UI.apList = null; html = '<p class="faint ap-msg">Shikimori сейчас не отвечает. Заполни поля ниже вручную.</p>'; }
+    const b = $('#ap-res'); if (b) b.innerHTML = html;
+  }, 320);
+}
+function apResHTML() {
+  const list = UI.apList; if (!list) return '';
+  UI.apMap = UI.apMap || new Map();
+  const idx = malIndex();
+  return list.length ? list.map(r => apRow(r, idx)).join('') : '<p class="faint ap-msg">На Shikimori ничего не нашлось. Заполни поля ниже вручную.</p>';
+}
+function apPick(el) {
+  const it = cur(), r = UI.apMap && UI.apMap.get(el.dataset.k); if (!it || !r) return;
+  UI.apPick = r;
+  const kind = $('#ap-kind'); if (kind) kind.value = r.pkind;
+  const set = (id, v) => { const x = $('#' + id); if (x) x.value = v; };
+  set('ap-label', nextPartLabel(it, r.pkind)); set('ap-title', r.title); set('ap-year', r.year);
+  if (r.future) set('ap-status', 'planned');
+  paintSug();
+  const b = $('#ap-res'); if (b && UI.apList) b.innerHTML = apResHTML();
+  const t = $('#ap-title'); if (t) { try { t.focus({ preventScroll: true }); } catch (e) {} }
+}
 
 /* ================= Экспорт / импорт ================= */
 function exportJSON() {
@@ -1435,7 +2099,7 @@ function parseBackup(text) {
   let d; try { d = JSON.parse(text); } catch (e) { return null; }
   const items = Array.isArray(d) ? d : d && Array.isArray(d.items) ? d.items : null;
   if (!items) return null;
-  const ok = items.map(x => norm(Object.assign({}, x))).filter(Boolean);
+  const ok = items.filter(x => x && x.id !== CFG_ID).map(x => norm(Object.assign({}, x))).filter(Boolean);
   return ok.length ? { items: ok, exported: d.exported || '' } : null;
 }
 function askImport(parsed) {
@@ -1499,24 +2163,42 @@ const ACT = {
     try { if (inp.showPicker) inp.showPicker(); } catch (e) {}
   },
   'del-date'(el) { const it = cur(); if (!it) return; it.dates = it.dates.filter(d => d !== el.dataset.v); Store.touch(it); renderDrawer(); renderMain(); },
-  'add-part'() { UI.addPart = true; renderDrawer(); const t = $('#ap-title'); if (t) t.focus(); },
-  'add-part-cancel'() { UI.addPart = false; renderDrawer(); },
+  'add-part'() {
+    const it = cur(); if (!it) return;
+    UI.addPart = true; UI.apPick = null; UI.apQ = ''; UI.apList = null; UI.apSugAll = false; UI.apMap = new Map();
+    if (it.cat === 'anime' && apKnown(it).length) UI.apSug = { sig: it.id + ':' + apKnown(it).join(','), loading: true }; else UI.apSug = null;
+    renderDrawer();
+    if (it.cat === 'anime') { loadSequels(it); const q = $('#ap-q'); if (q) q.focus({ preventScroll: true }); }
+    else { const t = $('#ap-title'); if (t) t.focus(); }
+    const ap = $('#addpart'); if (ap) { try { ap.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  },
+  'add-part-cancel'() { UI.addPart = false; UI.apPick = null; renderDrawer(); },
   'add-part-save'() {
     const it = cur(); if (!it) return;
     const kind = $('#ap-kind').value, label = $('#ap-label').value.trim() || (kind === 'film' ? 'Фильм' : 'Сезон'), title = $('#ap-title').value.trim();
     const status = $('#ap-status').value, year = $('#ap-year').value.trim();
-    if (!isMulti(it)) {
-      it.parts = [];
-      if (it.cat === 'anime') {
-        const p0 = { id: uid('p'), label: it.slabel || 'ТВ-1', title: it.title, kind: 'tv', year: it.year, status: it.status, dub: it.dub, progress: it.progress, dates: it.dates.slice(), rating: it.rating || null };
-        ['mal', 'aod', 'img', 'orig'].forEach(k => { if (it[k]) p0[k] = it[k]; });
-        it.parts.push(p0); delete it.slabel; delete it.progress;
-      }
-    }
-    it.parts.push({ id: uid('p'), label, title: title || (it.cat === 'anime' ? it.title + ' [' + label + ']' : ''), kind, year, status, dates: status === 'done' ? [today()] : [] });
-    if (it.cat === 'anime') syncParts(it);
-    UI.addPart = false; Store.touch(it); renderDrawer(); renderMain(); renderNav();
+    const pk = it.cat === 'anime' && UI.apPick;
+    const d = { label, title: title || (it.cat === 'anime' ? it.title + ' [' + label + ']' : ''), kind, year, status, dates: status === 'done' ? [today()] : [] };
+    if (pk) { Object.assign(d, { mal: pk.mal, img: pk.img, orig: pk.orig, franchise: pk.franchise, shiki: pk.score }); if (pk.franchise && !it.franchise) it.franchise = pk.franchise; }
+    addPartTo(it, d);
+    UI.addPart = false; UI.apPick = null; UI.apQ = ''; UI.apList = null;
+    Store.touch(it); renderDrawer(); renderMain(); renderNav();
+    toast('«' + label + '» добавлен');
   },
+  'ap-pick'(el) { apPick(el); },
+  'ap-all'() { UI.apSugAll = true; paintSug(); },
+  'add-pick'(el) { pickResult(el); },
+  'add-open'(el) { closeModal(); openItem(el.dataset.id); },
+  'add-manual'() { if (!AD) openAdd({}); AD.pick = null; AD.rel = null; AD.det = null; renderAddForm(); },
+  'add-back'() { if (!AD) return; AD.pick = null; AD.rel = null; AD.det = null; renderAddSearch(); },
+  'go-tmdb'() {
+    closeModal(); if (UI.open) closeItem(); go('data');
+    setTimeout(() => { const s = $('#tmdb'); if (s) s.scrollIntoView({ block: 'start', behavior: 'smooth' }); const k = $('#tmdb-key'); if (k) k.focus({ preventScroll: true }); }, 80);
+  },
+  'tmdb-off'() { UI.tmdbOff = true; renderMain(); },
+  'tmdb-off-no'() { UI.tmdbOff = false; renderMain(); },
+  'tmdb-off-yes'() { delete S.cfg.tmdb; UI.tmdbOff = false; SEARCH_CACHE.clear(); saveCfg(); renderMain(); toast('TMDB отключён'); },
+  'copy-site'() { copyText(location.origin + location.pathname).then(ok => toast(ok ? 'Адрес сайта скопирован' : 'Не получилось скопировать')); },
   'part-today'(el) { const it = cur(), p = it && findPart(it, el.dataset.pid); if (!p) return; const d = today(); if (!p.dates.includes(d)) p.dates.push(d); p.dates.sort(); if (p.status === 'planned') p.status = 'done'; if (it.cat === 'anime') syncParts(it); Store.touch(it); renderDrawer(); renderMain(); toast('Просмотр отмечен'); },
   'part-del'(el) { UI.confirmPart = el.dataset.pid; renderDrawer(); },
   'part-del-no'() { UI.confirmPart = null; renderDrawer(); },
@@ -1558,7 +2240,10 @@ document.addEventListener('click', e => {
   const fn = ACT[a.dataset.act];
   if (fn) { if (a.tagName === 'A' && a.dataset.act === 'go') e.preventDefault(); fn(a, e); }
 });
-document.addEventListener('submit', e => { if (e.target.id === 'addform') { e.preventDefault(); submitAdd(e.target); } });
+document.addEventListener('submit', e => {
+  if (e.target.id === 'addform') { e.preventDefault(); submitAdd(e.target); }
+  else if (e.target.id === 'tmdbform') { e.preventDefault(); saveTmdbKey(e.target); }
+});
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'file') {
@@ -1596,9 +2281,8 @@ document.addEventListener('change', e => {
   if (e.target.id !== 'ap-kind') return;
   const it = cur(); if (!it) return;
   const k = e.target.value, lab = $('#ap-label'), tt = $('#ap-title');
-  const n = (it.parts || []).filter(p => p.kind === k).length + 1;
-  const l = k === 'film' ? 'Фильм' + (n > 1 ? ' ' + n : '') : k === 'ova' ? 'OVA' : (it.cat === 'anime' ? 'ТВ-' + ((it.parts || []).filter(p => p.kind === 'tv').length + (isMulti(it) ? 1 : 2)) : 'Сезон ' + n);
-  lab.value = l; if (it.cat === 'anime') tt.value = it.title + (k === 'tv' ? ' [' + l + ']' : ': ');
+  const l = nextPartLabel(it, k);
+  lab.value = l; if (it.cat === 'anime' && !UI.apPick) tt.value = it.title + (k === 'tv' ? ' [' + l + ']' : ': ');
 });
 document.addEventListener('focusout', e => {
   if (!e.target.classList || !e.target.classList.contains('date-in')) return;
@@ -1612,6 +2296,8 @@ let listT = null;
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'q') { onSearch(t.value); return; }
+  if (t.id === 'add-q') { onAddInput(t.value); return; }
+  if (t.id === 'ap-q') { onApInput(t.value); return; }
   const it = cur(); if (!it) return;
   if (t.dataset.f) {
     const k = t.dataset.f;
@@ -1639,6 +2325,14 @@ function onSearch(v) {
   }, 150);
 }
 document.addEventListener('keydown', e => {
+  const ae = document.activeElement;
+  if (ae && ae.id === 'add-q' && AD) {
+    if (e.key === 'Escape' && ae.value) { e.preventDefault(); ae.value = ''; onAddInput(''); return; }
+    addKey(e); if (e.defaultPrevented) return;
+  }
+  if (ae && ae.id === 'ap-q' && e.key === 'Enter' && !e.isComposing) {
+    e.preventDefault(); const b = $('#ap-res .res:not([disabled])') || $('#ap-sug .res:not([disabled])'); if (b) b.click(); return;
+  }
   if (e.key === 'Escape') {
     if ($('#modal').classList.contains('on')) closeModal();
     else if (UI.open) closeItem();
@@ -1700,7 +2394,7 @@ function readSeed() {
   const el = $('#seed');
   const txt = el ? el.textContent.trim() : '';
   if (!txt) return { items: [] };
-  try { const d = JSON.parse(txt); return { items: (d.items || []).map(norm).filter(Boolean), exported: d.exported || '' }; } catch (e) { return { items: [] }; }
+  try { const d = JSON.parse(txt); return { items: (d.items || []).filter(x => x && x.id !== CFG_ID).map(norm).filter(Boolean), exported: d.exported || '' }; } catch (e) { return { items: [] }; }
 }
 function boot2() {
   S.ready = true;

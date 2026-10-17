@@ -238,9 +238,11 @@ h1,h2,h3{margin:0;font-weight:700}
 /* ---------- карточка тайтла ---------- */
 .scrim{position:fixed;inset:0;background:rgba(6,4,3,.55);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
 .scrim.on{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(600px,100%);z-index:50;box-shadow:none;transform:translateX(102%);visibility:hidden;transition:transform .24s cubic-bezier(.2,.8,.2,1),visibility 0s .24s;display:flex;flex-direction:column;border-left:1px solid var(--rule);
+/* цвет постера: зарегистрирован как цвет, чтобы подсветка плавно перетекала при смене карточки */
+@property --tint{syntax:'<color>';inherits:true;initial-value:transparent}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(600px,100%);z-index:50;box-shadow:none;transform:translateX(102%);visibility:hidden;transition:transform .24s cubic-bezier(.2,.8,.2,1),visibility 0s .24s,--tint .6s ease;display:flex;flex-direction:column;border-left:1px solid var(--rule);
   background:radial-gradient(640px 300px at 85% -60px,color-mix(in srgb,var(--tint,var(--c,var(--accent))) 16%,transparent),transparent 70%),var(--surface)}
-.drawer.on{transform:none;visibility:visible;box-shadow:var(--shadow);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.drawer.on{transform:none;visibility:visible;box-shadow:var(--shadow);transition:transform .24s cubic-bezier(.2,.8,.2,1),--tint .6s ease}
 .d-bar{height:4px;background:var(--c,var(--faint));flex:none;box-shadow:0 0 18px var(--c,transparent)}
 .d-top{display:flex;align-items:center;gap:6px;padding:calc(10px + env(safe-area-inset-top)) 12px 0 24px;flex:none}
 .d-top .crumb{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:auto;font-weight:600}
@@ -249,6 +251,9 @@ h1,h2,h3{margin:0;font-weight:700}
 .d-title{font-family:var(--display);font-size:31px;line-height:1.12;letter-spacing:-.02em;font-weight:700;overflow-wrap:anywhere;outline:none}
 .d-orig{color:var(--muted);margin-top:6px;font-size:14.5px}
 .poster{width:96px;aspect-ratio:2/3;border-radius:10px;object-fit:cover;background:var(--sunk);border:1px solid var(--rule);box-shadow:var(--lift)}
+.drawer .poster{box-shadow:var(--lift),0 14px 38px -12px color-mix(in srgb,var(--tint) 85%,transparent)}
+.drawer .poster-ph{display:grid;place-items:center;align-content:center;gap:6px;padding:8px;border:1px dashed var(--rule2);box-shadow:none;color:var(--muted);font-size:12.5px;line-height:1.3;text-align:center;transition:color .15s,border-color .15s,background .15s}
+.drawer .poster-ph:hover{color:var(--ink);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--sunk))}
 .d-sec{margin-top:28px}
 .d-sec>.lbl{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-weight:600;margin-bottom:10px}
 .d-sec>.lbl small{font-weight:400;color:var(--faint);font-size:13px}
@@ -403,6 +408,50 @@ details>summary::marker{color:var(--accent-text)}
 .more-d>summary{cursor:pointer;font-weight:500;color:var(--muted)}
 @media (hover:none){ .only-desk{display:none} }
 
+/* ---------- постеры из TMDB для записанных тайтлов ---------- */
+.ps-prog{margin-top:14px}
+.ps-meter{max-width:none;margin-top:0}
+.ps-meter i{transition:width .3s}
+.ps-count{margin:8px 0 0;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ps-note{margin:10px 0 0;font-size:13.5px}
+.ps-note .btn{margin-left:4px;vertical-align:baseline}
+.ps-sum{margin:12px 0 0;font-weight:500}
+.ps-strip{display:flex;gap:6px;margin-top:14px;height:48px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%);mask-image:linear-gradient(90deg,transparent,#000 22%)}
+.ps-strip:empty{display:none}
+.ps-strip img{height:48px;aspect-ratio:2/3;flex:none;border-radius:4px;object-fit:cover;background:var(--sunk);box-shadow:inset 0 0 0 1px var(--rule);animation:psin .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes psin{from{opacity:0;transform:translateY(6px) scale(.92)}}
+.ps-h{display:flex;align-items:baseline;gap:10px;margin:26px 0 0}
+.ps-h .h2{font-size:18px}
+.ps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:12px 10px;margin-top:12px}
+.ps-cell{display:grid;gap:5px;align-content:start;text-align:left;border:0;background:none;padding:0;font-size:12.5px;line-height:1.25;color:var(--muted);border-radius:8px}
+.ps-cell img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;background:var(--sunk);box-shadow:inset 0 0 0 1px var(--rule);transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s}
+.ps-cell span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.ps-cell:hover{color:var(--ink)}
+.ps-cell:hover img{transform:translateY(-2px);box-shadow:var(--lift)}
+.pcards{display:grid;gap:10px;margin-top:12px}
+.pcard{display:grid;gap:12px;padding:14px;border:1px solid var(--rule);border-radius:12px;background:var(--sunk);min-width:0}
+.pc-head{display:flex;align-items:flex-start;gap:12px}
+.pc-head>div{margin-right:auto;min-width:0}
+.pc-t{font-family:var(--display);font-size:18px;font-weight:700;line-height:1.2;letter-spacing:-.01em;overflow-wrap:anywhere}
+.pc-m{font-size:13px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.pc-none{margin:0;font-size:14px}
+.pvars{display:flex;gap:8px;overflow-x:auto;margin:0 -5px;padding:2px 5px 6px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.pvar{flex:none;width:112px;display:grid;gap:4px;align-content:start;text-align:left;border:1px solid transparent;background:none;border-radius:10px;padding:5px;transition:background .12s,border-color .12s,box-shadow .2s}
+.pvar:hover{background:var(--raise);border-color:color-mix(in srgb,var(--accent) 45%,var(--rule2));box-shadow:0 0 22px -8px var(--lamp-glow)}
+.pvar.on{border-color:color-mix(in srgb,var(--accent) 60%,var(--rule2))}
+.pvar.busy{cursor:progress;opacity:.55}
+.pv-img{position:relative;display:block;aspect-ratio:2/3;border-radius:7px;overflow:hidden;background:var(--surface);box-shadow:inset 0 0 0 1px var(--rule)}
+.pv-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pv-now{position:absolute;left:5px;top:5px;font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--accent);color:var(--accent-ink)}
+.pv-t{font-size:13px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.pv-m{font-size:12px;color:var(--muted);line-height:1.3}
+.pc-q{display:flex;gap:8px;align-items:center;max-width:460px}
+.pc-q .search{max-width:none;flex:1 1 auto}
+.pc-q .search input{padding:7px 0;font-size:14px}
+.ppick{display:grid;gap:12px;padding:14px;border:1px solid var(--rule);border-radius:12px;background:var(--sunk)}
+.d-sec.ppick>.lbl{margin-bottom:0}
+.ppick .row-acts{margin-top:0}
+
 /* ---------- статистика ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .tile{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;overflow:hidden}
@@ -481,6 +530,8 @@ code{font-size:.92em;padding:1px 5px;border-radius:5px;background:var(--raise);b
   .add-pick .poster{width:64px}
   .pk-t{font-size:19px}
   .keyform{grid-template-columns:1fr}
+  .pvar{width:96px}
+  .pcard{padding:12px}
   .kv{grid-template-columns:120px 1fr}
   .row{padding:11px 12px 11px 10px;gap:12px}
   .ygroup{font-size:20px}
@@ -790,9 +841,11 @@ const Store = {
     const st = LS.get(KEY_ITEMS, null);
     return Array.isArray(st) ? st.filter(x => !x || x.id !== CFG_ID) : st;
   },
-  touch(it) {
-    it.updated = new Date().toISOString();
-    S.meta.lastChange = it.updated; saveMeta();
+  /* quiet: служебная правка (например, постер) не двигает тайтл в списке «Хочу посмотреть» */
+  touch(it, quiet) {
+    const now = new Date().toISOString();
+    if (!quiet) it.updated = now;
+    S.meta.lastChange = now; saveMeta();
     this.dirty.add(it.id);
     this.schedule();
   },
@@ -882,7 +935,7 @@ function go(view) {
 }
 function openItem(id) {
   if (!S.byId.has(id)) return;
-  UI.editBasics = false; UI.addPart = false; UI.confirmDel = false; UI.confirmPart = null; UI.apPick = null;
+  UI.editBasics = false; UI.addPart = false; UI.confirmDel = false; UI.confirmPart = null; UI.apPick = null; UI.pp = null;
   const wasOpen = !!UI.open;
   UI.open = id;
   const base = UI.view === 'search' ? 'search' : UI.view;
@@ -1282,6 +1335,7 @@ function viewData() {
     '<p class="faint" style="margin:10px 0 0;font-size:13.5px">Резервная копия — это файл .json со всеми записями. Офлайн-сайт — это этот же сайт одним файлом .html, в который уже вшиты твои записи: его можно открыть на любом компьютере без интернета.</p>' +
     '</div></div></div>';
   h += lookupPanel();
+  h += '<section class="section" id="posters"><div class="panel">' + postersInner() + '</div></section>';
   if (Store.remote) h += '<section class="section"><div class="panel"><div class="h2">Открыть дневник на другом устройстве</div>' +
     '<p class="muted" style="margin:6px 0 0">Скопируй ссылку подключения и открой её на телефоне (например, отправь себе в «Заметки» или через AirDrop). Она один раз запомнит, где лежат записи. Никому её не отправляй: в ней твой ключ.</p>' +
     '<div class="row-acts"><button class="btn primary" data-act="copy-connect">' + I('copy') + 'Скопировать ссылку подключения</button><button class="btn ghost" data-act="disconnect">Отключить это устройство</button></div></div></section>';
@@ -1289,7 +1343,7 @@ function viewData() {
   else h += updateGuide();
   h += '<section class="section"><div class="panel"><div class="h2">Оформление</div><div class="chips" style="margin-top:12px">' +
     [['dark', 'Кинозал'], ['light', 'Дневной сеанс'], ['auto', 'Как в системе']].map(([v, n]) => '<button class="chip" data-act="theme" data-v="' + v + '" aria-pressed="' + (theme === v) + '">' + n + '</button>').join('') + '</div></div></section>';
-  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме).</p>' +
+  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме). Постеры для уже записанных фильмов, сериалов и мультфильмов тоже из TMDB.</p>' +
     '<p class="faint" style="margin:8px 0 0;font-size:13px" lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div></section>';
   return h;
 }
@@ -1368,6 +1422,7 @@ function renderDrawer() {
   }
   const scroll = d.classList.contains('on') && $('.d-body', d) ? $('.d-body', d).scrollTop : 0;
   d.style.setProperty('--c', 'var(--c-' + groupOf(it) + ')');
+  paintTint(d, it);
   d.innerHTML = drawerHTML(it);
   d.classList.add('on'); sc.classList.add('on');
   if (matchMedia('(max-width:860px)').matches) document.body.style.overflow = 'hidden';
@@ -1382,7 +1437,9 @@ function drawerHTML(it) {
   h += '<div class="d-head"><div><h2 class="d-title" id="dtitle" tabindex="-1">' + esc(it.title) + '</h2>' +
     (it.orig ? '<div class="d-orig">' + esc(it.orig) + '</div>' : '') +
     ((it.tags || []).length ? '<div class="chips" style="margin-top:8px">' + it.tags.map(t => '<span class="chip" style="cursor:default">' + esc(t) + '</span>').join('') + '</div>' : '') + '</div>' +
-    (it.img ? '<img class="poster" src="' + esc(it.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</div>';
+    (it.img ? '<img class="poster" src="' + esc(it.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">'
+      : canPickPoster(it) && UI.pp !== it.id ? '<button class="poster poster-ph" data-act="poster-find">' + I('search') + '<span>Найти постер</span></button>' : '') + '</div>';
+  if (UI.pp === it.id) h += posterPickHTML(it);
   // статус
   h += '<div class="d-sec"><div class="lbl">Статус' + (multi ? '<small>меняется сам, когда отмечаешь сезоны</small>' : '') + '</div><div class="seg" role="group" aria-label="Статус">' +
     STATUS_ORDER.map(s => '<button data-act="set-status" data-v="' + s + '" aria-pressed="' + (it.status === s) + '">' + I(STATUS[s].icon) + esc(STATUS[s].label) + '</button>').join('') + '</div></div>';
@@ -1416,6 +1473,7 @@ function drawerHTML(it) {
     '<label class="field"><span>Раздел</span><select class="select" data-act-change="set-cat">' + Object.keys(CATS).map(c => '<option value="' + c + '"' + (it.cat === c ? ' selected' : '') + '>' + CATS[c].one + '</option>').join('') + '</select></label></div>' +
     '<div class="two"><label class="field"><span>Озвучка</span><input class="input" data-f="dub" value="' + esc(it.dub || '') + '"></label>' +
     (!multi && isSeriesLike(it) ? '<label class="field"><span>Где остановился</span><input class="input" data-f="progress" value="' + esc(it.progress || '') + '" placeholder="Например: 3 сезон, 5 серия"></label>' : '<span></span>') + '</div>' +
+    (it.img && canPickPoster(it) && UI.pp !== it.id ? '<div><button class="btn small" data-act="poster-find">' + I('search') + 'Сменить постер</button></div>' : '') +
     '</div></details></div>';
   h += '</div><div class="d-foot">';
   if (UI.confirmDel) h += '<div class="confirm"><span>Удалить «' + esc(it.title) + '» из дневника?</span><button class="btn small danger" data-act="delete-yes">Да, удалить</button><button class="btn small ghost" data-act="delete-no">Отмена</button></div>';
@@ -2056,6 +2114,368 @@ function apPick(el) {
   const t = $('#ap-title'); if (t) { try { t.focus({ preventScroll: true }); } catch (e) {} }
 }
 
+/* ================= Постеры из TMDB для уже записанных тайтлов ================= */
+const POSTER_CATS = ['film', 'series', 'cartoon', 'toon'];
+const needsPoster = it => POSTER_CATS.includes(it.cat) && !it.img && !it.noimg;
+const canPickPoster = it => POSTER_CATS.includes(it.cat) && !!tmdbKey();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const bySel = id => '[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]';
+/* подбор идёт в фоне: состояние живёт здесь, панель в «Данных» только показывает его */
+const PS = { st: 'idle', queue: [], total: 0, done: 0, saved: [], review: [], tries: {}, fails: 0, errs: 0, msg: '', limit: 8, allSaved: false, gen: 0 };
+/* варианты постеров по id тайтла: общие для карточек «на выбор» и для карточки тайтла */
+const PV = new Map();
+
+/* TMDB иногда просит подождать (429) или не отвечает: пробуем ещё раз с паузой */
+async function retry(fn) {
+  for (let a = 0; ; a++) {
+    try { return await fn(); }
+    catch (e) {
+      if (a >= 3 || !(e.code === 'busy' || e.code === 'net')) throw e;
+      await sleep((e.code === 'busy' ? 1500 : 700) * (a + 1));
+    }
+  }
+}
+async function tmdbFind(kind, q, year) {
+  const p = { query: q, include_adult: 'false' };
+  if (year) p[kind === 'tv' ? 'first_air_date_year' : 'year'] = year;
+  const d = await retry(() => tmdb('/search/' + kind, p, null, null, 10000));
+  const rs = d.results || [];
+  const list = rs.filter(r => kind !== 'multi' || r.media_type === 'movie' || r.media_type === 'tv')
+    .map(r => tmdbRes(kind === 'multi' ? r : Object.assign({}, r, { media_type: kind })));
+  return { list, more: (d.total_results || 0) > rs.length };
+}
+const tnorm = s => fold(s).replace(/^(the|a) /, '').replace(/ & /g, ' and ');
+/* 3 — название совпало целиком, 1 — одно начинается с другого («Дюна» и «Дюна: Часть вторая») */
+function nameScore(it, c) {
+  const a = [it.orig, it.title].map(tnorm).filter(Boolean), b = [c.orig, c.title].map(tnorm).filter(Boolean);
+  let s = 0;
+  a.forEach(x => b.forEach(y => { s = Math.max(s, x === y ? 3 : y.startsWith(x + ' ') || x.startsWith(y + ' ') ? 1 : 0); }));
+  return s;
+}
+const posterKind = it => isSeriesLike(it) ? 'tv' : 'movie';
+function rankPosters(it, list) {
+  const want = posterKind(it), iy = +year4(it.year) || 0;
+  list.forEach(c => {
+    const cy = +c.y || 0;
+    c.ns = nameScore(it, c);
+    // год: 3 — тот же, 2 — соседний (фестиваль и прокат), 1 — неизвестен, 0 — другой
+    c.ys = !iy || !cy ? 1 : iy === cy ? 3 : Math.abs(iy - cy) === 1 ? 2 : 0;
+    c.km = c.kind === want ? 1 : 0;
+  });
+  return list.sort((a, b) => b.ns - a.ns || b.ys - a.ys || b.km - a.km || b.votes - a.votes);
+}
+/* уверенное совпадение: то же название, тот же год (±1) и тип; из двух одинаковых берём, только если один намного известнее */
+function surePick(it, list) {
+  const hasY = !!year4(it.year);
+  const strong = list.filter(c => c.km && c.ns === 3 && (!hasY || c.ys >= 2));
+  if (!hasY) return strong.length === 1 && list.filter(c => c.ns === 3).length === 1 ? strong[0] : null;
+  if (strong.length < 2) return strong[0] || null;
+  const exact = strong.filter(c => c.ys === 3);
+  if (exact.length === 1) return exact[0];
+  const pool = (exact.length ? exact : strong).slice().sort((a, b) => b.votes - a.votes);
+  return pool[0].votes >= 50 && pool[0].votes >= 10 * pool[1].votes ? pool[0] : null;
+}
+/* ищет постер для тайтла: { pick, det } — уверенно нашлось, { cands } — варианты на выбор (может быть пусто).
+   all: не выбирать самому, а собрать все варианты (для «Сменить постер») */
+async function findPoster(it, all) {
+  const m = /^(movie|tv)\/(\d+)$/.exec(it.tmdb || '');
+  // уже связан с TMDB при добавлении: постер берём прямо оттуда
+  if (m && !all) {
+    const det = await retry(() => tmdbDetails({ kind: m[1], id: m[2] }));
+    if (det.img) return { pick: { tmdb: it.tmdb, kind: m[1], id: +m[2], img: det.img }, det };
+  }
+  const qs = [];
+  [it.orig, it.title].forEach(s => { s = String(s || '').trim(); if (s && !qs.some(q => fold(q) === fold(s))) qs.push(s); });
+  const seen = new Map(), want = posterKind(it), y = year4(it.year);
+  let more = false, pick = null;
+  const take = r => { r.list.forEach(c => { if (!seen.has(c.key)) seen.set(c.key, c); }); more = more || r.more; return rankPosters(it, Array.from(seen.values())); };
+  for (const q of qs) { pick = surePick(it, take(await tmdbFind(want, q))); if (pick && !all) break; }
+  // первая страница поиска заполнена целиком: нужный год мог в неё не попасть
+  if (!pick && more && y) for (const q of qs) { pick = surePick(it, take(await tmdbFind(want, q, y))); if (pick && !all) break; }
+  // совсем ничего: может, раздел записан не тот (сериал как фильм)
+  if (!seen.size && qs.length) take(await tmdbFind('multi', it.title));
+  if (pick && pick.img && !all) return { pick, det: await retry(() => tmdbDetails(pick)).catch(() => null) };
+  return { cands: rankPosters(it, Array.from(seen.values())).filter(c => c.img).slice(0, all ? 8 : 6) };
+}
+/* записывает постер в тайтл вместе со ссылками TMDB и IMDb и оценкой TMDB */
+async function applyPoster(id, c, det) {
+  if (det === undefined) det = await retry(() => tmdbDetails(c)).catch(() => null);
+  const it = S.byId.get(id); if (!it) return null;
+  const img = (det && det.img) || c.img; if (!img) return null;
+  const same = it.tmdb === c.tmdb;
+  it.img = img; it.tmdb = c.tmdb; delete it.noimg;
+  if (det && det.imdb) it.imdb = det.imdb; else if (!same) delete it.imdb;
+  const ext = Object.assign({}, it.ext);
+  if (c.score) ext.tmdb = c.score; else if (!same) delete ext.tmdb;
+  if (Object.keys(ext).length) it.ext = ext; else delete it.ext;
+  Store.touch(it, true);
+  return it;
+}
+
+/* ---- подбор в фоне ---- */
+function psStart() {
+  if (!tmdbKey() || PS.st === 'run') return;
+  const ids = S.items.filter(needsPoster).sort((a, b) => lastDate(b).localeCompare(lastDate(a))).map(it => it.id);
+  Object.assign(PS, { st: 'run', queue: ids, total: ids.length, done: 0, saved: [], review: [], tries: {}, fails: 0, errs: 0, msg: '', limit: 8, allSaved: false });
+  psRender(); psLoop();
+}
+function psHalt(msg) { if (PS.st !== 'run') return; PS.st = 'pause'; PS.msg = msg; psRender(); }
+async function psLoop() {
+  const gen = ++PS.gen;
+  const live = () => PS.st === 'run' && PS.gen === gen;
+  const worker = async () => {
+    while (live() && PS.queue.length) {
+      const id = PS.queue.shift(), it = S.byId.get(id);
+      if (!it || !needsPoster(it)) { PS.done++; psPaint(); continue; }
+      try {
+        const r = await findPoster(it);
+        PS.fails = 0;
+        if (r.pick && await applyPoster(id, r.pick, r.det)) { PS.saved.push(id); psStrip(id); }
+        else { PV.set(id, { cands: r.cands || [] }); PS.review.push(id); psAddCard(id); }
+        PS.done++;
+      } catch (e) {
+        if (e.code === 'badkey' || e.code === 'nokey') {
+          PS.queue.unshift(id);
+          psHalt(e.code === 'nokey' ? 'Ключ TMDB отключён. Подключи его снова в блоке «Поиск при добавлении», и подбор продолжится.' : 'TMDB перестал принимать ключ. Проверь его в блоке «Поиск при добавлении» и нажми «Продолжить».');
+          break;
+        }
+        // один тайтл пробуем ещё раз в конце очереди, потом пропускаем до следующего раза
+        PS.tries[id] = (PS.tries[id] || 0) + 1;
+        if (PS.tries[id] < 2) PS.queue.push(id); else { PS.errs++; PS.done++; }
+        if (++PS.fails >= 5) { psHalt('TMDB перестал отвечать (' + (e.message || 'нет связи') + '). Найденное уже сохранено, продолжить можно чуть позже.'); break; }
+      }
+      psPaint();
+      // сохраняем пачками, не дожидаясь конца подбора
+      if (Store.dirty.size >= 20) Store.flush();
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  if (PS.gen !== gen) return;
+  if (PS.st === 'run') {
+    PS.st = 'done'; psRender();
+    toast('Подбор закончен: сохранено постеров ' + PS.saved.length + (PS.review.length ? ', на выбор ' + PS.review.length : ''));
+  }
+}
+
+/* ---- панель в «Данных» ---- */
+function psCountText() {
+  return 'Проверено ' + PS.done + ' из ' + PS.total + '. Сохранено постеров: ' + PS.saved.length +
+    (PS.review.length ? ', ждут твоего выбора: ' + PS.review.length : '') + (PS.errs ? ', не удалось проверить: ' + PS.errs : '') + '.';
+}
+const smallPoster = (url, size) => String(url || '').replace('/w342/', '/' + size + '/');
+const stripImg = id => { const it = S.byId.get(id); return it && it.img ? '<img src="' + esc(smallPoster(it.img, 'w92')) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : ''; };
+function postersInner() {
+  const key = tmdbKey(), pool = S.items.filter(it => POSTER_CATS.includes(it.cat));
+  const need = pool.filter(needsPoster).length, skipped = pool.filter(it => !it.img && it.noimg).length;
+  const run = PS.st === 'run', pause = PS.st === 'pause';
+  let h = '<div class="h2">Постеры для записанных тайтлов</div>' +
+    '<p class="muted" style="margin:6px 0 0">Сайт сам найдёт в TMDB постеры для фильмов, сериалов и мультфильмов по названию, оригиналу и году. Точные совпадения сохранит сразу, а если засомневается, покажет варианты, и ты выберешь сам. У аниме постеры уже есть.</p>';
+  if (!key) return h + '<div class="add-note" style="margin-top:12px"><span>Постеры берутся из TMDB, поэтому сначала подключи ключ в блоке «Поиск при добавлении».</span><button class="btn small" data-act="go-tmdb">Подключить</button></div>';
+  if (run || pause) {
+    h += '<div class="ps-prog"><div class="meter ps-meter" aria-hidden="true"><i id="ps-meter" style="width:' + (PS.total ? PS.done / PS.total * 100 : 0).toFixed(1) + '%"></i></div>' +
+      '<p class="ps-count" id="ps-count" role="status">' + esc(psCountText()) + '</p>' +
+      (PS.msg ? '<p class="key-msg err">' + esc(PS.msg) + '</p>' : '') +
+      '<div class="row-acts">' + (run ? '<button class="btn" data-act="ps-pause">' + I('pause') + 'Пауза</button>' : '<button class="btn primary" data-act="ps-resume">' + I('play') + 'Продолжить</button>') + '</div>' +
+      (run ? '<div class="ps-strip" id="ps-strip" aria-hidden="true">' + PS.saved.slice(-16).map(stripImg).join('') + '</div>'
+        : '<p class="faint ps-note">Найденное уже сохранено. Продолжить можно сейчас или в другой раз: если закрыть страницу, кнопка «Подобрать постеры» начнёт с оставшихся.</p>') + '</div>';
+  } else {
+    if (PS.st === 'done') h += '<p class="ps-sum">Готово. Сохранено постеров: ' + PS.saved.length + (PS.review.length ? ', ещё ' + PS.review.length + ' ждут твоего выбора ниже' : '') + (PS.errs ? '. Не удалось проверить: ' + PS.errs + ', попробуй позже' : '') + '.</p>';
+    const fresh = need - PS.review.filter(id => { const it = S.byId.get(id); return it && needsPoster(it); }).length;
+    h += '<p class="faint" style="margin:10px 0 0;font-size:13.5px">' + (need ? 'Без постера: ' + need + ' из ' + pool.length + '.' : 'У всех фильмов, сериалов и мультфильмов уже есть постеры.') + '</p>';
+    if (fresh > 0) {
+      const min = Math.round(fresh * .25 / 60);
+      h += '<div class="row-acts"><button class="btn primary" data-act="ps-start">' + I('search') + 'Подобрать постеры</button></div>' +
+        '<p class="faint ps-note">Займёт ' + (min < 1 ? 'меньше минуты' : 'около ' + min + ' ' + plural(min, ['минуты', 'минут', 'минут'])) + '. Можно прервать в любой момент: найденное сохраняется сразу.</p>';
+    }
+  }
+  const sv = PS.saved.map(id => S.byId.get(id)).filter(it => it && it.img);
+  if (sv.length && !run) {
+    h += '<div class="ps-h"><h3 class="h2">Сохранено автоматически</h3><span class="faint num">' + sv.length + '</span></div>' +
+      '<p class="faint ps-note" style="margin-top:4px">Если какой-то постер не от того тайтла, открой карточку и нажми «Сменить постер» в разделе «Название, год, раздел».</p>' +
+      '<div class="ps-grid">' + (PS.allSaved ? sv : sv.slice(0, 18)).map(it => '<button class="ps-cell" data-act="open" data-id="' + esc(it.id) + '" title="' + esc(it.title + (it.year ? ', ' + it.year : '')) + '">' +
+        '<img src="' + esc(smallPoster(it.img, 'w185')) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"><span>' + esc(it.title) + '</span></button>').join('') + '</div>' +
+      (!PS.allSaved && sv.length > 18 ? '<div class="more"><button class="btn" data-act="ps-saved-all">Показать все ' + sv.length + '</button></div>' : '');
+  }
+  const rv = PS.review.filter(id => S.byId.has(id));
+  if (rv.length) {
+    h += '<div class="ps-h"><h3 class="h2">Выбери постер</h3><span class="faint num" id="ps-rcount">' + rv.length + '</span></div>' +
+      '<p class="faint ps-note" style="margin-top:4px">Нажми на подходящий постер. Если нужного нет, поищи по другому названию или пропусти тайтл.</p>' +
+      '<div class="pcards" id="ps-cards">' + rv.slice(0, PS.limit).map(pcardHTML).join('') + '</div><div id="ps-morebox">' + psMoreHTML(rv.length) + '</div>';
+  }
+  if (skipped && !run) h += '<p class="faint ps-note">Пропущено вручную: ' + skipped + '.<button class="btn small ghost" data-act="ps-unskip">Вернуть в подбор</button></p>';
+  return h;
+}
+const psMoreHTML = n => n > PS.limit ? '<div class="more"><button class="btn" data-act="ps-more">Показать ещё ' + (n - PS.limit) + '</button></div>' : '';
+/* полная перерисовка панели — только при смене состояния: кнопки не должны исчезать из-под курсора */
+function psRender() { const p = $('#posters .panel'); if (p) p.innerHTML = postersInner(); }
+function psPaint() {
+  const m = $('#ps-meter'); if (!m) return;
+  m.style.width = (PS.total ? PS.done / PS.total * 100 : 0).toFixed(1) + '%';
+  const c = $('#ps-count'); if (c) c.textContent = psCountText();
+}
+function psStrip(id) {
+  const s = $('#ps-strip'); if (!s) return;
+  s.insertAdjacentHTML('beforeend', stripImg(id));
+  while (s.children.length > 16) s.firstElementChild.remove();
+}
+function psAddCard(id) {
+  const box = $('#ps-cards');
+  if (!box) { if ($('#posters')) psRender(); return; }
+  const n = PS.review.filter(x => S.byId.has(x)).length;
+  if (box.children.length < PS.limit) box.insertAdjacentHTML('beforeend', pcardHTML(id));
+  const rc = $('#ps-rcount'); if (rc) rc.textContent = n;
+  const mb = $('#ps-morebox'); if (mb) mb.innerHTML = psMoreHTML(n);
+}
+function pcardHTML(id) {
+  const it = S.byId.get(id); if (!it) return '';
+  const v = PV.get(id) || {};
+  const meta = [it.orig && fold(it.orig) !== fold(it.title) ? it.orig : '', it.year, CATS[it.cat].one].filter(Boolean).join(' · ');
+  return '<div class="pcard" data-id="' + esc(id) + '"><div class="pc-head"><div><div class="pc-t">' + esc(it.title) + '</div><div class="pc-m">' + esc(meta) + '</div></div>' +
+    '<button class="btn small ghost" data-act="ps-skip" data-id="' + esc(id) + '" title="Больше не предлагать постер для этого тайтла">Пропустить</button></div>' +
+    pvarsHTML(it, v) + pqHTML(it, v) + '</div>';
+}
+function pvarsHTML(it, v) {
+  if (v.busy) return '<div class="add-loading"><span class="pulse"></span>Ищу в TMDB…</div>';
+  if (v.err) return '<p class="faint pc-none">' + esc(v.err) + '</p>';
+  const list = v.cands || [];
+  if (!list.length) return '<p class="muted pc-none">' + (v.q ? 'По запросу «' + esc(v.q) + '» в TMDB ничего не нашлось.' : 'В TMDB не нашлось ничего похожего. Попробуй другое название, например оригинальное.') + '</p>';
+  return '<div class="pvars">' + list.map(c => {
+    const now = it.img && it.tmdb === c.tmdb;
+    const m = [c.y, CATS[c.cat].one.toLowerCase(), c.score ? 'TMDB ' + fmtScore(c.score) : ''].filter(Boolean).join(' · ');
+    return '<button type="button" class="pvar' + (now ? ' on' : '') + '" data-act="ps-pick" data-id="' + esc(it.id) + '" data-k="' + esc(c.key) + '" title="' + esc(c.title + (c.orig && fold(c.orig) !== fold(c.title) ? ' / ' + c.orig : '')) + '">' +
+      '<span class="pv-img"><img src="' + esc(smallPoster(c.img, 'w185')) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' + (now ? '<span class="pv-now">сейчас</span>' : '') + '</span>' +
+      '<span class="pv-t">' + esc(c.title) + '</span><span class="pv-m">' + esc(m) + '</span></button>';
+  }).join('') + '</div>';
+}
+const pqHTML = (it, v) => '<form class="pc-q" data-id="' + esc(it.id) + '" autocomplete="off"><label class="search">' + I('search') + '<span class="sr">Искать постер по другому названию</span>' +
+  '<input name="q" type="text" enterkeyhint="search" spellcheck="false" value="' + esc(v.q || it.orig || it.title) + '" placeholder="Другое название"></label><button class="btn small" type="submit">Найти</button></form>';
+/* блок выбора постера в карточке тайтла */
+function posterPickHTML(it) {
+  return '<div class="d-sec ppick" id="ppick"><div class="lbl">' + (it.img ? 'Сменить постер' : 'Постер из TMDB') + '<small>нажми на подходящий</small></div>' +
+    pvarsHTML(it, PV.get(it.id) || {}) + pqHTML(it, PV.get(it.id) || {}) +
+    '<div class="row-acts">' + (it.img ? '<button class="btn small ghost danger" data-act="poster-remove" title="Постер уберётся вместе со ссылками на TMDB и IMDb">' + I('trash') + 'Убрать постер</button>' : '') +
+    '<button class="btn small ghost" data-act="poster-cancel">Отмена</button></div></div>';
+}
+/* перерисовывает варианты одного тайтла там, где они видны */
+function psRepaint(id, focusIn) {
+  const card = $('.pcard' + bySel(id));
+  if (card) card.outerHTML = pcardHTML(id);
+  if (UI.open === id && UI.pp === id) renderDrawer();
+  if (focusIn) { const f = $((focusIn === 'drawer' ? '#ppick' : '.pcard' + bySel(id)) + ' .pc-q input'); if (f) { try { f.focus({ preventScroll: true }); } catch (e) {} } }
+}
+async function psSearch(form) {
+  const id = form.dataset.id, it = S.byId.get(id); if (!it) return;
+  const q = String(new FormData(form).get('q') || '').trim(); if (!q) return;
+  const where = form.closest('#drawer') ? 'drawer' : 'card';
+  const v = { q, busy: true }; PV.set(id, v);
+  psRepaint(id, where);
+  try { v.cands = rankPosters(it, (await tmdbFind('multi', q)).list).filter(c => c.img).slice(0, 8); }
+  catch (e) { v.err = e.code === 'badkey' || e.code === 'nokey' ? 'TMDB не принял ключ, проверь его в разделе «Данные».' : 'TMDB сейчас не отвечает (' + (e.message || 'нет связи') + '). Попробуй чуть позже.'; }
+  v.busy = false;
+  if (PV.get(id) === v) psRepaint(id, where);
+}
+/* варианты для карточки тайтла: «Найти постер» и «Сменить постер» */
+async function psLookup(it) {
+  const v = { busy: true }; PV.set(it.id, v);
+  UI.pp = it.id; renderDrawer();
+  const pp = $('#ppick'); if (pp) { try { pp.scrollIntoView({ block: 'nearest' }); } catch (e) {} }
+  try { v.cands = (await findPoster(it, true)).cands; }
+  catch (e) { v.err = e.code === 'badkey' || e.code === 'nokey' ? 'TMDB не принял ключ, проверь его в разделе «Данные».' : 'TMDB сейчас не отвечает (' + (e.message || 'нет связи') + '). Попробуй чуть позже.'; }
+  v.busy = false;
+  if (PV.get(it.id) === v) psRepaint(it.id);
+}
+async function psPick(el) {
+  const id = el.dataset.id, v = PV.get(id), c = v && (v.cands || []).find(x => x.key === el.dataset.k);
+  if (!c || v.saving) return;
+  v.saving = true; el.classList.add('busy'); el.setAttribute('aria-busy', 'true');
+  const it = await applyPoster(id, c);
+  v.saving = false;
+  if (!it) { el.classList.remove('busy'); el.removeAttribute('aria-busy'); toast('Не получилось сохранить постер'); return; }
+  psDone(id);
+  toast('Постер сохранён: «' + it.title + '»');
+}
+/* тайтл решён (выбран постер или пропущен): убираем его из карточек на выбор */
+function psDone(id) {
+  PS.review = PS.review.filter(x => x !== id); PV.delete(id);
+  if (UI.pp === id) UI.pp = null;
+  if (UI.open === id) renderDrawer();
+  psRender();
+}
+
+/* ---- подсветка карточки цветом постера ---- */
+const KEY_TINT = 'kinodnevnik:tints';
+/* c: адрес постера → цвет ('' — постер почти без цвета); bad: сайты, которые не дают читать картинки */
+const TINT = (() => { const t = LS.get(KEY_TINT, null); return t && t.c && t.bad ? t : { c: {}, bad: {} }; })();
+let tintT = null;
+function tintSave() {
+  clearTimeout(tintT);
+  tintT = setTimeout(() => { const k = Object.keys(TINT.c); k.slice(0, Math.max(0, k.length - 800)).forEach(x => delete TINT.c[x]); LS.set(KEY_TINT, TINT); }, 600);
+}
+function hsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  if (!d) return [0, 0, l];
+  const s = d / (1 - Math.abs(2 * l - 1));
+  const h = mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return [h * 60, s, l];
+}
+function hslHex(h, s, l) {
+  const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+  const f = n => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))));
+  return '#' + [f(0), f(8), f(4)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+/* самый заметный цвет постера: насыщенные пиксели по оттенкам, побеждает самый весомый оттенок */
+function dominant(im) {
+  const w = 24, h = 36, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const cx = cv.getContext('2d', { willReadFrequently: true });
+  cx.drawImage(im, 0, 0, w, h);
+  const d = cx.getImageData(0, 0, w, h).data, B = Array.from({ length: 12 }, () => [0, 0, 0, 0]);
+  for (let i = 0; i < d.length; i += 4) {
+    const [hh, s, l] = hsl(d[i], d[i + 1], d[i + 2]);
+    if (l < .12 || l > .9 || s < .18) continue;
+    const wt = s * (1 - Math.abs(l - .5) * 1.6); if (wt <= 0) continue;
+    const b = B[Math.floor(((hh + 15) % 360) / 30)];
+    b[0] += wt; b[1] += d[i] * wt; b[2] += d[i + 1] * wt; b[3] += d[i + 2] * wt;
+  }
+  const best = B.reduce((a, b) => b[0] > a[0] ? b : a);
+  if (best[0] < w * h * .02) return ''; // почти чёрно-белый постер: остаётся цвет раздела
+  const [hh, s, l] = hsl(best[1] / best[0], best[2] / best[0], best[3] / best[0]);
+  return hslHex(hh, Math.min(.85, Math.max(.35, s)), Math.min(.62, Math.max(.48, l)));
+}
+const TINT_WAIT = new Map();
+function posterTint(url) {
+  const host = (url.match(/^https?:\/\/([^/]+)/) || [])[1];
+  if (!host || TINT.bad[host]) return Promise.resolve('');
+  if (TINT_WAIT.has(url)) return TINT_WAIT.get(url);
+  const p = new Promise(res => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous'; im.referrerPolicy = 'no-referrer';
+    im.onload = () => { let c = ''; try { c = dominant(im); } catch (e) { TINT.bad[host] = 1; tintSave(); return res(''); } TINT.c[url] = c; tintSave(); res(c); };
+    // ошибка может быть и просто битой картинкой: проверяем без CORS, виноват ли сайт
+    im.onerror = () => {
+      const probe = new Image(); probe.referrerPolicy = 'no-referrer';
+      probe.onload = () => { TINT.bad[host] = 1; tintSave(); res(''); };
+      probe.onerror = () => res('');
+      probe.src = url;
+    };
+    im.src = url;
+  });
+  TINT_WAIT.set(url, p);
+  p.then(() => TINT_WAIT.delete(url));
+  return p;
+}
+function paintTint(d, it) {
+  const base = 'var(--c-' + groupOf(it) + ')', url = it.img;
+  const known = url ? TINT.c[url] : '';
+  d.style.setProperty('--tint', known || base);
+  d.dataset.tint = known || '';
+  if (!url || url in TINT.c) return;
+  posterTint(url).then(c => {
+    if (!c || UI.open !== it.id || it.img !== url) return;
+    d.style.setProperty('--tint', c); d.dataset.tint = c;
+  });
+}
+
 /* ================= Экспорт / импорт ================= */
 function exportJSON() {
   const data = JSON.stringify({ app: 'kinodnevnik', version: 1, exported: new Date().toISOString(), items: S.items }, null, 1);
@@ -2208,6 +2628,32 @@ const ACT = {
   'tmdb-off-no'() { UI.tmdbOff = false; renderMain(); },
   'tmdb-off-yes'() { delete S.cfg.tmdb; UI.tmdbOff = false; SEARCH_CACHE.clear(); saveCfg(); renderMain(); toast('TMDB отключён'); },
   'copy-site'() { copyText(location.origin + location.pathname).then(ok => toast(ok ? 'Адрес сайта скопирован' : 'Не получилось скопировать')); },
+  'ps-start'() { psStart(); },
+  'ps-pause'() { if (PS.st !== 'run') return; PS.st = 'pause'; psRender(); },
+  'ps-resume'() { if (PS.st !== 'pause' || !tmdbKey()) return; PS.st = 'run'; PS.msg = ''; PS.fails = 0; psRender(); psLoop(); },
+  'ps-more'() { PS.limit += 8; psRender(); },
+  'ps-saved-all'() { PS.allSaved = true; psRender(); },
+  'ps-pick'(el) { psPick(el); },
+  'ps-skip'(el) {
+    const it = S.byId.get(el.dataset.id); if (!it) return;
+    it.noimg = true; Store.touch(it, true); psDone(it.id);
+    toast('«' + it.title + '» пропущен. Вернуть можно внизу блока');
+  },
+  'ps-unskip'() {
+    let n = 0;
+    S.items.forEach(it => { if (it.noimg && POSTER_CATS.includes(it.cat)) { delete it.noimg; Store.touch(it, true); n++; } });
+    psRender(); toast('Вернул в подбор: ' + n);
+  },
+  'poster-find'() { const it = cur(); if (it) psLookup(it); },
+  'poster-cancel'() { UI.pp = null; renderDrawer(); },
+  'poster-remove'() {
+    const it = cur(); if (!it) return;
+    ['img', 'tmdb', 'imdb'].forEach(k => { delete it[k]; });
+    if (it.ext) { delete it.ext.tmdb; if (!Object.keys(it.ext).length) delete it.ext; }
+    it.noimg = true; UI.pp = null;
+    Store.touch(it, true); renderDrawer(); renderMain();
+    toast('Постер убран');
+  },
   'part-today'(el) { const it = cur(), p = it && findPart(it, el.dataset.pid); if (!p) return; const d = today(); if (!p.dates.includes(d)) p.dates.push(d); p.dates.sort(); if (p.status === 'planned') p.status = 'done'; if (it.cat === 'anime') syncParts(it); Store.touch(it); renderDrawer(); renderMain(); toast('Просмотр отмечен'); },
   'part-del'(el) { UI.confirmPart = el.dataset.pid; renderDrawer(); },
   'part-del-no'() { UI.confirmPart = null; renderDrawer(); },
@@ -2252,6 +2698,7 @@ document.addEventListener('click', e => {
 document.addEventListener('submit', e => {
   if (e.target.id === 'addform') { e.preventDefault(); submitAdd(e.target); }
   else if (e.target.id === 'tmdbform') { e.preventDefault(); saveTmdbKey(e.target); }
+  else if (e.target.classList.contains('pc-q')) { e.preventDefault(); psSearch(e.target); }
 });
 document.addEventListener('change', e => {
   const t = e.target;
@@ -2370,7 +2817,8 @@ function hideTipIfSticky() { const t = $('#tip'); if (t && t.classList.contains(
 let rz = null;
 window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (UI.view === 'home') mountReel(); }, 200); });
 document.addEventListener('visibilitychange', async () => {
-  if (Store.mode !== 'google' || document.visibilityState !== 'visible' || !S.ready || Store.pending()) return;
+  // во время подбора постеров не подменяем записи свежими из таблицы: подбор правит их прямо сейчас
+  if (Store.mode !== 'google' || document.visibilityState !== 'visible' || !S.ready || Store.pending() || PS.st === 'run') return;
   const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return;
   try {
     const fresh = (await Store.load()).map(norm).filter(Boolean);

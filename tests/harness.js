@@ -75,15 +75,52 @@ const TD = {
   'tv/42009': { id: 42009, name: 'Черное зеркало', first_air_date: '2011-12-04', last_air_date: '2025-04-10', status: 'Returning Series', number_of_seasons: 7, seasons: [0, 1, 2, 3, 4, 5, 6, 7].map(n => ({ season_number: n })), external_ids: { imdb_id: 'tt2085059' }, poster_path: '/bm.jpg' },
   'tv/90228': { id: 90228, name: 'Дюна: Пророчество', first_air_date: '2024-11-17', last_air_date: '2024-12-22', status: 'Returning Series', number_of_seasons: 1, seasons: [{ season_number: 1 }], external_ids: { imdb_id: 'tt10466872' }, poster_path: '/prophecy.jpg' }
 };
-let tmdbCalls = [];
+TM['train dreams'] = [M(1100000, 'Сны поездов', 'Train Dreams', '2025-11-07', '/train.jpg', 7.4, 300, [18])];
+/* поиск только фильмов или только сериалов (для подбора постеров к записанным тайтлам) */
+const homeJunk = Array.from({ length: 20 }, (_, i) => M(70000 + i, 'Дом', 'Home', (1950 + i) + '-01-01', '/home' + i + '.jpg', 5, 20));
+const TMV = {
+  'dune': [M(438631, 'Дюна', 'Dune', '2021-09-15', '/dune21.jpg', 7.8, 12000, [878]), M(841, 'Дюна', 'Dune', '1984-12-14', '/dune84.jpg', 6.3, 2500, [878]), M(693134, 'Дюна: Часть вторая', 'Dune: Part Two', '2024-02-27', '/dune2.jpg', 8.1, 6500, [878])],
+  'coco': [M(354912, 'Тайна Коко', 'Coco', '2017-10-27', '/coco.jpg', 8.2, 19000, [16, 10751]), M(999001, 'Коко', 'Coco', '2017-03-01', '/coco-short.jpg', 5.1, 4, [16])],
+  'trap': [M(917496, 'Ловушка', 'Trap', '2024-07-31', '/trap.jpg', 6.5, 1500, [53]), M(999002, 'Ловушка', 'Trap', '2024-03-15', '/trap2.jpg', 5.9, 300, [27])],
+  'брат': [M(20992, 'Брат', 'Брат', '1997-05-17', '/brat.jpg', 8.0, 900, [80], 'ru'), M(20993, 'Брат 2', 'Брат 2', '2000-05-11', '/brat2.jpg', 7.9, 700, [80], 'ru')],
+  // 45 «Домов»: первая страница забита старыми, нужный 2009 года находится только с годом
+  'home': year => year === '2009' ? { results: [M(62320, 'Дом', 'Home', '2009-06-05', '/home.jpg', 8.0, 1500, [99])], total: 1 } : { results: homeJunk, total: 45 }
+};
+TMV['ловушка'] = TMV.trap;
+const TTV = {
+  'black mirror': [T(42009, 'Черное зеркало', 'Black Mirror', '2011-12-04', '/bm.jpg', 8.3, 5000, [18])],
+  'gravity falls': [T(40075, 'Гравити Фолз', 'Gravity Falls', '2012-06-15', '/gf.jpg', 8.6, 4000, [16, 35])]
+};
+Object.assign(TD, {
+  'movie/157336': { id: 157336, imdb_id: 'tt0816692', poster_path: '/inter.jpg' },
+  'movie/917496': { id: 917496, imdb_id: 'tt26753557', poster_path: '/trap.jpg' },
+  'movie/999002': { id: 999002, imdb_id: 'tt31000000', poster_path: '/trap2.jpg' },
+  'movie/20992': { id: 20992, imdb_id: 'tt0118767', poster_path: '/brat.jpg' },
+  'movie/20993': { id: 20993, imdb_id: 'tt0238883', poster_path: '/brat2.jpg' },
+  'movie/62320': { id: 62320, imdb_id: 'tt1014762', poster_path: '/home.jpg' },
+  'movie/1100000': { id: 1100000, imdb_id: 'tt29768334', poster_path: '/train.jpg' },
+  'tv/40075': { id: 40075, name: 'Гравити Фолз', first_air_date: '2012-06-15', last_air_date: '2016-02-15', status: 'Ended', number_of_seasons: 2, external_ids: { imdb_id: 'tt1865718' }, poster_path: '/gf.jpg' }
+});
+function typedSearch(kind, q, year) {
+  // «Film 12» → один точный фильм 2012 года: для проверки сохранения пачками
+  const gen = /^film (\d+)$/.exec(q);
+  let v = gen ? [M(500000 + +gen[1], 'Фильм ' + gen[1], 'Film ' + gen[1], (2000 + +gen[1] % 20) + '-05-05', '/f' + gen[1] + '.jpg', 7, 100)] : (kind === 'tv' ? TTV : TMV)[q] || [];
+  if (typeof v === 'function') { const r = v(year); return { page: 1, results: r.results, total_results: r.total }; }
+  if (year) v = v.filter(r => String(r.release_date || r.first_air_date || '').startsWith(year));
+  return { page: 1, results: v, total_results: v.length };
+}
+let tmdbCalls = [], tmdbRevoked = false, corsImg = [];
 function tmdbAnswer(u) {
   const key = u.searchParams.get('api_key');
   tmdbCalls.push(u.pathname + '?' + u.searchParams.toString());
-  if (key !== VALID) return { status: 401, body: { status_code: 7, status_message: 'Invalid API key', success: false } };
+  if (key !== VALID || tmdbRevoked) return { status: 401, body: { status_code: 7, status_message: 'Invalid API key', success: false } };
   const p = u.pathname.replace('/3/', '');
   if (p === 'authentication') return { status: 200, body: { success: true } };
   if (p === 'search/multi') { const q = fold(u.searchParams.get('query')).trim(); return { status: 200, body: { page: 1, results: TM[q] || [] } }; }
+  if (p === 'search/movie' || p === 'search/tv') return { status: 200, body: typedSearch(p.slice(7), fold(u.searchParams.get('query')).trim(), u.searchParams.get('year') || u.searchParams.get('first_air_date_year')) };
   if (TD[p]) return { status: 200, body: TD[p] };
+  const g = /^movie\/(5\d{5})$/.exec(p);
+  if (g) return { status: 200, body: { id: +g[1], imdb_id: 'tt9' + g[1], poster_path: '/f' + (+g[1] - 500000) + '.jpg' } };
   return { status: 404, body: { success: false } };
 }
 
@@ -105,12 +142,12 @@ function seedItems() {
   ];
 }
 class Sheet {
-  constructor(items) { this.rows = items.map(x => JSON.parse(JSON.stringify(x))); this.log = []; }
+  constructor(items) { this.rows = items.map(x => JSON.parse(JSON.stringify(x))); this.log = []; this.batches = []; }
   handle(req) {
     this.log.push(req.action);
     if (req.key !== 'k') return { ok: false, error: 'неверный ключ' };
     if (req.action === 'getAll') return { ok: true, data: JSON.stringify({ items: this.rows }) };
-    if (req.action === 'saveItems') { JSON.parse(req.arg).forEach(it => { const i = this.rows.findIndex(r => r.id === it.id); if (i >= 0) this.rows[i] = it; else this.rows.push(it); }); return { ok: true, data: 'ok' }; }
+    if (req.action === 'saveItems') { this.batches.push(JSON.parse(req.arg).length); JSON.parse(req.arg).forEach(it => { const i = this.rows.findIndex(r => r.id === it.id); if (i >= 0) this.rows[i] = it; else this.rows.push(it); }); return { ok: true, data: 'ok' }; }
     if (req.action === 'deleteItems') { const del = new Set(JSON.parse(req.arg)); this.rows = this.rows.filter(r => !del.has(r.id)); return { ok: true, data: 'ok' }; }
     if (req.action === 'replaceAll') { this.rows = JSON.parse(req.arg); return { ok: true, data: 'ok' }; }
     return { ok: false, error: 'неизвестное действие' };
@@ -141,6 +178,8 @@ async function setup(opts = {}) {
     }
     if (u.host === 'api.themoviedb.org') {
       if (opts.tmdbDown) return route.abort('connectionfailed');
+      // TMDB просит подождать: первые n запросов получают 429
+      if (opts.tmdb429 && opts.tmdb429.n > 0) { opts.tmdb429.n--; tmdbCalls.push('429'); return route.fulfill({ status: 429, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{"status_code":25}' }); }
       const a = tmdbAnswer(u);
       await new Promise(r => setTimeout(r, opts.tmdbDelay || 120));
       return route.fulfill({ status: a.status, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(a.body) });
@@ -151,7 +190,14 @@ async function setup(opts = {}) {
       await new Promise(r => setTimeout(r, opts.shikiDelay || 90));
       return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(shikiAnswer(JSON.parse(req.postData()))) });
     }
-    if (['image.tmdb.org', 'shikimori.io', 'cdn.myanimelist.net'].includes(u.host)) return route.fulfill({ status: 200, contentType: 'image/png', body: png(46, 69, hash(u.pathname)) });
+    // картинки TMDB, как настоящие, разрешают читать цвет (CORS); MyAnimeList и Shikimori — нет
+    if (['image.tmdb.org', 'shikimori.io', 'cdn.myanimelist.net'].includes(u.host)) {
+      const cors = !!req.headers().origin;
+      corsImg.push((cors ? 'cors ' : '') + u.host + u.pathname);
+      // Playwright сам CORS не проверяет, поэтому запрет изображаем явно, как браузер
+      if (cors && u.host !== 'image.tmdb.org') return route.abort('accessdenied');
+      return route.fulfill({ status: 200, contentType: 'image/png', headers: u.host === 'image.tmdb.org' ? { 'access-control-allow-origin': '*' } : {}, body: png(46, 69, hash(u.pathname)) });
+    }
     errors.push('UNMOCKED ' + u.href);
     return route.abort();
   });
@@ -161,4 +207,4 @@ async function setup(opts = {}) {
   if (!opts.local) await context.addInitScript(([url]) => { try { if (!localStorage.getItem('kinodnevnik:remote')) localStorage.setItem('kinodnevnik:remote', JSON.stringify({ url, key: 'k' })); } catch (e) {} }, [GS]);
   return { browser, context, page, sheet, errors, shot: async (name, o) => page.screenshot(Object.assign({ path: path.join(OUT, name + '.png') }, o || {})) };
 }
-module.exports = { setup, Sheet, seedItems, SITE, VALID, tmdbCalls: () => tmdbCalls, setShikiDown: v => { shikiDown = v; }, shikiCalls: () => shikiCalls };
+module.exports = { setup, Sheet, seedItems, SITE, VALID, tmdbCalls: () => tmdbCalls, setShikiDown: v => { shikiDown = v; }, shikiCalls: () => shikiCalls, setTmdbRevoked: v => { tmdbRevoked = v; }, imgCalls: () => corsImg };

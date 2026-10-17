@@ -158,6 +158,8 @@ const done = page => page.waitForSelector('#posters .ps-sum', { timeout: 30000 }
   ok(H.tmdbCalls().length === c1, 'на паузе запросы к TMDB не идут');
   console.log('  на паузе:', t1);
   ok(/Проверено [1-8] из 9/.test(t1), 'на паузе видно, сколько уже проверено');
+  const savedN = +(/Сохранено постеров: (\d+)/.exec(t1) || [])[1];
+  ok(await E.page.locator('.ps-cell').count() === savedN, 'на паузе сетка показывает все уже сохранённые постеры (' + savedN + ')');
   await E.shot('45-posters-paused');
   await E.page.click('[data-act="ps-resume"]');
   await done(E.page);

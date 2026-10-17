@@ -2244,7 +2244,8 @@ async function psLoop() {
         if (PS.tries[id] < 2) PS.queue.push(id); else { PS.errs++; PS.done++; }
         if (++PS.fails >= 5) { psHalt('TMDB перестал отвечать (' + (e.message || 'нет связи') + '). Найденное уже сохранено, продолжить можно чуть позже.'); break; }
       }
-      psPaint();
+      // после паузы долетают запросы, начатые до неё: тогда панель перерисовывается целиком
+      if (PS.st === 'run') psPaint(); else psRender();
       // сохраняем пачками, не дожидаясь конца подбора
       if (Store.dirty.size >= 20) Store.flush();
     }

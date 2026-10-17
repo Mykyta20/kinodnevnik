@@ -1524,7 +1524,7 @@ function nextUnrated(exceptId) {
 const REL_OK = ['sequel', 'prequel', 'side_story', 'parent_story', 'full_story', 'spin_off', 'alternative_version', 'alternative_setting'];
 const SHIKI_KIND = { tv: 'ТВ-сериал', movie: 'Фильм', ova: 'OVA', ona: 'ONA', special: 'Спешл', tv_special: 'Спешл' };
 const SHIKI_SKIP = ['music', 'pv', 'cm'];
-const SHIKI_F = 'id malId name russian kind score status airedOn { year } releasedOn { year } franchise poster { main2xUrl mainUrl previewUrl }';
+const SHIKI_F = 'id malId name russian english kind score status airedOn { year } releasedOn { year } franchise poster { main2xUrl mainUrl previewUrl }';
 const SEARCH_CACHE = new Map(), SEQ_CACHE = new Map();
 const lookErr = (code, msg) => Object.assign(new Error(msg), { code });
 const tmdbKey = () => String(S.cfg.tmdb || '').trim();
@@ -1563,7 +1563,7 @@ function shikiRes(a) {
   const k = a.kind || 'tv', y0 = a.airedOn && a.airedOn.year, y1 = a.releasedOn && a.releasedOn.year, p = a.poster || {};
   return {
     src: 'shiki', key: 'shiki:' + a.id, mal: +(a.malId || a.id) || null,
-    title: a.russian || a.name || '', orig: a.name || '',
+    title: a.russian || a.name || '', orig: a.name || '', en: a.english || '',
     year: k === 'movie' ? (y0 ? String(y0) : '') : spanYear(y0, y1, a.status === 'ongoing'), y: y0 ? String(y0) : '',
     cat: k === 'movie' ? 'animefilm' : 'anime',
     pkind: k === 'movie' ? 'film' : (k === 'tv' || k === 'ona') ? 'tv' : 'ova',
@@ -1672,7 +1672,8 @@ function franchiseMap(list, idx) {
   list.forEach(r => { if (r.src !== 'shiki' || !r.franchise || fr.has(r.franchise)) return; const m = r.mal && idx.get(r.mal); if (m && m.it.cat === 'anime') fr.set(r.franchise, m.it); });
   return fr;
 }
-const matchQ = (f, t, o) => { t = fold(t); o = fold(o); return t === f || o === f ? 3 : t.startsWith(f) || o.startsWith(f) ? 2 : t.includes(f) || o.includes(f) ? 1 : 0; };
+const matchQ = (f, ...names) => names.reduce((m, n) => { n = fold(n); return Math.max(m, !n ? 0 : n === f ? 3 : n.startsWith(f) ? 2 : n.includes(f) ? 1 : 0); }, 0);
+const resQ = (f, r) => matchQ(f, r.title, r.orig, r.en);
 function localMatches(q) {
   const f = fold(q); if (!f) return [];
   return S.items.map(it => {
@@ -1777,7 +1778,7 @@ const resSec = (title, rows) => '<div class="res-sec"><div class="res-h">' + tit
 function renderAddRes() {
   const box = $('#add-res'); if (!box || !AD) return;
   const R = AD.res, q = AD.q.trim(), f = fold(q);
-  AD.map = new Map();
+  AD.map = new Map(); AD.noMatch = false;
   let h = '', def = -1, n = 0;
   if (!q) {
     box.innerHTML = '<div class="add-hint"><p>Начни вводить название, можно по-русски или в оригинале. Фильмы, сериалы и мультфильмы ищутся в TMDB, аниме в Shikimori. Выбери нужное, и название, год, раздел и постер заполнятся сами.</p>' + (tmdbKey() ? '' : noKeyNote()) + '</div>';
@@ -1791,16 +1792,22 @@ function renderAddRes() {
     const idx = malIndex(), shown = new Set(local.map(x => x[0].id));
     const dup = r => { const h = inDiary(r, idx); return h && shown.has(h.it.id) && !h.p; };
     let tm = R.tmdb || [], sh = R.shiki || [];
+    const best = list => list.reduce((m, r) => Math.max(m, resQ(f, r)), 0);
+    // Shikimori ищет очень широко: если среди аниме нет ничего похожего, а фильм или сериал найден точно, аниме не показываем
+    if (sh.length && best(sh) === 0 && best(tm) >= 2) sh = [];
     if (sh.length) tm = tm.filter(r => !r.jpAnim); // аниме берём из Shikimori: там русские названия и сезоны
     const fr = franchiseMap(sh, idx);
     // то, что уже показано в блоке «Уже в дневнике», второй раз не выводим
     tm = tm.filter(r => !dup(r)).slice(0, 6); sh = sh.filter(r => !dup(r)).slice(0, 6);
-    const tS = tm.length ? matchQ(f, tm[0].title, tm[0].orig) : -1, sS = sh.length ? matchQ(f, sh[0].title, sh[0].orig) : -1;
+    const tS = tm.length ? resQ(f, tm[0]) : -1, sS = sh.length ? resQ(f, sh[0]) : -1;
     const shFirst = UI.view === 'anime' ? sS >= tS : sS > tS;
     const secT = tm.length ? resSec('Фильмы, сериалы, мультфильмы <span>TMDB</span>', tm.map(r => remoteResHTML(r, idx, fr)).join('')) : '';
     const secS = sh.length ? resSec('Аниме <span>Shikimori</span>', sh.map(r => remoteResHTML(r, idx, fr)).join('')) : '';
     AD.fr = fr;
-    if (def < 0 && (tm.length || sh.length)) def = n;
+    // совсем ничего похожего по названию: честно говорим и по Enter ведём в ручную форму
+    AD.noMatch = !local.length && (tm.length || sh.length) && best(tm) === 0 && best(sh) === 0;
+    if (AD.noMatch) h += '<div class="add-hint"><p>Точного совпадения в базах нет. Если нужного тайтла среди найденного ниже нет, добавь его вручную.</p><button type="button" class="btn small" data-act="add-manual">' + I('plus') + 'Добавить «' + esc(q) + '» вручную</button></div>';
+    else if (def < 0 && (tm.length || sh.length)) def = n;
     h += shFirst ? secS + secT : secT + secS;
     h += errNote(R.tmdbErr, 'tmdb') + errNote(R.shikiErr, 'shiki');
     if (!tm.length && !sh.length && !local.length) {
@@ -1861,7 +1868,7 @@ function addKey(e) {
     e.preventDefault();
     const q = AD.q.trim();
     if (AD.res && AD.res.loading && q.length >= 2) { clearTimeout(addT); if (!AD.ctrl) runAddSearch(); return; }
-    if (list.length) list[AD.active >= 0 ? AD.active : 0].click();
+    if (list.length && (AD.active >= 0 || !AD.noMatch)) list[AD.active >= 0 ? AD.active : 0].click();
     else if (q) ACT['add-manual']();
   }
 }

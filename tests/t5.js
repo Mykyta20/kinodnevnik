@@ -22,7 +22,9 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   const { page, sheet } = E;
   await page.goto(H.SITE + '#film/i/fe5160313');
   await page.waitForSelector('#drawer.on .screen.ok', { timeout: 8000 });
-  ok(/\/w1280\/dune-bg\.jpg$/.test(await page.locator('#drawer .screen img').getAttribute('src')), 'кадр из фильма на «экране» вверху карточки');
+  ok(/\/w1280\/dune-a\.jpg$/.test(await page.locator('#drawer .screen img').getAttribute('src')), 'кадр — лучший по оценкам зрителей и без надписей');
+  const sb = await page.locator('#drawer .screen').boundingBox();
+  ok(Math.abs(sb.width / sb.height - 2) < .02, 'кадр обрезан мягко: 2:1 (' + (sb.width / sb.height).toFixed(2) + ')');
   ok(await page.locator('#drawer .d-head.lifted .poster').count() === 1, 'постер заходит на кадр, как на афише');
   const meta = await txt(page, '#drawer .d-meta');
   ok(/2 ч 35 мин/.test(meta) && /Фантастика, приключения/.test(meta), 'длительность и жанры (' + meta + ')');
@@ -34,7 +36,7 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   ok(/7,8/.test(await txt(page, '#drawer .wt')), 'плитка с оценкой TMDB');
   await wait(1500);
   const dune = row(sheet, 'fe5160313');
-  ok(dune.info && dune.info.bg === '/dune-bg.jpg' && dune.info.rt === 155 && dune.info.dir === 'Дени Вильнёв' && dune.info.g.join() === 'фантастика,приключения', 'в таблицу сохранены только кадр, жанры, длительность и режиссёр');
+  ok(dune.info && dune.info.bg === '/dune-a.jpg' && dune.info.rt === 155 && dune.info.dir === 'Дени Вильнёв' && dune.info.g.join() === 'фантастика,приключения', 'в таблицу сохранены только кадр, жанры, длительность и режиссёр');
   ok(!/Арракис|Шаламе/.test(JSON.stringify(dune)), 'описание и актёры не раздувают таблицу');
   ok(await page.evaluate(() => !!JSON.parse(localStorage.getItem('kinodnevnik:plot'))['tmdb:movie/438631'].ov), 'описание запомнено в браузере');
   await wait(400);
@@ -88,6 +90,41 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   await page.waitForSelector('#drawer.on .plot .ov');
   ok(/юном ниндзя Наруто/.test(await txt(page, '#drawer .plot .ov')) && await page.locator('#drawer .screen').count() === 0, 'если Shikimori не знает поле, описание берётся упрощённым запросом');
   H.setShikiOldSchema(false);
+  await page.keyboard.press('Escape');
+
+  // ===== «Другой кадр»
+  const shotSrc = () => page.locator('#drawer .screen img').getAttribute('src');
+  await page.goto(H.SITE + '#film/i/fe5160313');
+  await page.waitForSelector('#drawer.on .screen.ok .shot-next');
+  ok((await txt(page, '#drawer .shot-next')).replace(/\s/g, '') === 'Другойкадр1/3', 'на кадре кнопка «Другой кадр» и счётчик: 3 чистых кадра (с надписью отброшен)');
+  await page.hover('#drawer .screen');
+  await wait(250);
+  await E.shot('72-afisha-shot');
+  await page.click('#drawer .shot-next');
+  await page.waitForFunction(() => /dune-b\.jpg$/.test(document.querySelector('#drawer .screen img').src));
+  ok((await txt(page, '#drawer .shot-next')).replace(/\s/g, '') === 'Другойкадр2/3', 'второй кадр');
+  await page.click('#drawer .shot-next');
+  await page.waitForFunction(() => /dune-low\.jpg$/.test(document.querySelector('#drawer .screen img').src));
+  await page.click('#drawer .shot-next');
+  await page.waitForFunction(() => /dune-a\.jpg$/.test(document.querySelector('#drawer .screen img').src));
+  ok(true, 'кадры листаются по кругу');
+  await page.click('#drawer .shot-next');
+  await page.waitForFunction(() => /dune-b\.jpg$/.test(document.querySelector('#drawer .screen img').src));
+  await wait(1500);
+  ok(row(sheet, 'fe5160313').info.bg === '/dune-b.jpg' && row(sheet, 'fe5160313').info.bgPick === 1, 'выбранный кадр сохранён в таблице');
+  // кадр, выбранный вручную, не перебивается: даже если браузер забыл варианты и спросит базу снова
+  await page.evaluate(() => localStorage.removeItem('kinodnevnik:plot'));
+  await page.reload();
+  await page.waitForSelector('#drawer.on .plot .ov');
+  await wait(800);
+  ok(/dune-b\.jpg$/.test(await shotSrc()) && row(sheet, 'fe5160313').info.bg === '/dune-b.jpg', 'после перезагрузки — твой кадр, а не лучший по мнению TMDB');
+  await page.keyboard.press('Escape');
+  // аниме: варианты — кадры с Shikimori
+  await page.goto(H.SITE + '#anime/i/af35ef405');
+  await page.waitForSelector('#drawer.on .screen.ok .shot-next');
+  await page.click('#drawer .shot-next');
+  await page.waitForFunction(() => /jjk2\.jpg$/.test(document.querySelector('#drawer .screen img').src));
+  ok((await txt(page, '#drawer .shot-next')).replace(/\s/g, '') === 'Другойкадр2/3', 'у аниме тоже можно выбрать кадр');
   await page.keyboard.press('Escape');
 
   // ===== подключение OMDb

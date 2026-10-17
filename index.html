@@ -488,9 +488,18 @@ details>summary::marker{color:var(--accent-text)}
 .ppick .row-acts{margin-top:0}
 
 /* ---------- карточка-афиша: кадр на «экране», описание, оценки мира ---------- */
-.screen{position:relative;aspect-ratio:2.39/1;margin:4px 0 18px;border-radius:12px;overflow:hidden;background:var(--sunk);
+/* 2:1 — мягкая обрезка кадра 16:9; сдвиг вверх, где обычно лица */
+.screen{position:relative;aspect-ratio:2/1;margin:4px 0 18px;border-radius:12px;overflow:hidden;background:var(--sunk);
   box-shadow:0 0 0 1px var(--rule),0 24px 64px -26px color-mix(in srgb,var(--tint) 80%,transparent)}
-.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity .6s ease,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;opacity:0;transform:scale(1.03);transition:opacity .6s ease,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.shot-next{position:absolute;top:10px;right:10px;z-index:1;display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 9px;border-radius:999px;border:1px solid rgba(255,236,210,.26);
+  background:rgba(12,10,9,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#F2E9DC;font-size:12.5px;font-weight:500;opacity:0;transition:opacity .2s,background .15s}
+.shot-next svg.i{width:14px;height:14px}
+.shot-next span{color:rgba(242,233,220,.6);font-variant-numeric:tabular-nums}
+.shot-next:hover{background:rgba(12,10,9,.8)}
+.shot-next.busy{cursor:progress;opacity:.6 !important}
+.screen:hover .shot-next,.shot-next:focus-visible{opacity:1}
+@media (hover:none){.shot-next{opacity:1}}
 .screen.ok img{opacity:1;transform:none}
 .screen::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 100% at 50% 35%,transparent 55%,rgba(0,0,0,.42)),linear-gradient(180deg,transparent 62%,rgba(0,0,0,.22))}
 .screen.wait,.plot.wait i,.wt.wait .wt-v{background:linear-gradient(100deg,var(--sunk) 30%,color-mix(in srgb,var(--raise) 70%,var(--tint)) 50%,var(--sunk) 70%) var(--sunk);background-size:300% 100%;animation:shimmer 1.5s linear infinite}
@@ -2843,7 +2852,8 @@ function plotSave() {
 const infoKey = it => it.tmdb ? 'tmdb:' + it.tmdb : it.mal ? 'mal:' + it.mal : '';
 const canInfo = it => it.tmdb ? !!tmdbKey() : !!it.mal;
 const INFO_WAIT = new Map(), INFO_FAIL = new Set();
-const needInfo = it => canInfo(it) && !INFO_FAIL.has(infoKey(it)) && !(it.info && it.info.at && PLOT[infoKey(it)]);
+/* спросить базу, если подробностей нет или в этом браузере нет описания и вариантов кадра (кэш до «Другого кадра» — без них) */
+const needInfo = it => { if (!canInfo(it)) return false; const k = infoKey(it), p = PLOT[k]; return !INFO_FAIL.has(k) && !(it.info && it.info.at && p && p.bgs); };
 const bgUrl = (bg, size) => !bg ? '' : /^https?:/.test(bg) ? bg : TMDB_IMG + (size || 'w1280') + bg;
 const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 const fmtRuntime = m => m < 60 ? m + ' мин' : Math.floor(m / 60) + ' ч' + (m % 60 ? ' ' + (m % 60) + ' мин' : '');
@@ -2851,18 +2861,24 @@ const fmtVotes = n => n >= 1e6 ? String(Math.round(n / 1e5) / 10).replace('.', '
 
 async function tmdbInfo(ref) {
   const [kind, id] = ref.split('/');
-  const d = await retry(() => tmdb('/' + kind + '/' + id, { append_to_response: 'credits,external_ids' }, null, null, 10000));
+  // include_image_language=null — только кадры без надписей
+  const d = await retry(() => tmdb('/' + kind + '/' + id, { append_to_response: 'credits,external_ids,images', include_image_language: 'null' }, null, null, 10000));
   const cr = d.credits || {};
   const dir = kind === 'movie' ? (cr.crew || []).filter(c => c.job === 'Director').map(c => c.name) : (d.created_by || []).map(c => c.name);
   const rt = kind === 'movie' ? d.runtime : (d.episode_run_time || [])[0] || (d.last_episode_to_air || {}).runtime;
-  const info = { bg: d.backdrop_path || '', g: (d.genres || []).map(x => x.name).filter(Boolean).slice(0, 3), at: today() };
+  // варианты кадра: чистые, с оценками зрителей TMDB — первыми; главный кадр TMDB (бывает с надписью) — только если чистых нет
+  const bgs = ((d.images || {}).backdrops || []).filter(b => b.file_path && !b.iso_639_1)
+    .sort((a, b) => ((b.vote_count > 0) - (a.vote_count > 0)) || (b.vote_average || 0) - (a.vote_average || 0) || (b.vote_count || 0) - (a.vote_count || 0) || (b.width || 0) - (a.width || 0))
+    .map(b => b.file_path).slice(0, 8);
+  if (!bgs.length && d.backdrop_path) bgs.push(d.backdrop_path);
+  const info = { bg: bgs[0] || '', g: (d.genres || []).map(x => x.name).filter(Boolean).slice(0, 3), at: today() };
   if (rt) info.rt = rt;
   if (dir.length) info.dir = dir.slice(0, 2).join(', ');
   if (kind === 'tv' && d.number_of_seasons) info.ns = d.number_of_seasons;
   let ov = String(d.overview || '').trim(), en = false;
   // русского описания нет: берём английское
   if (!ov) { try { ov = String((await tmdb('/' + kind + '/' + id, { language: 'en-US' }, null, null, 8000)).overview || '').trim(); en = !!ov; } catch (e) {} }
-  return { info, plot: { ov, tg: String(d.tagline || '').trim(), cast: (cr.cast || []).slice(0, 4).map(c => c.name), en }, imdb: d.imdb_id || (d.external_ids || {}).imdb_id || '' };
+  return { info, plot: { ov, tg: String(d.tagline || '').trim(), cast: (cr.cast || []).slice(0, 4).map(c => c.name), en, bgs }, imdb: d.imdb_id || (d.external_ids || {}).imdb_id || '' };
 }
 /* Shikimori не любит частых запросов: не чаще раза в 220 мс */
 let shikiNext = 0;
@@ -2878,12 +2894,12 @@ async function shikiInfo(mal) {
     catch (e) { if (e.code !== 'http') throw e; }
   }
   if (!a) return null;
-  const shot = ((a.screenshots || [])[0] || {}).originalUrl || '';
-  const info = { bg: !shot ? '' : /^https?:/.test(shot) ? shot : SHIKI + shot, g: (a.genres || []).map(x => x.russian).filter(Boolean).slice(0, 3), at: today() };
+  const bgs = (a.screenshots || []).map(s => s && s.originalUrl).filter(Boolean).map(s => /^https?:/.test(s) ? s : SHIKI + s).slice(0, 8);
+  const info = { bg: bgs[0] || '', g: (a.genres || []).map(x => x.russian).filter(Boolean).slice(0, 3), at: today() };
   if (a.duration) info.rt = a.duration;
   if (a.episodes > 1) info.ne = a.episodes;
   if ((a.studios || []).length) info.dir = a.studios.map(s => s.name).slice(0, 2).join(', ');
-  return { info, plot: { ov: shikiText(a.description), tg: '', cast: [] } };
+  return { info, plot: { ov: shikiText(a.description), tg: '', cast: [], bgs } };
 }
 function loadInfo(it) {
   const key = infoKey(it);
@@ -2893,6 +2909,8 @@ function loadInfo(it) {
 /* переносит свежие подробности в запись; true — если что-то поменялось и запись надо сохранить */
 function applyInfo(it, r) {
   let ch = false;
+  // кадр, выбранный вручную кнопкой «Другой кадр», не перебиваем
+  if (it.info && it.info.bgPick && it.info.bg) Object.assign(r.info, { bg: it.info.bg, bgPick: 1 });
   const a = Object.assign({}, it.info), b = Object.assign({}, r.info); delete a.at; delete b.at;
   if (!it.info || !it.info.at || JSON.stringify(a) !== JSON.stringify(b)) { it.info = r.info; ch = true; }
   if (r.imdb && !it.imdb) { it.imdb = r.imdb; ch = true; }
@@ -2971,7 +2989,7 @@ async function ensureRatings(it) {
 function heroHTML(it) {
   const inf = it.info || {}, waiting = needInfo(it), bg = bgUrl(inf.bg, 'w1280');
   let h = '';
-  if (bg) h += '<div class="screen"><img src="' + esc(bg) + '" alt="" referrerpolicy="no-referrer" onload="this.parentNode.classList.add(\'ok\')" onerror="var s=this.parentNode;s.nextElementSibling.classList.remove(\'lifted\');s.remove()"></div>';
+  if (bg) h += '<div class="screen"><img src="' + esc(bg) + '" alt="" referrerpolicy="no-referrer" onload="this.parentNode.classList.add(\'ok\')" onerror="var s=this.parentNode;s.nextElementSibling.classList.remove(\'lifted\');s.remove()">' + shotBtnHTML(it) + '</div>';
   else if (waiting) h += '<div class="screen wait" aria-hidden="true"></div>';
   h += '<div class="d-head' + (bg || waiting ? ' lifted' : '') + '"><div><h2 class="d-title" id="dtitle" tabindex="-1">' + esc(it.title) + '</h2>' +
     (it.orig ? '<div class="d-orig">' + esc(it.orig) + '</div>' : '') + metaHTML(it) +
@@ -2980,6 +2998,29 @@ function heroHTML(it) {
       : canPickPoster(it) && UI.pp !== it.id ? '<button class="poster poster-ph" data-act="poster-find">' + I('search') + '<span>Найти постер</span></button>' : '') + '</div>';
   if (UI.pp === it.id) h += posterPickHTML(it);
   return h + plotHTML(it, PLOT[infoKey(it)], waiting) + worldHTML(it);
+}
+/* «Другой кадр»: варианты лежат в кэше описаний; пока их нет (старый кэш), кнопка всё равно видна и сначала узнаёт их */
+function shotBtnHTML(it) {
+  if (!canInfo(it)) return '';
+  const p = PLOT[infoKey(it)], list = p && p.bgs, i = list ? list.indexOf(it.info.bg) : -1;
+  if (list && list.length < 2) return '';
+  return '<button class="shot-next" data-act="shot-next" title="Показать другой кадр из этого тайтла">' + I('repeat') + 'Другой кадр' + (i >= 0 ? ' <span>' + (i + 1) + '/' + list.length + '</span>' : '') + '</button>';
+}
+async function nextShot(it, btn) {
+  const key = infoKey(it);
+  if (!PLOT[key] || !PLOT[key].bgs) {
+    try { const r = await loadInfo(it); if (r) { PLOT[key] = r.plot; plotSave(); } } catch (e) {}
+  }
+  const list = (PLOT[key] && PLOT[key].bgs) || [];
+  if (list.length < 2) { toast('Других кадров у этого тайтла нет'); if (UI.open === it.id) repaintHero(it); return; }
+  const next = list[(list.indexOf(it.info && it.info.bg) + 1) % list.length];
+  if (btn) btn.classList.add('busy');
+  // сначала загружаем, потом меняем: кадр сменяется плавно, без чёрной паузы
+  await new Promise(res => { const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = im.onerror = res; im.src = bgUrl(next, 'w1280'); });
+  const x = S.byId.get(it.id); if (!x) return;
+  x.info = Object.assign({}, x.info, { bg: next, bgPick: 1 });
+  Store.touch(x, true);
+  repaintHero(x);
 }
 function metaHTML(it) {
   const inf = it.info || {}, bits = [];
@@ -3830,6 +3871,7 @@ const ACT = {
   'omdb-off-no'() { UI.omdbOff = false; renderMain(); },
   'omdb-off-yes'() { delete S.cfg.omdb; UI.omdbOff = false; saveCfg(); renderMain(); toast('OMDb отключён'); },
   'plot-more'() { const it = cur(); if (!it) return; UI.plotOpen = UI.plotOpen === it.id ? null : it.id; repaintHero(it); },
+  'shot-next'(el) { const it = cur(); if (it && !el.classList.contains('busy')) nextShot(it, el); },
   'en-start'() { enStart(); },
   'en-pause'() { if (EN.st !== 'run') return; EN.st = 'pause'; enRender(); },
   'en-resume'() { if (EN.st !== 'pause') return; EN.st = 'run'; EN.msg = ''; EN.fails = 0; enRender(); enLoop(); },

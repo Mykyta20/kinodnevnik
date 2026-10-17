@@ -42,7 +42,7 @@ const SH = {};
 const fold = s => String(s || '').toLowerCase().replace(/ё/g, 'е');
 let shikiDown = false, shikiCalls = 0, shikiOldSchema = false;
 const SHD = {
-  '40748': { description: '[character=164471]Юдзи Итадори[/character] — школьник с невероятной физической силой. Однажды он съедает палец [character=164470]Рёмена Сукуны[/character], и его жизнь меняется навсегда.', genres: [{ russian: 'Сёнэн' }, { russian: 'Экшен' }, { russian: 'Сверхъестественное' }, { russian: 'Школа' }], studios: [{ name: 'MAPPA' }], duration: 24, episodes: 24, screenshots: [{ originalUrl: 'https://shikimori.io/system/screenshots/original/jjk1.jpg' }] },
+  '40748': { description: '[character=164471]Юдзи Итадори[/character] — школьник с невероятной физической силой. Однажды он съедает палец [character=164470]Рёмена Сукуны[/character], и его жизнь меняется навсегда.', genres: [{ russian: 'Сёнэн' }, { russian: 'Экшен' }, { russian: 'Сверхъестественное' }, { russian: 'Школа' }], studios: [{ name: 'MAPPA' }], duration: 24, episodes: 24, screenshots: ['jjk1', 'jjk2', 'jjk3'].map(n => ({ originalUrl: 'https://shikimori.io/system/screenshots/original/' + n + '.jpg' })) },
   '20': { description: 'История о юном [[ниндзя]] Наруто Узумаки, который мечтает стать хокаге.', genres: [{ russian: 'Сёнэн' }, { russian: 'Экшен' }], studios: [{ name: 'Studio Pierrot' }], duration: 23, episodes: 220, screenshots: [] }
 };
 function shikiAnswer(body) {
@@ -114,6 +114,13 @@ Object.assign(TD, {
 /* подробности для карточки-афиши: кадр, описание, жанры, длительность, режиссёр, актёры */
 Object.assign(TD['movie/438631'], { title: 'Дюна', backdrop_path: '/dune-bg.jpg', overview: 'Наследник знаменитого дома Атрейдесов Пол отправляется вместе с семьёй на одну из самых опасных планет во Вселенной — Арракис.', tagline: 'Начало', genres: [{ id: 878, name: 'фантастика' }, { id: 12, name: 'приключения' }], runtime: 155,
   credits: { crew: [{ job: 'Producer', name: 'Мэри Пэрент' }, { job: 'Director', name: 'Дени Вильнёв' }], cast: ['Тимоти Шаламе', 'Ребекка Фергюсон', 'Оскар Айзек', 'Джош Бролин', 'Стеллан Скарсгард'].map(name => ({ name })) }, external_ids: { imdb_id: 'tt1160419' } });
+/* кадры «Дюны»: два чистых с голосами, один чистый без голосов, один с русской надписью (его быть не должно) */
+TD['movie/438631'].images = { backdrops: [
+  { file_path: '/dune-low.jpg', iso_639_1: null, vote_average: 0, vote_count: 0, width: 1920 },
+  { file_path: '/dune-ru.jpg', iso_639_1: 'ru', vote_average: 5.9, vote_count: 9, width: 3840 },
+  { file_path: '/dune-b.jpg', iso_639_1: null, vote_average: 5.3, vote_count: 3, width: 3840 },
+  { file_path: '/dune-a.jpg', iso_639_1: null, vote_average: 5.6, vote_count: 6, width: 3840 }
+] };
 Object.assign(TD['tv/42009'], { backdrop_path: '/bm-bg.jpg', overview: 'Антология о тёмной стороне технологий и о том, что они делают с людьми.', genres: [{ name: 'драма' }, { name: 'НФ и Фэнтези' }], episode_run_time: [60], created_by: [{ name: 'Чарли Брукер' }], credits: { cast: [{ name: 'Брайс Даллас Ховард' }] } });
 Object.assign(TD['movie/354912'], { backdrop_path: '/coco-bg.jpg', overview: '', en: 'Despite his family’s baffling generations-old ban on music, Miguel dreams of becoming an accomplished musician.', genres: [{ name: 'мультфильм' }, { name: 'семейный' }], runtime: 105,
   credits: { crew: [{ job: 'Director', name: 'Ли Анкрич' }, { job: 'Director', name: 'Эдриан Молина' }], cast: [{ name: 'Энтони Гонсалес' }] } });

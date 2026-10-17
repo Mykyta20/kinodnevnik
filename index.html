@@ -769,6 +769,8 @@ const Store = {
       } catch (e) { throw new Error('нет связи с таблицей'); }
       let j; try { j = await r.json(); } catch (e) { throw new Error('таблица ответила странно (' + r.status + ')'); }
       if (!j.ok) throw new Error(j.error || 'ошибка таблицы');
+      // Google иногда отвечает «пустышкой», как на простое открытие ссылки: это не успех, запрос надо повторить
+      if (typeof j.data !== 'string') throw new Error('Google ответил без данных');
       return j.data;
     }
     return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](arg));
@@ -2441,10 +2443,20 @@ async function boot() {
   if (!isGoogle() && !LS.get(KEY_REMOTE, null) && !S.seed.items.length && !(LS.get(KEY_ITEMS, null) || []).length) { connectScreen(); return; }
   if (isGoogle() || LS.get(KEY_REMOTE, null)) {
     $('#app').innerHTML = '<div class="loading"><div class="brand"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span class="brand-name">Кинодневник</span></div><p>Загружаю записи из Google-таблицы…</p></div>';
-    let items;
-    try { items = await Store.load(); }
-    catch (e) {
-      $('#app').innerHTML = '<div class="loading"><div class="h2">Не получилось открыть таблицу</div><p class="muted">' + esc(e && e.message || 'Проверь интернет и обнови страницу.') + '</p></div>';
+    let items, err;
+    // Google-таблица иногда отвечает с перебоями: пробуем трижды, прежде чем сдаться
+    for (let attempt = 0; attempt < 3 && !items; attempt++) {
+      try { items = await Store.load(); }
+      catch (e) {
+        err = e;
+        if (attempt < 2) {
+          const p = $('#app .loading p'); if (p) p.textContent = 'Google-таблица отвечает с перебоями, пробую ещё раз…';
+          await new Promise(r => setTimeout(r, 2500 * (attempt + 1)));
+        }
+      }
+    }
+    if (!items) {
+      $('#app').innerHTML = '<div class="loading"><div class="h2">Не получилось открыть таблицу</div><p class="muted">' + esc(err && err.message || 'Проверь интернет и обнови страницу.') + '. Записи никуда не делись, это перебои на стороне Google.</p><div class="row-acts" style="justify-content:center"><button class="btn primary" onclick="location.reload()">Попробовать снова</button></div></div>';
       return;
     }
     S.items = items.map(norm).filter(Boolean); reindex();

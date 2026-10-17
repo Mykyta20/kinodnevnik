@@ -86,6 +86,26 @@ const done = page => page.waitForSelector('#posters .ps-sum', { timeout: 30000 }
   ok(!row(sheet, 'x2').noimg && !row(sheet, 'x6').noimg, 'пропущенные вернулись в подбор');
   ok(/Без постера: 2 из 10/.test(await page.locator('#posters').innerText()) && await page.locator('[data-act="ps-start"]').count() === 1, 'можно подобрать снова для оставшихся');
 
+  // ===== строки списков: у каждого тайтла маленький постер
+  await page.goto(H.SITE + '#film');
+  await page.waitForSelector('.row');
+  ok(/\/w92\/dune21\.jpg$/.test(await page.locator('.row[data-id="fe5160313"] .pic img').getAttribute('src')), 'в списке фильмов у «Дюны» маленький постер (w92)');
+  await page.waitForFunction(() => { const i = document.querySelector('.row[data-id="fe5160313"] .pic img'); return i && i.complete && i.naturalWidth > 0; });
+  const brat = page.locator('.row[data-id="x2"] .pic');
+  ok(await brat.locator('img').count() === 0 && (await brat.innerText()).trim() === 'Б', 'без постера — заглушка с первой буквой названия');
+  const rowBox = await page.locator('.row[data-id="x4"]').boundingBox(), picBox = await page.locator('.row[data-id="x4"] .pic').boundingBox();
+  ok(picBox.width === 40 && Math.round(picBox.height) === 60 && rowBox.height <= 84, 'обложка 40×60, строка без вердикта осталась компактной (' + Math.round(rowBox.height) + ' пикс.)');
+  await wait(300);
+  await E.shot('49-list-posters');
+  await page.goto(H.SITE + '#anime');
+  await page.waitForSelector('.row');
+  ok(await page.locator('.row .pic img[src*="myanimelist"]').count() === 2, 'аниме показывают свои постеры с MyAnimeList');
+  await page.goto(H.SITE + '#home');
+  await page.waitForSelector('.hero');
+  ok(await page.locator('.section .row .pic img').count() >= 4, 'в «Обзоре» у недавних тоже постеры');
+  await page.click('#nav a[data-v="data"]');
+  await page.waitForSelector('#posters');
+
   // ===== карточка тайтла: подсветка цветом постера, «Найти постер», «Сменить постер», «Убрать постер»
   await page.goto(H.SITE + '#film/i/fe5160313');
   await page.waitForSelector('#drawer.on .poster');
@@ -230,6 +250,12 @@ const done = page => page.waitForSelector('#posters .ps-sum', { timeout: 30000 }
   const sw = await E.page.evaluate(() => document.documentElement.scrollWidth);
   ok(sw <= 390, 'на телефоне нет горизонтальной прокрутки (' + sw + ')');
   await E.shot('46-mobile-posters');
+  await E.page.goto(H.SITE + '#film');
+  await E.page.waitForSelector('.row .pic img');
+  const msw = await E.page.evaluate(() => [document.documentElement.scrollWidth, document.querySelector('.row .pic').getBoundingClientRect().width]);
+  ok(msw[0] <= 390 && msw[1] === 36, 'список с постерами на телефоне: без прокрутки вбок, обложка 36 пикс. (' + msw.join(', ') + ')');
+  await wait(300);
+  await E.shot('50-mobile-list');
   await E.browser.close();
 
   E = await H.setup({ sheet: new H.Sheet(posterItems()), scheme: 'light' });
@@ -240,6 +266,11 @@ const done = page => page.waitForSelector('#posters .ps-sum', { timeout: 30000 }
   await done(E.page);
   await E.page.locator('#ps-cards').scrollIntoViewIfNeeded();
   await E.shot('47-light-posters');
+  await E.page.goto(H.SITE + '#home');
+  await E.page.waitForSelector('.section .row .pic img');
+  await E.page.locator('.section .row').first().scrollIntoViewIfNeeded();
+  await wait(400);
+  await E.shot('51-light-home');
   await E.page.goto(H.SITE + '#film/i/fe5160313');
   await E.page.waitForSelector('#drawer.on .poster');
   await wait(900);

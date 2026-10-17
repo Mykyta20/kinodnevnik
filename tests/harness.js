@@ -196,6 +196,8 @@ async function setup(opts = {}) {
   const browser = opts.browser || await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' }).catch(() => chromium.launch());
   const context = await browser.newContext({ viewport: opts.viewport || { width: 1280, height: 860 }, deviceScaleFactor: opts.dpr || 1, colorScheme: opts.scheme || 'dark', isMobile: !!opts.mobile, hasTouch: !!opts.mobile, locale: 'ru-RU' });
   const sheet = opts.sheet || new Sheet(seedItems());
+  // «замороженная» дата для проверок, зависящих от сегодняшнего дня (цель на год, итоги)
+  if (opts.now) await context.clock.setFixedTime(new Date(opts.now));
   const errors = [];
   await context.route('**/*', async route => {
     const req = route.request(), u = new URL(req.url());

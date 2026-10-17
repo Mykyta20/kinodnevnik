@@ -185,6 +185,34 @@ h1,h2,h3{margin:0;font-weight:700}
 .meter{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;margin-top:12px;max-width:420px;box-shadow:inset 0 0 0 1px var(--rule)}
 .meter i{display:block;height:100%;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 60%,transparent),var(--accent));border-radius:3px;box-shadow:0 0 10px var(--lamp-glow)}
 .banner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:var(--surface);border:1px dashed var(--rule2);margin-top:16px;font-size:14px}
+/* цель на год: кольцо прогресса */
+.goal{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 24px;align-items:center;margin-top:28px;padding:18px 22px;border-radius:14px;border:1px solid var(--rule);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--accent) 7%,var(--surface)),var(--surface) 55%)}
+.goal-ring{position:relative;display:grid;place-items:center;align-content:center;width:100px;height:100px;text-align:center}
+.goal-ring svg{position:absolute;inset:0}
+.goal-ring b{position:relative;font-family:var(--display);font-size:28px;line-height:1;font-variant-numeric:lining-nums tabular-nums}
+.goal-ring small{position:relative;margin-top:3px;font-size:12px;color:var(--muted)}
+.ring{transform:rotate(-90deg);overflow:visible}
+.ring circle{fill:none}
+.ring-t{stroke:var(--rule)}
+.ring-v{stroke:var(--accent);stroke-linecap:round;filter:drop-shadow(0 0 5px var(--lamp-glow))}
+.ring-v.grow{animation:ringIn 1.2s cubic-bezier(.2,.8,.2,1)}
+@keyframes ringIn{from{stroke-dashoffset:var(--full)}}
+.goal.done .ring-v{stroke:var(--ok);filter:drop-shadow(0 0 7px color-mix(in srgb,var(--ok) 70%,transparent))}
+.goal h3{font-family:var(--display);font-size:20px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+.goal p{margin:5px 0 0;font-size:14px;color:var(--muted)}
+.goal .pace{color:var(--ink)}
+.goal .pace.up{color:var(--ok)}
+.goal .pace.down{color:var(--accent-text)}
+.goal-sub{display:inline-flex;align-items:center;gap:9px;margin-top:10px;font-size:13.5px;color:var(--muted)}
+.goal-sub b{color:var(--ink);font-weight:600}
+.goal-ask{border-style:dashed;background:var(--surface)}
+.goal-ask .goal-ic{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px dashed var(--rule2);color:var(--accent-text)}
+.goal-ask .goal-ic svg{width:22px;height:22px}
+.goal .row-acts{margin:0}
+.goal-form{grid-template-columns:minmax(0,1fr) auto;align-items:end}
+.goal-f{display:grid;gap:10px;max-width:440px}
+.goal-f .field .input{max-width:180px}
 
 /* ---------- списки ---------- */
 .toolbar{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
@@ -614,6 +642,11 @@ code{font-size:.92em;padding:1px 5px;border-radius:5px;background:var(--raise);b
   .tile .v{font-size:27px}
   .cols2{grid-template-columns:1fr}
   .nudge{grid-template-columns:1fr;padding:18px 20px}
+  .goal{grid-template-columns:auto minmax(0,1fr);padding:16px 18px;gap:12px 16px}
+  .goal>.row-acts,.goal>.goal-edit{grid-column:1/-1}
+  .goal-form{grid-template-columns:1fr}
+  .goal-ring{width:84px;height:84px}
+  .goal-ring b{font-size:23px}
   .nudge .acts{padding-left:0;border-left:0;padding-top:14px;border-top:1px dashed var(--rule2)}
   .d-body{padding:6px 16px 40px}
   .d-top{padding-left:16px}
@@ -1229,9 +1262,10 @@ function viewHome() {
     '<div class="legend">' + GROUP_ORDER.map(g => '<a href="#' + g + '" data-act="go" data-v="' + g + '"><i style="background:var(--c-' + g + ')"></i>' + esc(GROUPS[g].name) + ' <b>' + byG[g] + '</b></a>').join('') + '</div>' +
     '</section>';
   h += banners();
+  h += goalHTML();
   const pct = seen.length ? Math.round(rated / seen.length * 100) : 0;
   h += '<div class="nudge"><div><div class="h2">Оценено ' + rated + ' из ' + seen.length + '</div>' +
-    '<p>' + (rated === 0 ? 'Начни с последних просмотров: они свежее в памяти. Можно по одному в день.' : rated < seen.length ? 'Продолжай понемногу. Кнопка «Следующий без оценки» в карточке ведёт дальше по списку.' : 'Все тайтлы оценены. Красота!') + '</p>' +
+    '<p>' + (rated === 0 ? 'Начни с последних просмотров: они свежее в памяти. Можно по одному в день.' : rated < seen.length ? 'Быстрее всего — в режиме «Быстро оценить»: тайтлы по одному, оценка одной цифрой.' : 'Все тайтлы оценены. Красота!') + '</p>' +
     '<div class="meter" aria-hidden="true"><i style="width:' + pct + '%"></i></div></div>' +
     '<div class="acts">' + (rated < seen.length ? '<button class="btn primary" data-act="rate-open">' + I('star') + 'Быстро оценить</button><button class="btn" data-act="random-unrated">' + I('dice') + 'Случайный</button>' : '') + '</div></div>';
   if (watching.length) {
@@ -1256,6 +1290,68 @@ function banners() {
     }
   }
   return h;
+}
+
+/* ---- цель на год: S.cfg.goals = { '2026': { n: 80, de: 10 } } ---- */
+const isGerman = d => /нем|deutsch|german/i.test(String(d || ''));
+/* просмотры за год, как в ленте: у тайтлов с сезонами — даты сезонов */
+function yearViews(y) {
+  let n = 0, de = 0;
+  const add = (dates, dub) => (dates || []).forEach(d => { if (d.startsWith(y)) { n++; if (isGerman(dub)) de++; } });
+  S.items.forEach(it => { if (isMulti(it)) it.parts.forEach(p => add(p.dates, p.dub || it.dub)); else add(it.dates, it.dub); });
+  return { n, de };
+}
+function ringSVG(val, max, size, stroke) {
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, p = Math.min(1, max ? val / max : 0), m = size / 2;
+  // кольцо наполняется плавно только при первом показе, а не при каждой перерисовке «Обзора»
+  const grow = !UI.ringShown;
+  return '<svg class="ring" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true"><circle class="ring-t" cx="' + m + '" cy="' + m + '" r="' + r + '" stroke-width="' + stroke + '"/>' +
+    '<circle class="ring-v' + (grow ? ' grow' : '') + '" cx="' + m + '" cy="' + m + '" r="' + r + '" stroke-width="' + stroke + '" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + (c * (1 - p)).toFixed(1) + '" style="--full:' + c.toFixed(1) + '"/></svg>';
+}
+/* force — показать приглашение, даже если на «Обзоре» его скрыли (для «Статистики») */
+function goalHTML(force) {
+  const y = String(new Date().getFullYear()), g = (S.cfg.goals || {})[y];
+  if (UI.goalEdit) return goalFormHTML(y, g);
+  const views = n => n + ' ' + plural(n, ['просмотр', 'просмотра', 'просмотров']);
+  if (!g) {
+    if (S.cfg.goalHide === y && !force) return '';
+    const last = yearViews(String(+y - 1)).n;
+    return '<div class="goal goal-ask"><span class="goal-ic">' + I('star') + '</span><div><h3>Поставь цель на ' + y + ' год</h3>' +
+      '<p>Сколько хочешь посмотреть до конца года? Кольцо покажет, успеваешь ли.' + (last ? ' В ' + (+y - 1) + ' году ' + (last % 10 === 1 && last % 100 !== 11 ? 'был ' : 'было ') + views(last) + '.' : '') + '</p></div>' +
+      '<div class="row-acts"><button class="btn primary small" data-act="goal-edit">Поставить цель</button>' + (force ? '' : '<button class="btn ghost small" data-act="goal-hide">Не сейчас</button>') + '</div></div>';
+  }
+  const v = yearViews(y), now = Date.now(), t0 = new Date(+y, 0, 1).getTime(), t1 = new Date(+y + 1, 0, 1).getTime();
+  const plan = g.n * Math.min(1, Math.max(0, (now - t0) / (t1 - t0))), diff = Math.round(v.n - plan), left = Math.max(0, g.n - v.n);
+  const weeks = Math.max(1, (t1 - now) / 6048e5), perWeek = left / weeks, done = v.n >= g.n;
+  let tempo;
+  if (done) tempo = '<p class="pace up">Цель выполнена! Всё, что дальше, — сверх плана.</p>';
+  else {
+    const k = Math.max(2, Math.round(1 / perWeek));
+    tempo = '<p>Осталось ' + left + ' — это ' + (perWeek >= 1.25 ? 'примерно ' + String(Math.round(perWeek * 10) / 10).replace('.', ',') + ' в неделю' : perWeek >= .8 ? 'примерно раз в неделю' : 'один просмотр в ' + k + ' ' + plural(k, ['неделю', 'недели', 'недель'])) + ' до конца года.</p>' +
+      (diff > 0 ? '<p class="pace up">Ты опережаешь план на ' + diff + '.</p>' : diff < 0 ? '<p class="pace down">Отстаёшь от плана на ' + (-diff) + ': пара хороших вечеров, и догонишь.</p>' : '<p class="pace">Идёшь точно по плану.</p>');
+  }
+  const de = g.de ? '<div class="goal-sub">' + ringSVG(v.de, g.de, 30, 4) + '<span>На немецком: <b>' + v.de + '</b> из ' + g.de + (v.de >= g.de ? ' — выполнено' : '') + '</span></div>' : '';
+  const h = '<div class="goal' + (done ? ' done' : '') + '"><div class="goal-ring">' + ringSVG(v.n, g.n, 100, 8) + '<b>' + v.n + '</b><small>из ' + g.n + '</small></div>' +
+    '<div><h3>Цель на ' + y + ' год: ' + views(g.n) + '</h3>' + tempo + de + '</div>' +
+    '<button class="btn ghost small goal-edit" data-act="goal-edit" title="Изменить цель">Изменить</button></div>';
+  UI.ringShown = true;
+  return h;
+}
+function goalFormHTML(y, g) {
+  const last = yearViews(String(+y - 1)).n, sug = g ? g.n : Math.max(12, Math.ceil((last || 45) * 1.1 / 5) * 5);
+  return '<form class="goal goal-form" id="goalform" autocomplete="off"><div class="goal-f"><h3>Цель на ' + y + ' год</h3>' +
+    '<label class="field"><span>Сколько просмотров за год' + (last ? ' (в ' + (+y - 1) + ' было ' + last + ')' : '') + '</span><input class="input" name="n" type="number" min="1" max="3000" value="' + sug + '" required></label>' +
+    '<label class="check"><input type="checkbox" name="deOn"' + (g && g.de ? ' checked' : '') + '> Ещё отдельная цель: сколько из них на немецком</label>' +
+    '<label class="field" id="goal-de"' + (g && g.de ? '' : ' hidden') + '><span>На немецком</span><input class="input" name="de" type="number" min="1" max="3000" value="' + (g && g.de ? g.de : 10) + '"><small class="hint">Считаются тайтлы, где в поле «Озвучка» написано «немецкая» или «Deutsch».</small></label></div>' +
+    '<div class="row-acts"><button class="btn primary small" type="submit">Сохранить</button><button class="btn ghost small" type="button" data-act="goal-cancel">Отмена</button>' +
+    (g ? '<button class="btn ghost small danger" type="button" data-act="goal-del">Убрать цель</button>' : '') + '</div></form>';
+}
+function saveGoal(form) {
+  const f = new FormData(form), y = String(new Date().getFullYear());
+  const n = Math.min(3000, Math.max(1, parseInt(f.get('n'), 10) || 0)), de = f.get('deOn') ? Math.min(3000, Math.max(1, parseInt(f.get('de'), 10) || 0)) : 0;
+  S.cfg.goals = Object.assign({}, S.cfg.goals, { [y]: de ? { n, de } : { n } });
+  saveCfg(); UI.goalEdit = false; UI.ringShown = false; renderMain();
+  toast('Цель на ' + y + ' год: ' + n + ' ' + plural(n, ['просмотр', 'просмотра', 'просмотров']));
 }
 
 /* ---- лента-штрихкод ---- */
@@ -1407,6 +1503,7 @@ function viewStats() {
   let h = '<div class="page-head"><div><h1 class="h1">Статистика</h1><p class="lead">Считается по датам просмотров и по твоим оценкам.</p></div></div>';
   h += '<div class="stat-grid">' +
     tile(ev.length, 'просмотров всего') + tile(seen.length, 'тайтлов в дневнике') + tile(rated.length, 'с твоей оценкой') + tile(avg ? avg.toFixed(1).replace('.', ',') : '–', 'средняя оценка') + '</div>';
+  h += goalHTML(true);
   h += '<section class="section"><div class="panel"><div class="section-head"><h2 class="h2">Просмотры по годам</h2></div>' +
     '<div class="legend" style="margin-top:0">' + GROUP_ORDER.map(g => '<span style="display:inline-flex;align-items:center;gap:8px;color:var(--muted)"><i style="background:var(--c-' + g + ')"></i>' + GROUPS[g].name + '</span>').join('') + '</div>' +
     '<div class="ybars">' + ys.map(y => '<div class="ybar"><span class="num">' + y + '</span><span class="track">' +
@@ -3296,6 +3393,10 @@ const ACT = {
     S.items.forEach(it => { if (it.noimg && POSTER_CATS.includes(it.cat)) { delete it.noimg; Store.touch(it, true); n++; } });
     psRender(); toast('Вернул в подбор: ' + n);
   },
+  'goal-edit'() { UI.goalEdit = true; renderMain(); const n = $('#goalform input[name=n]'); if (n) { n.focus(); n.select(); } },
+  'goal-cancel'() { UI.goalEdit = false; renderMain(); },
+  'goal-hide'() { S.cfg.goalHide = String(new Date().getFullYear()); saveCfg(); renderMain(); toast('Хорошо. Цель можно поставить позже в «Статистике»'); },
+  'goal-del'() { const y = String(new Date().getFullYear()); const g = Object.assign({}, S.cfg.goals); delete g[y]; S.cfg.goals = g; S.cfg.goalHide = y; saveCfg(); UI.goalEdit = false; renderMain(); toast('Цель убрана'); },
   'rate-open'(el, e) { if (e) e.preventDefault(); openQR(); },
   'qr-close'() { closeQR(); },
   'qr-filter'(el) { if (QR.busy) return; QR.filter = el.dataset.v; QR.front = null; qrNext('in'); },
@@ -3371,6 +3472,7 @@ document.addEventListener('submit', e => {
   if (e.target.id === 'addform') { e.preventDefault(); submitAdd(e.target); }
   else if (e.target.id === 'tmdbform') { e.preventDefault(); saveTmdbKey(e.target); }
   else if (e.target.id === 'omdbform') { e.preventDefault(); saveOmdbKey(e.target); }
+  else if (e.target.id === 'goalform') { e.preventDefault(); saveGoal(e.target); }
   else if (e.target.classList.contains('pc-q')) { e.preventDefault(); psSearch(e.target); }
 });
 document.addEventListener('change', e => {
@@ -3407,6 +3509,7 @@ document.addEventListener('change', e => {
   else if (act === 'part-rate' && it) { const p = findPart(it, t.dataset.pid); if (p) { p.rating = +t.value || null; Store.touch(it); renderDrawer(); renderMain(); } }
 });
 document.addEventListener('change', e => {
+  if (e.target.name === 'deOn' && e.target.form && e.target.form.id === 'goalform') { const de = $('#goal-de'); if (de) de.hidden = !e.target.checked; return; }
   if (e.target.id !== 'ap-kind') return;
   const it = cur(); if (!it) return;
   const k = e.target.value, lab = $('#ap-label'), tt = $('#ap-title');

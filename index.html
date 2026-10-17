@@ -2841,12 +2841,15 @@ const KEY_PLOT = 'kinodnevnik:plot';
 /* описание, слоган и актёры живут в браузере, чтобы не раздувать таблицу; в записи — только короткое it.info */
 const PLOT = (() => { const t = LS.get(KEY_PLOT, null); return t && typeof t === 'object' && !Array.isArray(t) ? t : {}; })();
 let plotT = null;
-function plotSave() {
+/* описание хранится, пока тайтл в дневнике (у владельца их около 500 — помещаются все); свежие — в конец */
+function plotPut(key, plot) {
+  delete PLOT[key]; PLOT[key] = plot;
   clearTimeout(plotT);
   plotT = setTimeout(() => {
-    const k = Object.keys(PLOT); k.slice(0, Math.max(0, k.length - 400)).forEach(x => delete PLOT[x]);
+    const keep = new Set(S.items.map(infoKey));
+    Object.keys(PLOT).forEach(x => { if (!keep.has(x)) delete PLOT[x]; });
     // место в браузере кончилось: оставляем свежую половину
-    if (!LS.set(KEY_PLOT, PLOT)) { Object.keys(PLOT).slice(0, 200).forEach(x => delete PLOT[x]); LS.set(KEY_PLOT, PLOT); }
+    if (!LS.set(KEY_PLOT, PLOT)) { const k = Object.keys(PLOT); k.slice(0, k.length >> 1).forEach(x => delete PLOT[x]); LS.set(KEY_PLOT, PLOT); }
   }, 700);
 }
 const infoKey = it => it.tmdb ? 'tmdb:' + it.tmdb : it.mal ? 'mal:' + it.mal : '';
@@ -2923,7 +2926,7 @@ async function ensureInfo(it) {
   try { r = await loadInfo(it); } catch (e) { r = null; }
   const x = S.byId.get(it.id);
   if (!r) { INFO_FAIL.add(key); if (x) { repaintHero(x); qrRefresh(x); } return; }
-  PLOT[key] = r.plot; plotSave();
+  plotPut(key, r.plot);
   if (!x) return;
   if (applyInfo(x, r)) Store.touch(x, true);
   repaintHero(x); qrRefresh(x);
@@ -3009,7 +3012,7 @@ function shotBtnHTML(it) {
 async function nextShot(it, btn) {
   const key = infoKey(it);
   if (!PLOT[key] || !PLOT[key].bgs) {
-    try { const r = await loadInfo(it); if (r) { PLOT[key] = r.plot; plotSave(); } } catch (e) {}
+    try { const r = await loadInfo(it); if (r) plotPut(key, r.plot); } catch (e) {}
   }
   const list = (PLOT[key] && PLOT[key].bgs) || [];
   if (list.length < 2) { toast('Других кадров у этого тайтла нет'); if (UI.open === it.id) repaintHero(it); return; }
@@ -3159,7 +3162,7 @@ async function enLoop() {
         if (needInfo(it)) {
           const r = await loadInfo(it);
           it = S.byId.get(id) || it;
-          if (r) { PLOT[infoKey(it)] = r.plot; plotSave(); if (applyInfo(it, r)) Store.touch(it, true); EN.info++; }
+          if (r) { plotPut(infoKey(it), r.plot); if (applyInfo(it, r)) Store.touch(it, true); EN.info++; }
           else INFO_FAIL.add(infoKey(it));
         }
         if (needRatings(it)) {

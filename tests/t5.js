@@ -200,6 +200,29 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   await E.shot('64-omdb-done');
   await E.browser.close();
 
+  // ===== у владельца около 500 тайтлов: описания всех остаются в браузере, «Обновить всё сразу» не крутится по кругу
+  const many = items().concat(Array.from({ length: 450 }, (_, i) => ({ id: 'm' + i, cat: 'film', title: 'Фильм ' + i, orig: 'Film ' + i, year: String(2000 + i % 20), status: 'done', dates: ['2020-01-01'], tmdb: 'movie/' + (500000 + i), img: tm('/f' + i + '.jpg') })));
+  E = await H.setup({ sheet: new H.Sheet(many), tmdbDelay: 5 });
+  // описание тайтла, которого в дневнике уже нет: должно выпасть
+  await E.context.addInitScript(() => { try { if (!localStorage.getItem('kinodnevnik:plot')) localStorage.setItem('kinodnevnik:plot', JSON.stringify({ 'tmdb:movie/1': { ov: 'Удалённый', tg: '', cast: [], bgs: [] } })); } catch (e) {} });
+  await E.page.goto(H.SITE + '#data');
+  await E.page.waitForSelector('#en-box [data-act="en-start"]');
+  await E.page.click('[data-act="en-start"]');
+  await E.page.waitForSelector('#en-box .ps-sum', { timeout: 60000 });
+  ok(/Описаний добавлено: 456/.test(await txt(E.page, '#en-box .ps-sum')), 'описания для всех 456 тайтлов');
+  await wait(1600);
+  const kept = await E.page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('kinodnevnik:plot') || '{}')));
+  ok(kept.length === 456 && kept.includes('tmdb:movie/438631') && !kept.includes('tmdb:movie/1'), 'в браузере описания всех 456, включая самое раннее, а удалённого тайтла — нет (' + kept.length + ')');
+  await E.page.reload();
+  await E.page.waitForSelector('#en-box');
+  ok(await E.page.locator('#en-box [data-act="en-start"]').count() === 0, 'после перезагрузки обновлять нечего: кнопка не возвращается');
+  const before = H.tmdbCalls().length;
+  await E.page.goto(H.SITE + '#film/i/fe5160313');
+  await E.page.waitForSelector('#drawer.on .screen.ok');
+  await wait(600);
+  ok(!H.tmdbCalls().slice(before).some(c => c.includes('/movie/438631')), 'карточка «Дюны» берёт описание из браузера, без нового запроса');
+  await E.browser.close();
+
   // ===== OMDb: кончился лимит и неверный ключ
   E = await H.setup({ sheet: new H.Sheet(items({ omdb: H.OMDB_KEY })) });
   H.setOmdbMode('limit');

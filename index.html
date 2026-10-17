@@ -500,6 +500,59 @@ details>summary::marker{color:var(--accent-text)}
 .wr-note{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;margin:12px 0 0;font-size:13.5px;color:var(--muted)}
 .wr-note .btn{margin-left:-6px}
 
+/* ---------- быстро оценить: по одному тайтлу, как на большом экране ---------- */
+.qr{position:fixed;inset:0;z-index:65;display:none;flex-direction:column;overflow:auto;overscroll-behavior:contain;background:var(--bg);outline:none;transition:--tint .7s ease}
+.qr.on{display:flex}
+.qr-bg{position:fixed;inset:-60px;z-index:0;pointer-events:none;background:radial-gradient(900px 560px at 26% 22%,color-mix(in srgb,var(--tint) 20%,transparent),transparent 70%)}
+.qr-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(40px) saturate(1.25);opacity:0;transition:opacity .9s ease}
+.qr-bg img.ok{opacity:.3}
+:root[data-theme="light"] .qr-bg img.ok{opacity:.2}
+@media (prefers-color-scheme:light){:root:not([data-theme]) .qr-bg img.ok{opacity:.2}}
+.qr-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(110% 85% at 50% 32%,transparent 35%,var(--bg) 90%)}
+.qr-top{position:relative;z-index:1;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding:calc(14px + env(safe-area-inset-top)) 28px 6px}
+.qr-top .btn{margin-left:-8px}
+.qr-top .h2{margin-right:4px}
+.qr-left{margin-left:auto;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qr-left b{color:var(--ink);font-weight:600}
+.qr-stage{position:relative;z-index:1;flex:1;display:grid;place-items:center;padding:14px 28px}
+.qr-card{display:grid;grid-template-columns:268px minmax(0,1fr);grid-template-areas:'poster head' 'poster more';column-gap:40px;align-items:start;align-content:center;width:min(980px,100%)}
+.qr-card.in{animation:qrIn .44s cubic-bezier(.2,.8,.2,1)}
+.qr-card.back{animation:qrBack .44s cubic-bezier(.2,.8,.2,1)}
+.qr-card.out{animation:qrOut .19s ease forwards}
+.qr-card.out-r{animation:qrOutR .19s ease forwards}
+@keyframes qrOutR{to{opacity:0;transform:translateX(60px) scale(.985)}}
+@keyframes qrIn{from{opacity:0;transform:translateX(52px)}}
+@keyframes qrBack{from{opacity:0;transform:translateX(-52px)}}
+@keyframes qrOut{to{opacity:0;transform:translateX(-60px) scale(.985)}}
+.qr-poster{grid-area:poster;position:relative;display:grid;place-items:center;width:100%;aspect-ratio:2/3;border-radius:14px;overflow:hidden;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--c) 40%,var(--sunk)),var(--sunk) 80%);box-shadow:0 0 0 1px var(--rule),0 34px 90px -30px color-mix(in srgb,var(--tint) 85%,transparent);
+  font-family:var(--display);font-size:76px;font-weight:700;color:color-mix(in srgb,var(--c) 55%,var(--ink))}
+.qr-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.qr-head{grid-area:head;align-self:end;min-width:0}
+.qr-more{grid-area:more;min-width:0}
+.qr-head .crumb{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.qr-t{margin-top:8px;font-family:var(--display);font-size:44px;line-height:1.06;letter-spacing:-.024em;font-weight:700;overflow-wrap:anywhere;outline:none}
+.qr-o{margin-top:6px;color:var(--muted);font-size:15px}
+.qr-seen{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:5px 12px 5px 9px;border-radius:999px;border:1px solid var(--rule2);background:color-mix(in srgb,var(--surface) 70%,transparent);font-size:13.5px}
+.qr-more .plot.clip .ov{-webkit-line-clamp:5}
+.qr-sc{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:13px;color:var(--muted)}
+.qr-sc b{margin-left:5px;font-family:var(--display);font-size:15px;color:var(--ink)}
+.qr-dock{position:relative;z-index:1;width:min(980px,calc(100% - 56px));margin:0 auto;padding:6px 0 calc(22px + env(safe-area-inset-bottom))}
+.qr .stars button{height:62px;font-size:22px;border-radius:12px}
+.qr-word{display:flex;align-items:baseline;justify-content:center;min-height:30px;margin-top:10px;font-family:var(--display);font-weight:700;font-size:20px;color:var(--accent-text)}
+.qr-word span{font-family:var(--font);font-weight:400;font-size:14.5px;color:var(--faint)}
+.qr-acts{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:6px}
+.qr-verdict{max-width:540px;margin:12px auto 0}
+.qr-verdict .input{text-align:center;background:color-mix(in srgb,var(--field) 80%,transparent)}
+.qr-keys{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--faint)}
+.qr-card.qr-end{grid-template-columns:minmax(0,1fr);grid-template-areas:none;justify-items:center;row-gap:12px;width:min(600px,100%);text-align:center}
+.qr-end .crumb{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.qr-end .big{font-family:var(--display);font-size:72px;line-height:1;font-weight:700;letter-spacing:-.03em;font-style:italic;color:var(--accent-text);text-shadow:0 0 40px var(--lamp-soft)}
+.qr-end p{margin:0}
+.qr .stars button.on{animation:none}
+.qr .stars button.flash{animation:qrFlash .5s ease}
+@keyframes qrFlash{0%{filter:brightness(1.6)}100%{filter:none}}
+
 /* ---------- статистика ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .tile{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;overflow:hidden}
@@ -580,6 +633,18 @@ code{font-size:.92em;padding:1px 5px;border-radius:5px;background:var(--raise);b
   .keyform{grid-template-columns:1fr}
   .pvar{width:96px}
   .pcard{padding:12px}
+  .qr-top{padding:calc(10px + env(safe-area-inset-top)) 14px 4px}
+  .qr-top .chips{order:3;width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .qr-stage{padding:8px 16px;place-items:start center}
+  .qr-card{grid-template-columns:112px minmax(0,1fr);grid-template-areas:'poster head' 'more more';column-gap:16px;row-gap:14px}
+  .qr-poster{font-size:42px;border-radius:10px}
+  .qr-head{align-self:center}
+  .qr-t{font-size:26px}
+  .qr-seen{font-size:12.5px}
+  .qr-dock{width:calc(100% - 32px)}
+  .qr .stars{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .qr .stars button{height:52px;font-size:19px}
+  .qr-end .big{font-size:54px}
   .kv{grid-template-columns:120px 1fr}
   .row{padding:9px 12px 9px 10px;gap:12px}
   .pic{width:36px;font-size:16px}
@@ -1001,6 +1066,8 @@ function closeItem() {
   renderDrawer(); renderMain(); renderNav();
 }
 window.addEventListener('hashchange', () => {
+  if (location.hash === '#rate') { if (!QR.open) openQR(); return; }
+  if (QR.open) closeQR(true);
   const r = parseHash();
   if (r.v !== UI.view && r.v !== 'search') { UI.view = r.v; UI.sub = 'all'; UI.status = 'all'; UI.extra = ''; renderMain(); renderNav(); }
   if ((r.id || null) !== UI.open) {
@@ -1013,15 +1080,16 @@ function onRoute() {}
 
 /* ================= Отрисовка: каркас ================= */
 function navCounts() {
-  const c = { film: 0, series: 0, cartoon: 0, anime: 0, watchlist: 0 };
+  const c = { film: 0, series: 0, cartoon: 0, anime: 0, watchlist: 0, rate: 0 };
   S.items.forEach(it => {
     c[groupOf(it)]++;
     if (inWatchlist(it)) c.watchlist++;
+    if (qrWants(it)) c.rate++;
   });
   return c;
 }
 const inWatchlist = it => it.status === 'planned' || (isMulti(it) && it.parts.some(p => p.status === 'planned'));
-const NAV = [['home', 'Обзор'], ['film', 'Фильмы'], ['series', 'Сериалы'], ['cartoon', 'Мультфильмы'], ['anime', 'Аниме'], ['sep'], ['watchlist', 'Хочу посмотреть'], ['stats', 'Статистика'], ['data', 'Данные и синхронизация']];
+const NAV = [['home', 'Обзор'], ['film', 'Фильмы'], ['series', 'Сериалы'], ['cartoon', 'Мультфильмы'], ['anime', 'Аниме'], ['sep'], ['watchlist', 'Хочу посмотреть'], ['rate', 'Быстро оценить'], ['stats', 'Статистика'], ['data', 'Данные и синхронизация']];
 
 function renderShell() {
   $('#app').innerHTML =
@@ -1047,6 +1115,7 @@ function renderShell() {
     '<div class="scrim" id="scrim" data-act="close"></div>' +
     '<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Карточка тайтла"></aside>' +
     '<div class="modal" id="modal" role="dialog" aria-modal="true"></div>' +
+    '<div class="qr" id="qr" role="dialog" aria-modal="true" aria-label="Быстро оценить" tabindex="-1"></div>' +
     '<div class="tip" id="tip" role="status"></div>' +
     '<div class="toast" id="toast" role="status" aria-live="polite"></div>' +
     '<input type="file" id="file" accept=".json,application/json" hidden>';
@@ -1061,12 +1130,14 @@ function renderNav() {
   const c = navCounts();
   const cur = UI.view === 'search' ? '' : UI.view;
   const color = { film: 'var(--c-film)', series: 'var(--c-series)', cartoon: 'var(--c-cartoon)', anime: 'var(--c-anime)' };
+  // «Быстро оценить» — не раздел, а режим поверх дневника
+  const act = v => v === 'rate' ? 'data-act="rate-open"' : 'data-act="go" data-v="' + v + '"';
   $('#nav').innerHTML = NAV.map(([v, name]) => v === 'sep' ? '<div class="nav-sep"></div>' :
-    '<a href="#' + v + '" data-act="go" data-v="' + v + '"' + (cur === v ? ' aria-current="page"' : '') + '>' +
+    '<a href="#' + v + '" ' + act(v) + (cur === v ? ' aria-current="page"' : '') + '>' +
       (color[v] ? '<span class="dot" style="background:' + color[v] + '"></span>' : '') + esc(name) +
       (c[v] != null ? '<span class="n">' + c[v] + '</span>' : '') + '</a>').join('');
   $('#tabs').innerHTML = NAV.filter(n => n[0] !== 'sep').map(([v, name]) =>
-    '<a href="#' + v + '" data-act="go" data-v="' + v + '"' + (cur === v ? ' aria-current="page"' : '') + '>' + esc(v === 'data' ? 'Данные' : name) + '</a>').join('');
+    '<a href="#' + v + '" ' + act(v) + (cur === v ? ' aria-current="page"' : '') + '>' + esc(v === 'data' ? 'Данные' : v === 'rate' ? 'Оценить' : name) + '</a>').join('');
   const cu = $('#tabs [aria-current]'); if (cu && cu.scrollIntoView) { try { cu.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }
   $('#sidefoot').innerHTML = Store.mode === 'google'
     ? 'Записи хранятся в твоей Google-таблице и видны на всех устройствах.'
@@ -1162,7 +1233,7 @@ function viewHome() {
   h += '<div class="nudge"><div><div class="h2">Оценено ' + rated + ' из ' + seen.length + '</div>' +
     '<p>' + (rated === 0 ? 'Начни с последних просмотров: они свежее в памяти. Можно по одному в день.' : rated < seen.length ? 'Продолжай понемногу. Кнопка «Следующий без оценки» в карточке ведёт дальше по списку.' : 'Все тайтлы оценены. Красота!') + '</p>' +
     '<div class="meter" aria-hidden="true"><i style="width:' + pct + '%"></i></div></div>' +
-    '<div class="acts">' + (rated < seen.length ? '<button class="btn primary" data-act="next-unrated">' + I('star') + 'Оценить последнее</button><button class="btn" data-act="random-unrated">' + I('dice') + 'Случайный</button>' : '') + '</div></div>';
+    '<div class="acts">' + (rated < seen.length ? '<button class="btn primary" data-act="rate-open">' + I('star') + 'Быстро оценить</button><button class="btn" data-act="random-unrated">' + I('dice') + 'Случайный</button>' : '') + '</div></div>';
   if (watching.length) {
     h += '<section class="section"><div class="section-head"><h2 class="h2">Сейчас смотрю</h2><span class="faint num">' + watching.length + '</span></div><div class="list">' + watching.map(it => rowHTML(it, { showCat: true })).join('') + '</div></section>';
   }
@@ -2519,14 +2590,15 @@ function posterTint(url) {
   p.then(() => TINT_WAIT.delete(url));
   return p;
 }
-function paintTint(d, it) {
+/* still — показывается ли тайтл до сих пор (по умолчанию: открыт в карточке) */
+function paintTint(d, it, still) {
   const base = 'var(--c-' + groupOf(it) + ')', url = it.img;
   const known = url ? TINT.c[url] : '';
   d.style.setProperty('--tint', known || base);
   d.dataset.tint = known || '';
   if (!url || url in TINT.c) return;
   posterTint(url).then(c => {
-    if (!c || UI.open !== it.id || it.img !== url) return;
+    if (!c || !(still ? still() : UI.open === it.id) || it.img !== url) return;
     d.style.setProperty('--tint', c); d.dataset.tint = c;
   });
 }
@@ -2610,11 +2682,11 @@ async function ensureInfo(it) {
   let r = null;
   try { r = await loadInfo(it); } catch (e) { r = null; }
   const x = S.byId.get(it.id);
-  if (!r) { INFO_FAIL.add(key); if (x) repaintHero(x); return; }
+  if (!r) { INFO_FAIL.add(key); if (x) { repaintHero(x); qrRefresh(x); } return; }
   PLOT[key] = r.plot; plotSave();
   if (!x) return;
   if (applyInfo(x, r)) Store.touch(x, true);
-  repaintHero(x);
+  repaintHero(x); qrRefresh(x);
   ensureRatings(x);
 }
 
@@ -2665,7 +2737,7 @@ async function ensureRatings(it) {
     OMDB_WAIT.delete(ref);
     const x = S.byId.get(it.id);
     if (x) {
-      repaintHero(x);
+      repaintHero(x); qrRefresh(x);
       // поле «IMDb, вручную» прячется, когда оценка пришла сама; пока в блоке что-то печатают, не трогаем
       const lb = UI.open === x.id && $('#d-links');
       if (lb && !lb.contains(document.activeElement)) lb.innerHTML = extHTML(x);
@@ -2872,6 +2944,183 @@ function enInner() {
   }
   return h;
 }
+/* ================= Быстро оценить ================= */
+/* в очереди — всё просмотренное без оценки, кроме брошенного; свежие просмотры первыми */
+const qrWants = it => !it.rating && it.status !== 'planned' && it.status !== 'dropped';
+const QR = { open: false, filter: 'all', skip: new Set(), hist: [], rated: 0, sum: 0, cur: null, front: null, pushed: false, busy: false, hover: false };
+const QR_ASK = '<span>Как тебе? Нажми цифру от 1 до 10</span>';
+const qrPool = f => S.items.filter(it => qrWants(it) && (f === 'all' || groupOf(it) === f));
+function qrQueue() {
+  const q = qrPool(QR.filter).filter(it => !QR.skip.has(it.id)).sort((a, b) => lastDate(b).localeCompare(lastDate(a)));
+  // после «Назад» возвращённый тайтл идёт первым
+  const i = QR.front ? q.findIndex(it => it.id === QR.front) : -1;
+  if (i > 0) q.unshift(q.splice(i, 1)[0]);
+  return q;
+}
+function openQR(filter) {
+  const box = $('#qr'); if (!box || !S.ready || QR.open) return;
+  closeModal();
+  if (UI.open) { UI.open = null; UI.pushed = false; renderDrawer(); markActiveRow(); setHash(UI.view, true); }
+  // из раздела — сразу его тайтлы, если там есть что оценивать
+  const f = filter || (GROUPS[UI.view] && qrPool(UI.view).length ? UI.view : 'all');
+  Object.assign(QR, { open: true, filter: f, skip: new Set(), hist: [], rated: 0, sum: 0, cur: null, front: null, busy: false, hover: false });
+  QR.pushed = location.hash !== '#rate';
+  if (QR.pushed) { try { history.pushState(null, '', '#rate'); } catch (e) {} }
+  document.body.style.overflow = 'hidden';
+  box.innerHTML = '<div class="qr-bg" aria-hidden="true"><img alt="" id="qr-bgimg"></div>' +
+    '<div class="qr-top"><button class="btn ghost" data-act="qr-close">' + I('back') + 'К дневнику</button><div class="h2">Быстро оценить</div>' +
+    '<div class="chips" id="qr-chips" role="group" aria-label="Что оценивать"></div><span class="qr-left" id="qr-left"></span></div>' +
+    '<div class="qr-stage" id="qr-stage"></div><div class="qr-dock" id="qr-dock"></div>';
+  box.classList.add('on');
+  qrNext('in');
+  try { box.focus({ preventScroll: true }); } catch (e) {}
+}
+function closeQR(fromHash) {
+  if (!QR.open) return;
+  QR.open = false; QR.cur = null;
+  const box = $('#qr'); box.classList.remove('on'); box.innerHTML = '';
+  document.body.style.overflow = '';
+  if (!fromHash) { if (QR.pushed) { try { history.back(); } catch (e) {} } else setHash(UI.view, true); }
+  QR.pushed = false;
+  renderNav(); renderMain();
+}
+function qrTop(left) {
+  const ch = $('#qr-chips');
+  if (ch) ch.innerHTML = [['all', 'Все']].concat(GROUP_ORDER.map(g => [g, GROUPS[g].name]))
+    .map(([g, n]) => [g, n, qrPool(g).filter(it => !QR.skip.has(it.id)).length]).filter(x => x[0] === 'all' || x[2] || QR.filter === x[0])
+    .map(([g, n, c]) => '<button class="chip" data-act="qr-filter" data-v="' + g + '" aria-pressed="' + (QR.filter === g) + '">' + esc(n) + '<span class="n">' + c + '</span></button>').join('');
+  const l = $('#qr-left');
+  if (l) l.innerHTML = QR.rated ? 'Оценено: <b>' + QR.rated + '</b> · осталось <b>' + left + '</b>' : 'Осталось <b>' + left + '</b>';
+}
+function qrPlotHTML(pl, waiting) {
+  if (!pl) return waiting ? '<div class="plot wait" aria-hidden="true"><i></i><i></i><i></i></div>' : '';
+  if (!pl.ov && !pl.tg) return '';
+  return '<div class="plot clip">' + (pl.tg ? '<p class="tg">«' + esc(pl.tg.replace(/^[«"“„]+|[»"”]+$/g, '')) + '»</p>' : '') + (pl.ov ? '<p class="ov">' + esc(pl.ov) + '</p>' : '') + '</div>';
+}
+function qrScores(it) {
+  const e = it.ext || {}, o = e.omdb || {}, b = [], imdb = imdbOf(it);
+  if (imdb) b.push('IMDb<b>' + fmtScore(imdb) + '</b>');
+  if (o.rt != null) b.push('Rotten Tomatoes<b>' + o.rt + '%</b>');
+  if (o.mc != null) b.push('Metacritic<b>' + o.mc + '</b>');
+  if (it.aod) b.push('Аниме-базы<b>' + fmtScore(it.aod) + '</b>'); else if (+e.shiki) b.push('Shikimori<b>' + fmtScore(e.shiki) + '</b>');
+  if (+e.tmdb) b.push('TMDB<b>' + fmtScore(e.tmdb) + '</b>');
+  return b.length ? '<div class="qr-sc">' + b.map(x => '<span>' + x + '</span>').join('') + '</div>' : '';
+}
+function qrHeadHTML(it) {
+  const n = it.dates.length;
+  const seen = !n ? 'Дата просмотра не записана' : n > 1 ? 'Смотрел ' + n + ' ' + plural(n, ['раз', 'раза', 'раз']) + ', последний — ' + fmtDate(lastDate(it)) : 'Смотрел ' + fmtDate(lastDate(it));
+  const parts = isMulti(it) ? ' · ' + partsSummary(it) : it.slabel && it.cat === 'anime' ? ' · ' + it.slabel : '';
+  return '<div class="crumb">' + esc(CATS[it.cat].one + (it.year ? ' · ' + it.year : '') + parts) + '</div>' +
+    '<h2 class="qr-t" id="qr-title" tabindex="-1">' + esc(it.title) + '</h2>' + (it.orig && fold(it.orig) !== fold(it.title) ? '<div class="qr-o">' + esc(it.orig) + '</div>' : '') + metaHTML(it) +
+    '<div class="qr-seen">' + I('cal') + esc(seen) + '</div>';
+}
+function qrCardHTML(it, anim) {
+  return '<div class="qr-card' + (anim ? ' ' + anim : '') + '" style="--c:var(--c-' + groupOf(it) + ')" data-id="' + esc(it.id) + '">' +
+    '<div class="qr-poster">' + esc((Array.from(it.title.trim())[0] || '').toUpperCase()) + (it.img ? '<img src="' + esc(smallPoster(it.img, 'w500')) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</div>' +
+    '<div class="qr-head">' + qrHeadHTML(it) + '</div><div class="qr-more">' + qrPlotHTML(PLOT[infoKey(it)], needInfo(it)) + qrScores(it) + '</div></div>';
+}
+function qrDockHTML(it) {
+  return '<div class="stars" role="group" aria-label="Оценка от 1 до 10">' + Array.from({ length: 10 }, (_, i) => i + 1).map(n => '<button data-act="qr-rate" data-v="' + n + '" title="' + n + ', ' + WORDS[n].toLowerCase() + '">' + n + '</button>').join('') + '</div>' +
+    '<div class="qr-word" id="qr-word" aria-live="polite">' + QR_ASK + '</div>' +
+    '<div class="qr-acts"><button class="btn ghost small" data-act="qr-back"' + (QR.hist.length ? '' : ' disabled') + ' title="Вернуть предыдущий (стрелка влево)">' + I('back') + 'Назад</button>' +
+      '<button class="btn small" data-act="qr-skip" title="Пропустить (стрелка вправо)">Не помню, пропустить' + I('next') + '</button>' +
+      (isMulti(it) ? '' : '<button class="btn ghost small" data-act="qr-drop" title="Отметить «Брошено» и убрать из очереди">' + I('x') + 'Не досмотрел</button>') +
+      '<button class="btn ghost small" data-act="qr-open">Открыть карточку</button></div>' +
+    '<div class="qr-verdict"><input class="input" id="qr-verdict" autocomplete="off" placeholder="Вердикт одной фразой — по желанию" aria-label="Вердикт одной фразой"></div>' +
+    '<p class="qr-keys only-desk"><kbd>1</kbd>–<kbd>9</kbd> и <kbd>0</kbd> — оценка · <kbd>→</kbd> пропустить · <kbd>←</kbd> назад · <kbd>Esc</kbd> выйти</p>';
+}
+function qrEndHTML() {
+  const rest = qrPool('all').filter(it => !QR.skip.has(it.id)).length;
+  const avg = QR.rated ? (QR.sum / QR.rated).toFixed(1).replace('.', ',') : '';
+  return '<div class="qr-end qr-card in"><div class="crumb">' + (QR.rated ? 'Сеанс окончен' : 'Здесь всё оценено') + '</div><div class="big">Конец</div>' +
+    '<p class="muted">' + (QR.rated ? 'За этот сеанс оценено ' + QR.rated + ' ' + plural(QR.rated, ['тайтл', 'тайтла', 'тайтлов']) + ', средняя оценка ' + avg + '.' : 'Тайтлов без оценки здесь не осталось.') +
+      (QR.skip.size ? ' Пропущено: ' + QR.skip.size + '.' : '') + '</p>' +
+    '<div class="row-acts" style="justify-content:center">' + (QR.filter !== 'all' && rest ? '<button class="btn" data-act="qr-filter" data-v="all">Оценить остальные разделы (' + rest + ')</button>' : '') +
+      (QR.skip.size ? '<button class="btn" data-act="qr-again">Вернуться к пропущенным</button>' : '') + '<button class="btn primary" data-act="qr-close">К дневнику</button></div></div>';
+}
+function qrNext(dir) {
+  const st = $('#qr-stage'), dk = $('#qr-dock'); if (!st || !QR.open) return;
+  const q = qrQueue(), it = q[0];
+  QR.cur = it ? it.id : null; QR.hover = false;
+  st.innerHTML = it ? qrCardHTML(it, dir) : qrEndHTML();
+  dk.innerHTML = it ? qrDockHTML(it) : '';
+  qrTop(q.length);
+  qrBackdrop(it);
+  if (!it) { $('#qr').style.setProperty('--tint', 'var(--accent)'); return; }
+  paintTint($('#qr'), it, () => QR.open && QR.cur === it.id);
+  ensureInfo(it); ensureRatings(it);
+  // следующие два — заранее, чтобы переход был мгновенным
+  q.slice(1, 3).forEach(n => { ensureInfo(n); qrPreload(n); });
+}
+function qrPreload(it) {
+  if (it.img) new Image().src = smallPoster(it.img, 'w500');
+  const bg = it.info && bgUrl(it.info.bg, 'w780'); if (bg) new Image().src = bg;
+}
+/* пришли подробности или оценки: дорисовываем текущую карточку, не перезапуская её появление */
+function qrRefresh(it) {
+  if (!QR.open) return;
+  if (QR.cur !== it.id) { if (qrQueue().slice(1, 3).some(n => n.id === it.id)) qrPreload(it); return; }
+  const c = $('.qr-card[data-id]'); if (!c || c.classList.contains('out')) return;
+  const hd = $('.qr-head', c), mr = $('.qr-more', c);
+  if (hd) hd.innerHTML = qrHeadHTML(it);
+  if (mr) mr.innerHTML = qrPlotHTML(PLOT[infoKey(it)], needInfo(it)) + qrScores(it);
+  qrBackdrop(it);
+}
+function qrBackdrop(it) {
+  const img = $('#qr-bgimg'); if (!img) return;
+  const url = it && it.info ? bgUrl(it.info.bg, 'w780') : '';
+  if (!url) { img.classList.remove('ok'); delete img.dataset.src; return; }
+  if (img.dataset.src === url) return;
+  img.dataset.src = url; img.classList.remove('ok');
+  img.onload = () => { if (img.dataset.src === url) img.classList.add('ok'); };
+  img.src = url;
+}
+/* уход карточки: влево — дальше по очереди, вправо — назад */
+function qrGo(dir, delay) {
+  QR.busy = true;
+  setTimeout(() => {
+    const c = $('#qr-stage .qr-card'); if (c) c.classList.add(dir === 'back' ? 'out-r' : 'out');
+    setTimeout(() => { QR.busy = false; qrNext(dir); }, 170);
+  }, delay || 0);
+}
+function qrRate(n) {
+  const it = QR.cur && S.byId.get(QR.cur); if (!it || QR.busy) return;
+  const inp = $('#qr-verdict'), v = inp ? inp.value.trim() : '';
+  QR.hist.push({ id: it.id, kind: 'rate', rating: it.rating || null, verdict: it.verdict, n });
+  it.rating = n; if (v) it.verdict = v;
+  Store.touch(it);
+  QR.rated++; QR.sum += n; QR.front = null;
+  const bs = $$('#qr .stars button');
+  bs.forEach((b, i) => { b.classList.toggle('lit', i < n - 1); b.classList.toggle('on', i === n - 1); });
+  if (bs[n - 1]) bs[n - 1].classList.add('flash');
+  const w = $('#qr-word'); if (w) w.textContent = WORDS[n];
+  qrGo('in', 230);
+}
+function qrSkip() {
+  const it = QR.cur && S.byId.get(QR.cur); if (!it || QR.busy) return;
+  QR.hist.push({ id: it.id, kind: 'skip' }); QR.skip.add(it.id); QR.front = null;
+  qrGo('in');
+}
+function qrDrop() {
+  const it = QR.cur && S.byId.get(QR.cur); if (!it || QR.busy || isMulti(it)) return;
+  QR.hist.push({ id: it.id, kind: 'drop', status: it.status });
+  it.status = 'dropped'; Store.touch(it); QR.front = null;
+  toast('«' + it.title + '» отмечен как брошенный');
+  qrGo('in');
+}
+function qrBack() {
+  if (QR.busy) return;
+  const h = QR.hist.pop(); if (!h) return;
+  const it = S.byId.get(h.id);
+  if (it) {
+    if (h.kind === 'skip') QR.skip.delete(h.id);
+    else if (h.kind === 'drop') { it.status = h.status; Store.touch(it); }
+    else { it.rating = h.rating; if (h.verdict) it.verdict = h.verdict; else delete it.verdict; Store.touch(it); QR.rated--; QR.sum -= h.n; }
+    QR.front = h.id;
+  }
+  qrGo('back');
+}
+
 function enRender() { const b = $('#en-box'); if (b) b.innerHTML = enInner(); }
 function enPaint() {
   const m = $('#en-meter'); if (!m) return;
@@ -3047,6 +3296,15 @@ const ACT = {
     S.items.forEach(it => { if (it.noimg && POSTER_CATS.includes(it.cat)) { delete it.noimg; Store.touch(it, true); n++; } });
     psRender(); toast('Вернул в подбор: ' + n);
   },
+  'rate-open'(el, e) { if (e) e.preventDefault(); openQR(); },
+  'qr-close'() { closeQR(); },
+  'qr-filter'(el) { if (QR.busy) return; QR.filter = el.dataset.v; QR.front = null; qrNext('in'); },
+  'qr-rate'(el) { qrRate(+el.dataset.v); },
+  'qr-skip'() { qrSkip(); },
+  'qr-drop'() { qrDrop(); },
+  'qr-back'() { qrBack(); },
+  'qr-again'() { QR.skip.clear(); qrNext('in'); },
+  'qr-open'() { const id = QR.cur; if (!id) return; closeQR(true); setHash(UI.view, true); openItem(id); },
   'go-omdb'() {
     closeModal(); if (UI.open) closeItem(); go('data');
     setTimeout(() => { const s = $('#omdb'); if (s) s.scrollIntoView({ block: 'start', behavior: 'smooth' }); const k = $('#omdb-key'); if (k) k.focus({ preventScroll: true }); }, 80);
@@ -3197,6 +3455,17 @@ function onSearch(v) {
 }
 document.addEventListener('keydown', e => {
   const ae = document.activeElement;
+  // «Быстро оценить»: цифры — оценка, стрелки — пропустить и назад, Esc — выйти
+  if (QR.open) {
+    const typing = ae && /INPUT|TEXTAREA/.test(ae.tagName);
+    if (e.key === 'Escape') { e.preventDefault(); if (typing && ae.value) ae.blur(); else closeQR(); return; }
+    if (typing) { if (e.key === 'Enter') { e.preventDefault(); ae.blur(); } return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); qrRate(e.key === '0' ? 10 : +e.key); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); qrSkip(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); qrBack(); }
+    return;
+  }
   if (ae && ae.id === 'add-q' && AD) {
     if (e.key === 'Escape' && ae.value) { e.preventDefault(); ae.value = ''; onAddInput(''); return; }
     addKey(e); if (e.defaultPrevented) return;
@@ -3217,6 +3486,13 @@ document.addEventListener('pointermove', e => {
   const tt = e.target.closest && e.target.closest('[data-tip]');
   if (tt && $('#tip')) { const tip = $('#tip'); tip.innerHTML = esc(tt.dataset.tip); tip.style.display = 'block'; tip.classList.remove('clickable'); tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY - tip.offsetHeight - 10) + 'px'; return; }
   const tp = $('#tip'); if (tp && tp.style.display === 'block' && !tp.classList.contains('clickable')) hideTip();
+});
+/* «Быстро оценить»: при наведении на лампочку видно слово — «Хорошо», «Шедевр» */
+document.addEventListener('pointerover', e => {
+  if (!QR.open || QR.busy || !e.target.closest) return;
+  const b = e.target.closest('#qr .stars button'), w = $('#qr-word'); if (!w) return;
+  if (b) { QR.hover = true; w.textContent = WORDS[+b.dataset.v]; }
+  else if (QR.hover) { QR.hover = false; w.innerHTML = QR_ASK; }
 });
 document.addEventListener('pointerdown', e => {
   const reel = e.target.closest && e.target.closest('#reel');
@@ -3276,6 +3552,7 @@ function boot2() {
   setSave('ok');
   renderNav(); renderMain();
   if (r.id && S.byId.has(r.id)) { UI.open = r.id; renderDrawer(); markActiveRow(); }
+  if (location.hash === '#rate') openQR();
 }
 function readConnect() {
   const m = location.hash.match(/connect=([A-Za-z0-9_\-]+)/);

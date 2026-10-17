@@ -194,6 +194,115 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   ok(ow[0] <= ow[1], 'на телефоне афиша без прокрутки вбок (' + ow.join(', ') + ')');
   await wait(600);
   await E.shot('66-afisha-mobile');
+  console.log(E.errors.length ? 'ОШИБКИ:\n' + E.errors.join('\n') : 'Ошибок в консоли нет (стенд с телефоном)');
+  await E.browser.close();
+
+  // ===== «Быстро оценить»
+  const qItems = () => items({ omdb: H.OMDB_KEY }).concat([
+    { id: 'q1', cat: 'film', title: 'Ловушка', orig: 'Trap', year: '2024', status: 'done', dates: ['2024-09-01'], tmdb: 'movie/917496', img: tm('/trap.jpg') },
+    { id: 'q2', cat: 'film', title: 'Брат', year: '1997', status: 'done', dates: ['2020-05-01'] },
+    { id: 'q3', cat: 'film', title: 'Бросил на середине', year: '2019', status: 'dropped', dates: ['2019-01-01'] }
+  ]);
+  E = await H.setup({ sheet: new H.Sheet(qItems()) });
+  const P = E.page, Q = E.sheet;
+  const qTitle = () => P.locator('#qr .qr-t').innerText();
+  const nextCard = async prev => { await P.waitForFunction(p => { const t = document.querySelector('#qr .qr-card:not(.out):not(.out-r) .qr-t'); return t && t.textContent !== p; }, prev, { timeout: 5000 }); await wait(80); };
+  await P.goto(H.SITE + '#home');
+  await P.waitForSelector('.hero');
+  ok(await P.locator('#nav a[data-act="rate-open"] .n').innerText() === '4', 'в меню «Быстро оценить» и число тайтлов без оценки (брошенные и планы не считаются)');
+  await P.click('.nudge [data-act="rate-open"]');
+  await P.waitForSelector('#qr.on .qr-card');
+  ok(await P.evaluate(() => location.hash) === '#rate', 'режим открылся поверх дневника (#rate)');
+  ok(await qTitle() === 'Наруто', 'первым — самый свежий просмотр');
+  ok(await P.locator('#qr [data-act="qr-drop"]').count() === 0, 'у аниме с сезонами нет «Не досмотрел»: статус считается из сезонов');
+  await P.hover('#qr .stars button[data-v="10"]');
+  ok(await P.locator('#qr-word').innerText() === 'Шедевр', 'наведение на лампочку подсказывает слово');
+  await P.mouse.move(5, 400);
+  await E.shot('67-qr');
+  await P.keyboard.press('8');
+  await nextCard('Наруто');
+  ok(await qTitle() === 'Ловушка', 'цифра 8 поставила оценку и открыла следующий');
+  await P.waitForSelector('#qr .screen, #qr .qr-poster img');
+  await P.fill('#qr-verdict', 'Неожиданно хорошо');
+  await P.click('#qr .stars button[data-v="7"]');
+  await nextCard('Ловушка');
+  await wait(1500);
+  ok(row(Q, 'a8b6a67ea').rating === 8 && row(Q, 'q1').rating === 7 && row(Q, 'q1').verdict === 'Неожиданно хорошо', 'оценки и вердикт сохранены в таблице');
+  ok(await qTitle() === 'Черное зеркало', 'дальше «Черное зеркало»');
+  await P.waitForSelector('#qr .qr-more .plot .ov');
+  ok(/тёмной стороне/.test(await P.locator('#qr .qr-more .ov').innerText()), 'в режиме видно описание — проще вспомнить');
+  await P.waitForSelector('#qr .qr-sc');
+  ok(/IMDb\s*8,7/.test(await P.locator('#qr .qr-sc').innerText()), 'и оценки мира для ориентира');
+  await wait(600);
+  await E.shot('68-qr-series');
+  await P.keyboard.press('ArrowRight');
+  await nextCard('Черное зеркало');
+  ok(await qTitle() === 'Брат', 'стрелка вправо — пропустить');
+  await P.keyboard.press('ArrowLeft');
+  await nextCard('Брат');
+  ok(await qTitle() === 'Черное зеркало', 'стрелка влево — вернуть пропущенный');
+  await P.keyboard.press('ArrowLeft');
+  await nextCard('Черное зеркало');
+  await wait(1500);
+  ok(await qTitle() === 'Ловушка' && !row(Q, 'q1').rating && !row(Q, 'q1').verdict, '«Назад» снимает поставленную оценку и вердикт');
+  await P.keyboard.press('9');
+  await nextCard('Ловушка');
+  await P.click('#qr [data-act="qr-drop"]');
+  await nextCard('Черное зеркало');
+  ok(await qTitle() === 'Брат', '«Не досмотрел» убирает из очереди');
+  await P.keyboard.press('0');
+  await P.waitForSelector('#qr .qr-end');
+  const end = (await P.locator('#qr .qr-end').innerText()).replace(/\s+/g, ' ');
+  console.log('  финал:', end);
+  ok(/Конец/.test(end) && /оценено 3 тайтла, средняя оценка 9,0/.test(end), 'финальный экран: 3 тайтла, средняя 9,0');
+  await E.shot('69-qr-end');
+  await wait(1500);
+  ok(row(Q, 'q1').rating === 9 && row(Q, 'q2').rating === 10 && row(Q, 'fe14667b3').status === 'dropped', 'цифра 0 — это 10; брошенный сохранён');
+  await P.click('#qr .qr-end [data-act="qr-close"]');
+  await P.waitForSelector('#qr.on', { state: 'detached' }).catch(() => {});
+  await wait(300);
+  ok(await P.locator('#qr.on').count() === 0 && await P.evaluate(() => location.hash) === '#home', 'выход возвращает на «Обзор»');
+  ok(await P.locator('#nav a[data-act="rate-open"] .n').innerText() === '0', 'в меню теперь 0 без оценки');
+  ok(/Оценено 7 из 9/.test(await P.locator('.nudge').innerText()), 'билет «Оценено» на главной обновился');
+  await E.browser.close();
+
+  // прямая ссылка, «Назад» в браузере, «Открыть карточку», раздел по умолчанию
+  E = await H.setup({ sheet: new H.Sheet(qItems()) });
+  await E.page.goto(H.SITE + '#rate');
+  await E.page.waitForSelector('#qr.on .qr-card');
+  ok(true, 'ссылка #rate сразу открывает режим');
+  await E.page.goBack();
+  await wait(300);
+  ok(await E.page.locator('#qr.on').count() === 0, 'кнопка «Назад» браузера закрывает режим');
+  await E.page.goto(H.SITE + '#film');
+  await E.page.waitForSelector('.row');
+  await E.page.click('#nav a[data-act="rate-open"]');
+  await E.page.waitForSelector('#qr.on .qr-card');
+  ok(await E.page.locator('#qr [data-act="qr-filter"][aria-pressed="true"]').innerText().then(t => /Фильмы/.test(t)) && await E.page.locator('#qr .qr-t').innerText() === 'Ловушка', 'из раздела «Фильмы» — сразу фильмы');
+  await E.page.click('#qr [data-act="qr-open"]');
+  await E.page.waitForSelector('#drawer.on');
+  ok(await E.page.locator('#qr.on').count() === 0 && await E.page.locator('#dtitle').innerText() === 'Ловушка', '«Открыть карточку» ведёт в полную карточку');
+  await E.browser.close();
+
+  // телефон и светлая тема
+  E = await H.setup({ sheet: new H.Sheet(qItems()), viewport: { width: 390, height: 844 }, dpr: 2, mobile: true });
+  await E.page.goto(H.SITE + '#home');
+  await E.page.waitForSelector('.hero');
+  await E.page.click('#tabs a[data-act="rate-open"]');
+  await E.page.waitForSelector('#qr.on .qr-card');
+  await wait(700);
+  const qw = await E.page.evaluate(() => { const q = document.querySelector('#qr'); return [q.scrollWidth, q.clientWidth]; });
+  ok(qw[0] <= qw[1], 'на телефоне режим без прокрутки вбок (' + qw.join(', ') + ')');
+  await E.shot('70-qr-mobile');
+  await E.browser.close();
+  E = await H.setup({ sheet: new H.Sheet(qItems()), scheme: 'light' });
+  await E.page.addInitScript(() => { try { localStorage.setItem('kinodnevnik:theme', '"light"'); } catch (e) {} });
+  await E.page.goto(H.SITE + '#series');
+  await E.page.waitForSelector('.row');
+  await E.page.click('#nav a[data-act="rate-open"]');
+  await E.page.waitForSelector('#qr.on .qr-more .plot .ov');
+  await wait(900);
+  await E.shot('71-qr-light');
   console.log(E.errors.length ? 'ОШИБКИ:\n' + E.errors.join('\n') : 'Ошибок в консоли нет (последний стенд)');
   await E.browser.close();
 })().catch(e => { console.error(e); process.exit(1); });

@@ -554,6 +554,59 @@ details>summary::marker{color:var(--accent-text)}
 .rcard.wait .rc-t{height:12px;width:80%;border-radius:6px;background:var(--sunk)}
 .recs-note{margin:0;font-size:14px;color:var(--muted)}
 
+/* ---------- итоги года: финальные титры (всегда тёмный зал) ---------- */
+.credits{position:fixed;inset:0;z-index:66;display:none;overflow:hidden;background:#080706;color:#EEE5D7;outline:none;--amber:#F0A640;--dim:rgba(238,229,215,.56)}
+.credits.on{display:block;animation:enter .5s ease}
+.cr-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(1100px 540px at 50% -170px,rgba(240,166,64,.17),transparent 70%)}
+.credits::after{content:'';position:absolute;inset:-50%;pointer-events:none;opacity:.07;mix-blend-mode:screen;animation:grain 1.2s steps(4) infinite;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .92 0 0 0 0 .8 0 0 0 1.1 -.25'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.cr-roll{position:absolute;left:0;right:0;top:0;padding:0 24px;text-align:center;will-change:transform}
+.cr-sec{max-width:780px;margin:0 auto;padding:10vh 0}
+.cr-open{padding-top:30vh}
+.cr-k{font-size:12px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--dim)}
+.cr-title{margin-top:18px;font-family:var(--display);font-size:clamp(48px,8vw,96px);font-style:italic;font-weight:700;line-height:1;letter-spacing:-.03em;color:#F6E7CF;text-shadow:0 0 54px rgba(240,166,64,.35)}
+.cr-sub{margin:16px auto 0;max-width:560px;font-size:16px;line-height:1.5;color:var(--dim)}
+.cr-sub b{color:#F3EADC;font-weight:600}
+.cr-big{display:flex;flex-wrap:wrap;justify-content:center;gap:26px 46px;margin-top:28px}
+.cr-big div b{display:block;font-family:var(--display);font-size:56px;line-height:1;color:var(--amber);font-variant-numeric:lining-nums tabular-nums;text-shadow:0 0 30px rgba(240,166,64,.3)}
+.cr-big div span{display:block;margin-top:8px;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.cr-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:end;height:120px;max-width:540px;margin:40px auto 0}
+.cr-months i{display:block;min-height:2px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--amber),rgba(240,166,64,.22));box-shadow:0 0 16px rgba(240,166,64,.28)}
+.cr-months i.peak{background:linear-gradient(180deg,#FFD58A,var(--amber))}
+.cr-mx{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;max-width:540px;margin:8px auto 0;font-size:11px;letter-spacing:.04em;color:rgba(238,229,215,.45)}
+.cr-posters{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin-top:30px}
+.cr-p{width:128px}
+.cr-p .img{position:relative;display:grid;place-items:center;aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:linear-gradient(160deg,#3a2c1e,#16120f);box-shadow:0 22px 44px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,236,210,.1);font-family:var(--display);font-size:40px;font-weight:700;color:rgba(240,166,64,.5)}
+.cr-p .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cr-p b{display:block;margin-top:10px;font-family:var(--display);font-size:15px;font-weight:700;line-height:1.2}
+.cr-p small{display:block;margin-top:2px;font-family:var(--display);font-size:15px;font-weight:700;color:var(--amber)}
+.cr-rows{display:grid;gap:14px;margin-top:30px}
+.cr-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:baseline}
+.cr-row .l{text-align:right;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.cr-row .r{text-align:left;font-family:var(--display);font-size:21px;line-height:1.3;color:#F3EADC;overflow-wrap:anywhere}
+.cr-row .r em{margin-left:4px;font-style:normal;font-size:16px;color:var(--amber);white-space:nowrap}
+.cr-list .cr-rows{gap:11px}
+.cr-list .cr-row .r{font-size:19px}
+.cr-end{display:grid;place-items:center;align-content:center;min-height:100vh;padding:0}
+.cr-end .cr-title{font-size:clamp(64px,11vw,130px)}
+.cr-end .row-acts{justify-content:center;margin-top:28px}
+.credits .btn{background:rgba(24,19,16,.72);border-color:rgba(255,236,210,.2);color:#EEE5D7}
+.credits .btn:hover{background:rgba(40,32,26,.9);border-color:rgba(255,236,210,.4)}
+.credits .btn.primary{background:var(--amber);border-color:var(--amber);color:#1A1208}
+.cr-ui{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;z-index:2;display:flex;gap:8px}
+.cr-hint{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));z-index:2;margin:0;text-align:center;font-size:12px;color:rgba(238,229,215,.38);pointer-events:none;animation:crHint 7s ease forwards}
+@keyframes crHint{0%,75%{opacity:1}100%{opacity:0}}
+.cr-cta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 20px}
+.cr-cta p{margin:6px 0 0;max-width:58ch}
+.cr-cta .chip svg.i{width:12px;height:12px}
+@media (max-width:860px){
+  .cr-row{gap:14px}
+  .cr-row .l{font-size:10.5px;letter-spacing:.14em}
+  .cr-row .r{font-size:17px}
+  .cr-big div b{font-size:42px}
+  .cr-p{width:100px}
+}
+
 /* ---------- быстро оценить: по одному тайтлу, как на большом экране ---------- */
 .qr{position:fixed;inset:0;z-index:65;display:none;flex-direction:column;overflow:auto;overscroll-behavior:contain;background:var(--bg);outline:none;transition:--tint .7s ease}
 .qr.on{display:flex}
@@ -1163,6 +1216,9 @@ function closeItem() {
   renderDrawer(); renderMain(); renderNav();
 }
 window.addEventListener('hashchange', () => {
+  const cm = /^#credits\/(\d{4})$/.exec(location.hash);
+  if (cm) { if (!CR.open) openCredits(cm[1]); return; }
+  if (CR.open) closeCredits(true);
   if (location.hash === '#rate') { if (!QR.open) openQR(); return; }
   if (QR.open) closeQR(true);
   const r = parseHash();
@@ -1327,6 +1383,7 @@ function viewHome() {
     '</section>';
   h += banners();
   h += goalHTML();
+  h += creditsCTA();
   const pct = seen.length ? Math.round(rated / seen.length * 100) : 0;
   h += '<div class="nudge"><div><div class="h2">Оценено ' + rated + ' из ' + seen.length + '</div>' +
     '<p>' + (rated === 0 ? 'Начни с последних просмотров: они свежее в памяти. Можно по одному в день.' : rated < seen.length ? 'Быстрее всего — в режиме «Быстро оценить»: тайтлы по одному, оценка одной цифрой.' : 'Все тайтлы оценены. Красота!') + '</p>' +
@@ -1569,6 +1626,7 @@ function viewStats() {
   h += '<div class="stat-grid">' +
     tile(ev.length, 'просмотров всего') + tile(seen.length, 'тайтлов в дневнике') + tile(rated.length, 'с твоей оценкой') + tile(avg ? avg.toFixed(1).replace('.', ',') : '–', 'средняя оценка') + '</div>';
   h += goalHTML(true);
+  h += creditsCTA(true);
   h += '<section class="section"><div class="panel"><div class="section-head"><h2 class="h2">Просмотры по годам</h2></div>' +
     '<div class="legend" style="margin-top:0">' + GROUP_ORDER.map(g => '<span style="display:inline-flex;align-items:center;gap:8px;color:var(--muted)"><i style="background:var(--c-' + g + ')"></i>' + GROUPS[g].name + '</span>').join('') + '</div>' +
     '<div class="ybars">' + ys.map(y => '<div class="ybar"><span class="num">' + y + '</span><span class="track">' +
@@ -3396,6 +3454,149 @@ async function recOpen(el) {
   renderAddForm();
 }
 
+/* ================= Итоги года: финальные титры ================= */
+const MONTHS_NOM = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+const BEST_LABEL = { film: 'Фильм года', series: 'Сериал года', cartoon: 'Мультфильм года', anime: 'Аниме года' };
+const CR = { open: false, y: '', pos: 0, max: 0, speed: 46, play: true, last: 0, raf: 0, idle: 0, pushed: false, ro: null };
+const yearsWithViews = () => Array.from(new Set(viewEvents().map(e => e.d.slice(0, 4)))).sort().reverse();
+const dayMonth = iso => +iso.slice(8, 10) + ' ' + MONTHS_GEN[+iso.slice(5, 7) - 1];
+function yearStats(y) {
+  const ev = viewEvents().filter(e => e.d.startsWith(y));
+  const byG = { film: 0, series: 0, cartoon: 0, anime: 0 }, months = Array(12).fill(0), seen = new Map();
+  ev.forEach(e => {
+    byG[e.g]++; months[+e.d.slice(5, 7) - 1]++;
+    const s = seen.get(e.it.id); if (s) s.n++; else seen.set(e.it.id, { it: e.it, n: 1, first: e.d, label: e.label });
+  });
+  const titles = Array.from(seen.values());
+  const top1 = (arr, min) => { const m = new Map(); arr.forEach(x => { if (x) m.set(x, (m.get(x) || 0) + 1); }); const t = Array.from(m.entries()).sort((a, b) => b[1] - a[1])[0]; return t && t[1] >= min ? t : null; };
+  const best = {};
+  GROUP_ORDER.forEach(g => { best[g] = titles.filter(t => groupOf(t.it) === g && t.it.rating).sort((a, b) => b.it.rating - a.it.rating || lastDate(b.it).localeCompare(lastDate(a.it)))[0] || null; });
+  const dubs = [];
+  S.items.forEach(it => {
+    if (isMulti(it)) it.parts.forEach(p => (p.dates || []).forEach(d => { if (d.startsWith(y)) dubs.push(String(p.dub || it.dub || '').trim()); }));
+    else it.dates.forEach(d => { if (d.startsWith(y)) dubs.push(String(it.dub || '').trim()); });
+  });
+  const rated = titles.filter(t => t.it.rating), mins = ev.filter(e => !isSeriesLike(e.it) && e.it.info && e.it.info.rt).map(e => e.it.info.rt);
+  return {
+    ev, byG, months, titles, best,
+    top: titles.filter(t => t.it.rating >= 8).sort((a, b) => b.it.rating - a.it.rating || (b.it.img ? 1 : 0) - (a.it.img ? 1 : 0) || a.first.localeCompare(b.first)).slice(0, 6),
+    genre: top1(titles.flatMap(t => ((t.it.info && t.it.info.g) || []).map(s => String(s).toLowerCase())), 3),
+    dir: top1(titles.filter(t => !isAnimeLike(t.it) && !isSeriesLike(t.it)).flatMap(t => t.it.info && t.it.info.dir ? t.it.info.dir.split(', ') : []), 2),
+    dub: top1(dubs, 2),
+    avg: rated.length ? rated.reduce((a, t) => a + t.it.rating, 0) / rated.length : 0,
+    rew: titles.filter(t => t.n > 1).sort((a, b) => b.n - a.n),
+    hours: mins.length >= 3 ? Math.round(mins.reduce((a, b) => a + b, 0) / 60) : 0,
+    peak: months.indexOf(Math.max(...months)),
+    dropped: titles.filter(t => t.it.status === 'dropped').length
+  };
+}
+function creditsHTML(y) {
+  const st = yearStats(y), n = st.ev.length, g = (S.cfg.goals || {})[y];
+  const big = (v, label) => '<div><b>' + v + '</b><span>' + label + '</span></div>';
+  const row = (l, r) => '<div class="cr-row"><div class="l">' + l + '</div><div class="r">' + r + '</div></div>';
+  const letter = it => esc((Array.from(it.title.trim())[0] || '').toUpperCase());
+  const first = st.ev[0], last = st.ev[n - 1], mx = Math.max(1, ...st.months);
+  let h = '<section class="cr-sec cr-open"><div class="cr-k">Кинодневник представляет</div><div class="cr-title">Итоги ' + y + ' года</div>' +
+    (first ? '<p class="cr-sub">с ' + dayMonth(first.d) + ' по ' + dayMonth(last.d) + '</p>' : '') + '</section>';
+  h += '<section class="cr-sec"><div class="cr-k">В этом году</div><div class="cr-big">' + big(n, plural(n, ['просмотр', 'просмотра', 'просмотров'])) +
+    GROUP_ORDER.filter(k => st.byG[k]).map(k => big(st.byG[k], GROUPS[k].name.toLowerCase())).join('') + '</div>' +
+    (st.hours ? '<p class="cr-sub">Одни только фильмы — это примерно <b>' + st.hours + ' ' + plural(st.hours, ['час', 'часа', 'часов']) + '</b> перед экраном.</p>' : '') +
+    '<div class="cr-months" aria-hidden="true">' + st.months.map((v, i) => '<i' + (i === st.peak ? ' class="peak"' : '') + ' style="height:' + (v / mx * 100).toFixed(1) + '%"></i>').join('') + '</div>' +
+    '<div class="cr-mx" aria-hidden="true">' + MONTHS.map(m => '<span>' + m + '</span>').join('') + '</div>' +
+    '<p class="cr-sub">Самый киношный месяц — <b>' + MONTHS_NOM[st.peak] + '</b>: ' + st.months[st.peak] + ' ' + plural(st.months[st.peak], ['просмотр', 'просмотра', 'просмотров']) + '.</p></section>';
+  if (st.top.length) h += '<section class="cr-sec"><div class="cr-k">В главных ролях</div><div class="cr-posters">' +
+    st.top.map(t => '<div class="cr-p"><span class="img">' + letter(t.it) + (t.it.img ? '<img src="' + esc(smallPoster(t.it.img, 'w342')) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</span><b>' + esc(t.it.title) + '</b><small>' + t.it.rating + '</small></div>').join('') + '</div></section>';
+  const bestRows = GROUP_ORDER.filter(k => st.best[k]).map(k => row(BEST_LABEL[k], esc(st.best[k].it.title) + ' <em>' + st.best[k].it.rating + '</em>'));
+  if (bestRows.length) h += '<section class="cr-sec"><div class="cr-k">Лучшее по моим оценкам</div><div class="cr-rows">' + bestRows.join('') + '</div></section>';
+  const facts = [];
+  if (st.genre) facts.push(row('Жанр года', esc(cap1(st.genre[0])) + ' <em>' + st.genre[1] + ' ' + plural(st.genre[1], ['тайтл', 'тайтла', 'тайтлов']) + '</em>'));
+  if (st.dir) facts.push(row('Режиссёр года', esc(st.dir[0]) + ' <em>' + st.dir[1] + ' ' + plural(st.dir[1], ['фильм', 'фильма', 'фильмов']) + '</em>'));
+  if (st.dub) facts.push(row('Озвучка года', esc(st.dub[0]) + ' <em>' + st.dub[1] + ' ' + plural(st.dub[1], ['раз', 'раза', 'раз']) + '</em>'));
+  if (st.rew.length) facts.push(row('Пересмотрено', st.rew.slice(0, 3).map(t => esc(t.it.title) + ' <em>' + t.n + ' ' + plural(t.n, ['раз', 'раза', 'раз']) + '</em>').join('<br>')));
+  if (first) facts.push(row('Первый сеанс', esc(first.label) + ' <em>' + dayMonth(first.d) + '</em>'));
+  if (last && n > 1) facts.push(row('Последний сеанс', esc(last.label) + ' <em>' + dayMonth(last.d) + '</em>'));
+  if (st.avg) facts.push(row('Средняя оценка', st.avg.toFixed(1).replace('.', ',')));
+  if (st.dropped) facts.push(row('Брошено', st.dropped + ' — бывает'));
+  if (g) facts.push(row('Цель года', n + ' из ' + g.n + (n >= g.n ? ' <em>выполнено</em>' : '')));
+  if (facts.length) h += '<section class="cr-sec"><div class="cr-k">Факты</div><div class="cr-rows">' + facts.join('') + '</div></section>';
+  h += '<section class="cr-sec cr-list"><div class="cr-k">В ролях — в порядке появления</div><div class="cr-rows">' +
+    st.titles.map(t => row(esc(CATS[t.it.cat].one) + ' · ' + dayMonth(t.first), esc(t.label) + (t.it.rating ? ' <em>' + t.it.rating + '</em>' : ''))).join('') + '</div></section>';
+  const years = yearsWithViews().filter(x => x !== y);
+  h += '<section class="cr-sec cr-end"><div><div class="cr-title">Конец</div><p class="cr-sub">' + (+y === new Date().getFullYear() ? 'Продолжение следует…' : 'Снято на Кинодневник') + '</p>' +
+    '<div class="row-acts"><button class="btn" data-act="cr-restart">' + I('repeat') + 'Сначала</button>' +
+    years.slice(0, 4).map(x => '<button class="btn" data-act="cr-year" data-y="' + x + '">Итоги ' + x + '</button>').join('') +
+    '<button class="btn primary" data-act="cr-close">К дневнику</button></div></div></section>';
+  return h;
+}
+function openCredits(y) {
+  if (!S.ready || CR.open || !y) return;
+  let box = $('#credits');
+  if (!box) { document.body.insertAdjacentHTML('beforeend', '<div class="credits" id="credits" role="dialog" aria-modal="true" aria-label="Итоги года" tabindex="-1"></div>'); box = $('#credits'); }
+  if (UI.open) { UI.open = null; UI.pushed = false; renderDrawer(); markActiveRow(); setHash(UI.view, true); }
+  CR.open = true;
+  CR.pushed = location.hash !== '#credits/' + y;
+  if (CR.pushed) { try { history.pushState(null, '', '#credits/' + y); } catch (e) {} }
+  document.body.style.overflow = 'hidden';
+  box.classList.add('on');
+  crShow(y);
+  try { box.focus({ preventScroll: true }); } catch (e) {}
+}
+function crShow(y) {
+  const box = $('#credits');
+  Object.assign(CR, { y, pos: 0, play: true, last: 0, idle: 0 });
+  box.innerHTML = '<div class="cr-glow" aria-hidden="true"></div><div class="cr-roll" id="cr-roll">' + creditsHTML(y) + '</div>' +
+    '<div class="cr-ui"><button class="btn small" data-act="cr-play" id="cr-play">' + I('pause') + 'Пауза</button><button class="btn icon small" data-act="cr-close" aria-label="Закрыть">' + I('close') + '</button></div>' +
+    '<p class="cr-hint only-desk">Пробел — пауза · колёсико или стрелки — листать · Esc — выйти</p>';
+  document.title = 'Итоги ' + y + ' — Кинодневник';
+  crMeasure();
+  if (CR.ro) CR.ro.disconnect();
+  if (window.ResizeObserver) { CR.ro = new ResizeObserver(crMeasure); CR.ro.observe($('#cr-roll')); }
+  cancelAnimationFrame(CR.raf); CR.raf = requestAnimationFrame(crStep);
+}
+function crMeasure() {
+  const r = $('#cr-roll'), box = $('#credits'); if (!r || !box) return;
+  CR.max = Math.max(0, r.scrollHeight - box.clientHeight);
+  // длинный год идёт чуть быстрее, чтобы титры уложились минуты в полторы-две
+  CR.speed = Math.max(46, CR.max / 110);
+}
+function crStep(t) {
+  if (!CR.open) return;
+  const dt = CR.last ? Math.min(.1, (t - CR.last) / 1000) : 0;
+  CR.last = t;
+  if (CR.play && t > CR.idle) { CR.pos = Math.min(CR.max, CR.pos + CR.speed * dt); if (CR.pos >= CR.max && CR.max > 0) crPlay(false); }
+  const r = $('#cr-roll'); if (r) r.style.transform = 'translate3d(0,' + (-CR.pos).toFixed(1) + 'px,0)';
+  CR.raf = requestAnimationFrame(crStep);
+}
+function crPlay(on) {
+  CR.play = on;
+  const b = $('#cr-play'); if (!b) return;
+  const end = !on && CR.pos >= CR.max;
+  b.innerHTML = on ? I('pause') + 'Пауза' : end ? I('repeat') + 'Сначала' : I('play') + 'Дальше';
+  b.dataset.act = end ? 'cr-restart' : 'cr-play';
+}
+/* колёсико и пальцы листают титры; автопрокрутка продолжится через полторы секунды */
+function crNudge(dy) { CR.pos = Math.min(CR.max, Math.max(0, CR.pos + dy)); CR.idle = performance.now() + 1500; if (!CR.play) crPlay(false); }
+function closeCredits(fromHash) {
+  if (!CR.open) return;
+  CR.open = false; cancelAnimationFrame(CR.raf); if (CR.ro) CR.ro.disconnect();
+  const box = $('#credits'); box.classList.remove('on'); box.innerHTML = '';
+  document.body.style.overflow = ''; document.title = 'Кинодневник';
+  if (!fromHash) { if (CR.pushed) { try { history.back(); } catch (e) {} } else setHash(UI.view, true); }
+  CR.pushed = false;
+}
+function creditsCTA(force) {
+  const now = new Date(), m = now.getMonth(), years = yearsWithViews();
+  // на «Обзоре» — только в декабре и январе, в «Статистике» — всегда
+  if (!force) {
+    const y = String(m === 11 ? now.getFullYear() : now.getFullYear() - 1);
+    if ((m !== 11 && m !== 0) || !years.includes(y)) return '';
+    return '<div class="banner"><span>Итоги ' + y + ' года готовы: финальные титры твоего года в кино.</span><button class="btn small primary" data-act="cr-open" data-y="' + y + '">' + I('play') + 'Смотреть титры</button></div>';
+  }
+  if (!years.length) return '';
+  return '<section class="section"><div class="panel cr-cta"><div><div class="h2">Итоги года</div><p class="muted">Финальные титры твоего года в кино: главные роли, лучшее, самый киношный месяц и все просмотры по порядку.</p></div>' +
+    '<div class="chips">' + years.map(y => '<button class="chip" data-act="cr-open" data-y="' + y + '">' + I('play') + y + '</button>').join('') + '</div></div></section>';
+}
+
 function enRender() { const b = $('#en-box'); if (b) b.innerHTML = enInner(); }
 function enPaint() {
   const m = $('#en-meter'); if (!m) return;
@@ -3600,6 +3801,11 @@ const ACT = {
   },
   'recs-reload'() { recsEnsure(true); },
   'recs-scroll'(el) { const s = $('#shelf'); if (s) s.scrollBy({ left: +el.dataset.v * s.clientWidth * .8, behavior: 'smooth' }); },
+  'cr-open'(el) { openCredits(el.dataset.y); },
+  'cr-close'() { closeCredits(); },
+  'cr-play'() { crPlay(!CR.play); },
+  'cr-restart'() { CR.pos = 0; CR.idle = performance.now() + 600; crPlay(true); },
+  'cr-year'(el) { if (CR.pushed) { try { history.replaceState(null, '', '#credits/' + el.dataset.y); } catch (e) {} } crShow(el.dataset.y); },
   'rate-open'(el, e) { if (e) e.preventDefault(); openQR(); },
   'qr-close'() { closeQR(); },
   'qr-filter'(el) { if (QR.busy) return; QR.filter = el.dataset.v; QR.front = null; qrNext('in'); },
@@ -3761,6 +3967,14 @@ function onSearch(v) {
 }
 document.addEventListener('keydown', e => {
   const ae = document.activeElement;
+  // титры: пробел — пауза, стрелки — листать, Esc — выйти
+  if (CR.open) {
+    if (e.key === 'Escape') { e.preventDefault(); closeCredits(); }
+    else if (e.key === ' ') { e.preventDefault(); if (CR.pos >= CR.max) ACT['cr-restart'](); else crPlay(!CR.play); }
+    else if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); crNudge(e.key === 'PageDown' ? innerHeight * .8 : 90); }
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); crNudge(e.key === 'PageUp' ? -innerHeight * .8 : -90); }
+    return;
+  }
   // «Быстро оценить»: цифры — оценка, стрелки — пропустить и назад, Esc — выйти
   if (QR.open) {
     const typing = ae && /INPUT|TEXTAREA/.test(ae.tagName);
@@ -3793,6 +4007,12 @@ document.addEventListener('pointermove', e => {
   if (tt && $('#tip')) { const tip = $('#tip'); tip.innerHTML = esc(tt.dataset.tip); tip.style.display = 'block'; tip.classList.remove('clickable'); tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY - tip.offsetHeight - 10) + 'px'; return; }
   const tp = $('#tip'); if (tp && tp.style.display === 'block' && !tp.classList.contains('clickable')) hideTip();
 });
+/* титры листаются колёсиком и пальцем */
+document.addEventListener('wheel', e => { if (!CR.open || !e.target.closest || !e.target.closest('#credits')) return; e.preventDefault(); crNudge(e.deltaY); }, { passive: false });
+let crTouch = null;
+document.addEventListener('touchstart', e => { if (CR.open && e.touches.length === 1) crTouch = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchmove', e => { if (!CR.open || crTouch == null) return; const y = e.touches[0].clientY; crNudge(crTouch - y); crTouch = y; }, { passive: true });
+document.addEventListener('touchend', () => { crTouch = null; }, { passive: true });
 /* «Быстро оценить»: при наведении на лампочку видно слово — «Хорошо», «Шедевр» */
 document.addEventListener('pointerover', e => {
   if (!QR.open || QR.busy || !e.target.closest) return;
@@ -3859,6 +4079,7 @@ function boot2() {
   renderNav(); renderMain();
   if (r.id && S.byId.has(r.id)) { UI.open = r.id; renderDrawer(); markActiveRow(); }
   if (location.hash === '#rate') openQR();
+  const cm = /^#credits\/(\d{4})$/.exec(location.hash); if (cm) openCredits(cm[1]);
 }
 function readConnect() {
   const m = location.hash.match(/connect=([A-Za-z0-9_\-]+)/);

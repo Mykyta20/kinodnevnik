@@ -167,6 +167,73 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   await wait(1300);
   ok(await E.page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'на телефоне цель без прокрутки вбок');
   await E.shot('82-goal-mobile');
+  await E.browser.close();
+
+  // ===== «Итоги года» — финальные титры
+  const yearItems = () => [
+    { id: 'c1', cat: 'film', title: 'Дюна', orig: 'Dune', year: '2021', status: 'done', dates: ['2025-01-05', '2025-11-20'], rating: 9, dub: 'Дубляж', img: tm('/dune21.jpg'), info: { g: ['фантастика', 'приключения'], rt: 155, dir: 'Дени Вильнёв', at: '2026-01-01' } },
+    { id: 'c2', cat: 'film', title: 'Бегущий по лезвию 2049', year: '2017', status: 'done', dates: ['2025-03-10'], rating: 10, dub: 'Дубляж', img: tm('/br2049.jpg'), info: { g: ['фантастика', 'драма'], rt: 164, dir: 'Дени Вильнёв', at: '2026-01-01' } },
+    { id: 'c3', cat: 'film', title: 'Прибытие', year: '2016', status: 'done', dates: ['2025-03-22'], rating: 8, dub: 'Дубляж', info: { g: ['фантастика', 'драма'], rt: 116, dir: 'Дени Вильнёв', at: '2026-01-01' } },
+    { id: 'c4', cat: 'series', title: 'Чернобыль', year: '2019', status: 'done', dates: ['2025-03-30'], rating: 10, dub: 'LostFilm' },
+    { id: 'c5', cat: 'anime', title: 'Магическая битва', year: '2020–2021', status: 'done', dates: ['2025-07-14'], rating: 9, dub: 'AniLibria', mal: 40748 },
+    { id: 'c6', cat: 'cartoon', title: 'Тайна Коко', year: '2017', status: 'done', dates: ['2025-12-24'], rating: 10, dub: 'Дубляж' },
+    { id: 'c7', cat: 'film', title: 'Скучный фильм', year: '2024', status: 'dropped', dates: ['2025-05-02'] },
+    { id: 'c8', cat: 'film', title: 'Сны поездов', year: '2025', status: 'done', dates: ['2026-01-02'], rating: 7 },
+    cfg({ goals: { '2025': { n: 8 } } })
+  ];
+  const JAN = '2026-01-10T12:00:00';
+  E = await H.setup({ sheet: new H.Sheet(yearItems()), now: JAN });
+  await E.page.goto(H.SITE + '#home');
+  await E.page.waitForSelector('.banner [data-act="cr-open"]');
+  ok(/Итоги 2025 года готовы/.test(await txt(E.page, '.banner')), 'в январе на «Обзоре» — приглашение на итоги прошлого года');
+  await E.page.click('.banner [data-act="cr-open"]');
+  await E.page.waitForSelector('#credits.on .cr-title');
+  ok(await E.page.evaluate(() => location.hash) === '#credits/2025' && await E.page.title() === 'Итоги 2025 — Кинодневник', 'титры открылись (#credits/2025)');
+  const cr = (await E.page.locator('#credits').innerText()).replace(/\s+/g, ' ');
+  ok(/Итоги 2025 года/.test(cr) && /с 5 января по 24 декабря/.test(cr), 'заставка: год и даты первого и последнего сеанса');
+  ok(/8 просмотров/i.test(cr) && /5 фильмы/i.test(cr) && /примерно 10 часов/.test(cr), 'числа года: 8 просмотров, 5 — фильмы, ≈10 часов фильмов');
+  ok(/Самый киношный месяц — март: 3 просмотра/.test(cr), 'самый киношный месяц — март');
+  ok(await E.page.locator('#credits .cr-p').count() === 6 && await E.page.locator('#credits .cr-p b').first().innerText() === 'Бегущий по лезвию 2049', '«В главных ролях»: шесть лучших, первым — с постером и десяткой');
+  ok(/Фильм года Бегущий по лезвию 2049 10/i.test(cr) && /Сериал года Чернобыль 10/i.test(cr) && /Мультфильм года Тайна Коко 10/i.test(cr) && /Аниме года Магическая битва 9/i.test(cr), 'лучшее в каждом разделе');
+  ok(/Жанр года Фантастика 3 тайтла/i.test(cr) && /Режиссёр года Дени Вильнёв 3 фильма/i.test(cr) && /Озвучка года Дубляж 5 раз/i.test(cr), 'жанр, режиссёр и озвучка года');
+  ok(/Пересмотрено Дюна 2 раза/i.test(cr) && /Первый сеанс Дюна 5 января/i.test(cr) && /Последний сеанс Тайна Коко 24 декабря/i.test(cr), 'пересмотренное, первый и последний сеанс');
+  ok(/Средняя оценка 9,3/i.test(cr) && /Брошено 1 — бывает/i.test(cr) && /Цель года 8 из 8 выполнено/i.test(cr), 'средняя оценка, брошенное и цель года');
+  ok(await E.page.locator('#credits .cr-list .cr-row').count() === 7, 'в конце — все тайтлы года по порядку, как список актёров');
+  await wait(400);
+  await E.shot('87-credits-open');
+  await wait(1800);
+  const pos = () => E.page.evaluate(() => { const m = /translate3d\(0px?, ?(-?[\d.]+)px/.exec(document.querySelector('#cr-roll').style.transform) || []; return -parseFloat(m[1] || 0); });
+  const p1 = await pos();
+  ok(p1 > 20, 'титры плывут вверх сами (' + Math.round(p1) + ' пикс.)');
+  await E.page.keyboard.press(' ');
+  const p2 = await pos(); await wait(700);
+  ok(Math.abs(await pos() - p2) < 1 && /Дальше/.test(await E.page.locator('#cr-play').innerText()), 'пробел — пауза');
+  for (let i = 0; i < 4; i++) await E.page.keyboard.press('PageDown');
+  await wait(300);
+  await E.shot('88-credits-facts');
+  for (let i = 0; i < 20; i++) await E.page.keyboard.press('PageDown');
+  await E.page.waitForFunction(() => /Сначала/.test(document.querySelector('#cr-play').textContent));
+  ok(true, 'в конце — «Конец» и кнопка «Сначала»');
+  await wait(300);
+  await E.shot('89-credits-end');
+  await E.page.click('#credits .cr-end [data-act="cr-year"][data-y="2026"]');
+  await E.page.waitForFunction(() => /Итоги 2026 года/.test(document.querySelector('#credits .cr-title').textContent));
+  ok(await E.page.evaluate(() => location.hash) === '#credits/2026', 'из финала можно перейти к другому году');
+  await E.page.keyboard.press('Escape');
+  await wait(300);
+  ok(await E.page.locator('#credits.on').count() === 0 && await E.page.evaluate(() => location.hash) === '#home', 'Esc закрывает титры');
+  await E.page.click('#nav a[data-v="stats"]');
+  await E.page.waitForSelector('.cr-cta');
+  ok((await E.page.locator('.cr-cta [data-act="cr-open"]').allInnerTexts()).join() === '2026,2025', 'в «Статистике» — титры за каждый год');
+  await E.browser.close();
+  E = await H.setup({ sheet: new H.Sheet(yearItems()), now: JAN, viewport: { width: 390, height: 844 }, dpr: 2, mobile: true });
+  await E.page.goto(H.SITE + '#credits/2025');
+  await E.page.waitForSelector('#credits.on .cr-title');
+  await E.page.keyboard.press(' ');
+  for (let i = 0; i < 3; i++) await E.page.keyboard.press('PageDown');
+  await wait(400);
+  ok(await E.page.evaluate(() => document.querySelector('#cr-roll').scrollWidth <= 390), 'титры по прямой ссылке и на телефоне без прокрутки вбок');
+  await E.shot('90-credits-mobile');
   console.log(E.errors.length ? 'ОШИБКИ:\n' + E.errors.join('\n') : 'Ошибок в консоли нет (последний стенд)');
   await E.browser.close();
 })().catch(e => { console.error(e); process.exit(1); });

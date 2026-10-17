@@ -119,6 +119,15 @@ Object.assign(TD['movie/354912'], { backdrop_path: '/coco-bg.jpg', overview: '',
   credits: { crew: [{ job: 'Director', name: 'Ли Анкрич' }, { job: 'Director', name: 'Эдриан Молина' }], cast: [{ name: 'Энтони Гонсалес' }] } });
 Object.assign(TD['movie/157336'], { backdrop_path: '/inter-bg.jpg', overview: 'Когда засуха, пыльные бури и вымирание растений приводят человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и найти планету с подходящими для человечества условиями.', tagline: 'Следующий шаг человечества станет величайшим', genres: [{ name: 'приключения' }, { name: 'драма' }, { name: 'фантастика' }], runtime: 169,
   credits: { crew: [{ job: 'Director', name: 'Кристофер Нолан' }], cast: [{ name: 'Мэттью Макконахи' }, { name: 'Энн Хэтэуэй' }] } });
+/* рекомендации TMDB: по «Дюне», «Интерстеллару» и «Коко» */
+const BR = M(335984, 'Бегущий по лезвию 2049', 'Blade Runner 2049', '2017-10-04', '/br2049.jpg', 7.6, 13000, [878]);
+const TR = {
+  'movie/438631': [M(693134, 'Дюна: Часть вторая', 'Dune: Part Two', '2024-02-27', '/dune2.jpg', 8.1, 6500, [878]), M(157336, 'Интерстеллар', 'Interstellar', '2014-11-05', '/inter.jpg', 8.4, 35000, [12, 18, 878]), BR,
+    M(1001, 'Малоизвестный', 'Obscure', '2019-01-01', '/obscure.jpg', 6, 12), M(1002, 'Без постера', 'No Poster', '2018-01-01', null, 7, 900), M(1003, 'Будущий фильм', 'Future', '2027-05-01', '/future.jpg', 7, 300)],
+  'movie/157336': [M(27205, 'Начало', 'Inception', '2010-07-15', '/inception.jpg', 8.4, 36000, [28, 878]), BR, M(438631, 'Дюна', 'Dune', '2021-09-15', '/dune21.jpg', 7.8, 12000, [878])],
+  'movie/354912': [M(150540, 'Головоломка', 'Inside Out', '2015-06-09', '/insideout.jpg', 7.9, 21000, [16, 10751])]
+};
+TD['movie/27205'] = { id: 27205, imdb_id: 'tt1375666', poster_path: '/inception.jpg' };
 /* ---------- подставной OMDb ---------- */
 const OMDB_KEY = 'abcd1234';
 const R = (rt, mc) => [{ Source: 'Internet Movie Database', Value: 'x' }].concat(rt ? [{ Source: 'Rotten Tomatoes', Value: rt }] : [], mc ? [{ Source: 'Metacritic', Value: mc + '/100' }] : []);
@@ -155,6 +164,8 @@ function tmdbAnswer(u) {
   if (p === 'authentication') return { status: 200, body: { success: true } };
   if (p === 'search/multi') { const q = fold(u.searchParams.get('query')).trim(); return { status: 200, body: { page: 1, results: TM[q] || [] } }; }
   if (p === 'search/movie' || p === 'search/tv') return { status: 200, body: typedSearch(p.slice(7), fold(u.searchParams.get('query')).trim(), u.searchParams.get('year') || u.searchParams.get('first_air_date_year')) };
+  const rec = /^((?:movie|tv)\/\d+)\/recommendations$/.exec(p);
+  if (rec) return { status: 200, body: { page: 1, results: TR[rec[1]] || [] } };
   // русского описания нет — с language=en-US отдаём английское
   if (TD[p]) return { status: 200, body: u.searchParams.get('language') === 'en-US' && TD[p].en ? Object.assign({}, TD[p], { overview: TD[p].en }) : TD[p] };
   const g = /^movie\/(5\d{5})$/.exec(p);

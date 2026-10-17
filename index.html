@@ -528,6 +528,32 @@ details>summary::marker{color:var(--accent-text)}
 .wr-note{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;margin:12px 0 0;font-size:13.5px;color:var(--muted)}
 .wr-note .btn{margin-left:-6px}
 
+/* ---------- что посмотреть дальше: полка рекомендаций ---------- */
+.recs{margin:4px 0 34px}
+.recs-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;margin-bottom:12px}
+.recs-h .sub{font-size:13.5px;color:var(--faint)}
+.recs-h .acts{display:flex;gap:6px;margin-left:auto;align-self:center}
+.shelf{display:grid;grid-auto-flow:column;grid-auto-columns:142px;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;margin:0 -4px;padding:6px 4px 12px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.rcard{position:relative;scroll-snap-align:start;min-width:0}
+.rcard.busy{opacity:.55;pointer-events:none}
+.rc-main{display:grid;gap:5px;align-content:start;width:100%;padding:0;border:0;border-radius:10px;background:none;text-align:left;color:inherit}
+.rc-img{position:relative;display:block;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--sunk);box-shadow:0 0 0 1px var(--rule);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
+.rc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rcard:hover .rc-img{transform:translateY(-3px);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 45%,var(--rule)),var(--lift),0 0 26px -8px var(--lamp-glow)}
+.rc-t{margin-top:3px;font-size:14px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.rc-m{font-size:12.5px;color:var(--muted)}
+.rc-why{font-size:12px;line-height:1.3;color:var(--faint);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rc-add,.rc-x{position:absolute;display:grid;place-items:center;padding:0;border:0;border-radius:50%;opacity:0;transition:opacity .15s,transform .15s}
+.rc-add{top:8px;right:8px;width:34px;height:34px;background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.rc-x{top:8px;left:8px;width:26px;height:26px;background:rgba(12,10,9,.72);color:#F2E9DC}
+.rc-x svg.i{width:14px;height:14px}
+.rcard:hover .rc-add,.rcard:hover .rc-x,.rcard:focus-within .rc-add,.rcard:focus-within .rc-x{opacity:1}
+.rc-add:hover{transform:scale(1.08)}
+@media (hover:none){.rc-add,.rc-x{opacity:1}}
+.rcard.wait .rc-img{background:linear-gradient(100deg,var(--sunk) 30%,var(--raise) 50%,var(--sunk) 70%) var(--sunk);background-size:300% 100%;animation:shimmer 1.5s linear infinite}
+.rcard.wait .rc-t{height:12px;width:80%;border-radius:6px;background:var(--sunk)}
+.recs-note{margin:0;font-size:14px;color:var(--muted)}
+
 /* ---------- быстро оценить: по одному тайтлу, как на большом экране ---------- */
 .qr{position:fixed;inset:0;z-index:65;display:none;flex-direction:column;overflow:auto;overscroll-behavior:contain;background:var(--bg);outline:none;transition:--tint .7s ease}
 .qr.on{display:flex}
@@ -1184,7 +1210,7 @@ function renderMain() {
   const v = UI.view;
   if (v === 'home') c.innerHTML = viewHome();
   else if (GROUPS[v]) c.innerHTML = viewGroup(v);
-  else if (v === 'watchlist') c.innerHTML = viewWatchlist();
+  else if (v === 'watchlist') { c.innerHTML = viewWatchlist(); recsEnsure(); }
   else if (v === 'stats') c.innerHTML = viewStats();
   else if (v === 'data') c.innerHTML = viewData();
   else if (v === 'search') c.innerHTML = viewSearch();
@@ -1481,8 +1507,9 @@ function viewWatchlist() {
   const list = filterItems(S.items.filter(inWatchlist)).sort((a, b) => (b.updated || '').localeCompare(a.updated || '') || a.title.localeCompare(b.title, 'ru'));
   let h = '<div class="page-head"><div><h1 class="h1">Хочу посмотреть</h1><p class="lead">То, что советуют друзья, и новые сезоны любимых историй.</p></div>' +
     '<div class="row-acts" style="margin:0"><button class="btn" data-act="random-planned"' + (list.length ? '' : ' disabled') + '>' + I('dice') + 'Что посмотреть?</button><button class="btn primary" data-act="add" data-status="planned">' + I('plus') + 'Добавить в список</button></div></div>';
+  if (!UI.q) h += recsHTML();
   if (!list.length && !UI.q) return h + '<div class="list"><div class="empty"><div class="h2">Список пока пуст</div><p>Добавь фильм или сериал, который хочешь посмотреть, а в аниме можно отметить сезон «в планах».</p></div></div>';
-  return h + listHTML(list, 'watchlist', false);
+  return h + (UI.q ? '' : '<div class="section-head"><h2 class="h2">Мой список</h2><span class="faint num">' + list.length + '</span></div>') + listHTML(list, 'watchlist', false);
 }
 function viewSearch() {
   const list = sortItems(filterItems(S.items.slice()), 'date');
@@ -3218,6 +3245,116 @@ function qrBack() {
   qrGo('back');
 }
 
+/* ================= Что посмотреть дальше: рекомендации TMDB ================= */
+const KEY_RECS = 'kinodnevnik:recs';
+/* st: idle, load, ok, err; список кэшируется в браузере на сутки */
+const REC = { st: 'idle', list: [], at: 0, sig: '', map: new Map() };
+(() => { const c = LS.get(KEY_RECS, null); if (c && Array.isArray(c.list)) Object.assign(REC, { st: 'ok', list: c.list, at: c.at || 0, sig: c.sig || '' }); })();
+/* источники — то, что ты оценил выше всего: 8–10 или «любимое», если тайтл связан с TMDB */
+const recSources = () => S.items.filter(it => /^(movie|tv)\/\d+$/.test(it.tmdb || '') && (it.rating >= 8 || it.fav))
+  .sort((a, b) => (b.rating || 0) - (a.rating || 0) || lastDate(b).localeCompare(lastDate(a))).slice(0, 10);
+const recSig = src => src.map(it => it.tmdb + ':' + (it.rating || 0)).join(',');
+async function loadRecs() {
+  const src = recSources(), sig = recSig(src);
+  if (!src.length) return { list: [], sig };
+  const got = await Promise.allSettled(src.map(it => retry(() => tmdb('/' + it.tmdb + '/recommendations', { page: 1 }, null, null, 9000))));
+  if (got.every(g => g.status === 'rejected')) throw got[0].reason;
+  const sum = new Map();
+  got.forEach((g, i) => {
+    if (g.status !== 'fulfilled') return;
+    const s = src[i], kind = s.tmdb.split('/')[0];
+    (g.value.results || []).slice(0, 20).forEach((x, pos) => {
+      const r = tmdbRes(Object.assign({}, x, { media_type: x.media_type || kind }));
+      if (!r.img || r.votes < 50 || r.future) return;
+      // чем выше оценка источника и чем выше место в его списке, тем весомее совет
+      const w = ((s.rating || 8) - 6) * (1 - pos / 25);
+      const cur = sum.get(r.tmdb) || { r, w: 0, from: [] };
+      cur.w += w; if (cur.from.length < 2) cur.from.push(s.title);
+      sum.set(r.tmdb, cur);
+    });
+  });
+  const list = Array.from(sum.values()).sort((a, b) => b.w - a.w || b.r.votes - a.r.votes).slice(0, 30)
+    .map(x => Object.assign({}, x.r, { from: x.from }));
+  return { list, sig };
+}
+async function recsEnsure(force) {
+  if (!tmdbKey() || REC.st === 'load') return;
+  const sig = recSig(recSources());
+  if (!force && REC.st === 'ok' && REC.sig === sig && Date.now() - REC.at < 864e5) return;
+  REC.st = 'load'; recsPaint();
+  try {
+    const r = await loadRecs();
+    Object.assign(REC, { st: 'ok', list: r.list, sig: r.sig, at: Date.now() });
+    LS.set(KEY_RECS, { list: REC.list, sig: REC.sig, at: REC.at });
+  } catch (e) { REC.st = REC.list.length ? 'ok' : 'err'; REC.err = e; }
+  recsPaint();
+}
+/* что показывать: без уже записанного (по TMDB и по названию) и без скрытого */
+function recsShown() {
+  const have = new Set(S.items.map(it => it.tmdb).filter(Boolean)), hidden = new Set(S.cfg.recNo || []), idx = malIndex();
+  return REC.list.filter(r => !have.has(r.tmdb) && !hidden.has(r.tmdb) && !inDiary(r, idx)).slice(0, 16);
+}
+function recsHTML() {
+  if (!tmdbKey()) return '';
+  const src = recSources();
+  const head = '<div class="recs-h"><h2 class="h2">Что посмотреть дальше</h2><span class="sub">похожее на то, что ты оценил выше всего · TMDB</span>' +
+    '<span class="acts"><button class="btn icon ghost small" data-act="recs-scroll" data-v="-1" aria-label="Листать назад">' + I('back') + '</button><button class="btn icon ghost small" data-act="recs-scroll" data-v="1" aria-label="Листать вперёд">' + I('next') + '</button>' +
+    '<button class="btn ghost small" data-act="recs-reload" title="Подобрать заново">Обновить</button></span></div>';
+  let body;
+  if (!src.length) return '<section class="recs" id="recs"><div class="recs-h"><h2 class="h2">Что посмотреть дальше</h2></div><p class="recs-note">Поставь оценки 8–10 любимым фильмам и сериалам (с постером из TMDB), и здесь появится похожее.</p></section>';
+  if (REC.st === 'load' && !REC.list.length) body = '<div class="shelf" aria-hidden="true">' + '<div class="rcard wait"><span class="rc-img"></span><span class="rc-t"></span></div>'.repeat(6) + '</div>';
+  else if (REC.st === 'err' && !REC.list.length) body = '<p class="recs-note">TMDB сейчас не отвечает, советы появятся позже. <button class="btn small ghost" data-act="recs-reload">Попробовать снова</button></p>';
+  else {
+    const list = recsShown();
+    REC.map = new Map(list.map(r => [r.key, r]));
+    body = list.length ? '<div class="shelf" id="shelf">' + list.map(recCardHTML).join('') + '</div>' : '<p class="recs-note">Всё похожее уже в дневнике. Загляни после новых оценок.</p>';
+  }
+  return '<section class="recs" id="recs">' + head + body + '</section>';
+}
+function recCardHTML(r) {
+  const m = [r.y, CATS[r.cat].one.toLowerCase(), r.score ? 'TMDB ' + fmtScore(r.score) : ''].filter(Boolean).join(' · ');
+  const why = r.from && r.from.length ? 'Похоже на: ' + r.from.map(t => '«' + t + '»').join(', ') : '';
+  return '<div class="rcard"><button class="rc-main" data-act="rec-open" data-k="' + esc(r.key) + '" title="' + esc(r.title + (r.orig && fold(r.orig) !== fold(r.title) ? ' / ' + r.orig : '')) + '">' +
+    '<span class="rc-img"><img src="' + esc(r.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>' +
+    '<span class="rc-t">' + esc(r.title) + '</span><span class="rc-m">' + esc(m) + '</span>' + (why ? '<span class="rc-why">' + esc(why) + '</span>' : '') + '</button>' +
+    '<button class="rc-add" data-act="rec-add" data-k="' + esc(r.key) + '" title="В «Хочу посмотреть»" aria-label="Добавить «' + esc(r.title) + '» в «Хочу посмотреть»">' + I('plus') + '</button>' +
+    '<button class="rc-x" data-act="rec-hide" data-k="' + esc(r.key) + '" title="Не советовать" aria-label="Не советовать «' + esc(r.title) + '»">' + I('close') + '</button></div>';
+}
+function recsPaint() {
+  const box = $('#recs'); if (!box || UI.view !== 'watchlist') return;
+  const sh = $('#shelf'), x = sh ? sh.scrollLeft : 0;
+  box.outerHTML = recsHTML();
+  const n = $('#shelf'); if (n) n.scrollLeft = x;
+}
+/* сразу в «Хочу посмотреть»: название, год, раздел, постер и оценка из TMDB; IMDb — в фоне */
+function recAdd(k) {
+  const r = REC.map.get(k); if (!r) return;
+  if (inDiary(r, malIndex())) { toast('«' + r.title + '» уже в дневнике'); return; }
+  const it = norm({ id: uid('u'), cat: r.cat, title: r.title, orig: r.orig && fold(r.orig) !== fold(r.title) ? r.orig : '', year: r.year, status: 'planned', dates: [] });
+  if (r.img) it.img = r.img;
+  it.tmdb = r.tmdb; if (r.score) it.ext = { tmdb: r.score };
+  S.items.push(it); reindex(); Store.touch(it);
+  tmdbDetails(r).then(d => {
+    const x = S.byId.get(it.id); if (!x) return;
+    let ch = false;
+    if (d.imdb && !x.imdb) { x.imdb = d.imdb; ch = true; }
+    if (d.year && r.kind === 'tv' && d.year !== x.year) { x.year = d.year; ch = true; }
+    if (ch) Store.touch(x, true);
+  }).catch(() => {});
+  toast('«' + it.title + '» — в «Хочу посмотреть»');
+  renderNav(); renderMain();
+}
+/* карточка — через обычную форму добавления: можно поправить статус, если уже смотрел */
+async function recOpen(el) {
+  const r = REC.map.get(el.dataset.k); if (!r) return;
+  const card = el.closest('.rcard'); if (card) card.classList.add('busy');
+  const det = await Promise.race([tmdbDetails(r).catch(() => null), sleep(1500).then(() => null)]);
+  if (card) card.classList.remove('busy');
+  if (AD && AD.ctrl) AD.ctrl.abort();
+  AD = { preset: { status: 'planned' }, q: r.title, seq: 0, ctrl: null, res: null, map: new Map(), active: -1, pick: r, rel: null, det: det };
+  renderAddForm();
+}
+
 function enRender() { const b = $('#en-box'); if (b) b.innerHTML = enInner(); }
 function enPaint() {
   const m = $('#en-meter'); if (!m) return;
@@ -3397,6 +3534,15 @@ const ACT = {
   'goal-cancel'() { UI.goalEdit = false; renderMain(); },
   'goal-hide'() { S.cfg.goalHide = String(new Date().getFullYear()); saveCfg(); renderMain(); toast('Хорошо. Цель можно поставить позже в «Статистике»'); },
   'goal-del'() { const y = String(new Date().getFullYear()); const g = Object.assign({}, S.cfg.goals); delete g[y]; S.cfg.goals = g; S.cfg.goalHide = y; saveCfg(); UI.goalEdit = false; renderMain(); toast('Цель убрана'); },
+  'rec-add'(el) { recAdd(el.dataset.k); },
+  'rec-open'(el) { recOpen(el); },
+  'rec-hide'(el) {
+    const r = REC.map.get(el.dataset.k); if (!r) return;
+    S.cfg.recNo = (S.cfg.recNo || []).filter(x => x !== r.tmdb).concat([r.tmdb]).slice(-300);
+    saveCfg(); recsPaint(); toast('Больше не посоветую «' + r.title + '»');
+  },
+  'recs-reload'() { recsEnsure(true); },
+  'recs-scroll'(el) { const s = $('#shelf'); if (s) s.scrollBy({ left: +el.dataset.v * s.clientWidth * .8, behavior: 'smooth' }); },
   'rate-open'(el, e) { if (e) e.preventDefault(); openQR(); },
   'qr-close'() { closeQR(); },
   'qr-filter'(el) { if (QR.busy) return; QR.filter = el.dataset.v; QR.front = null; qrNext('in'); },

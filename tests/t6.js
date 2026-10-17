@@ -72,7 +72,61 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   ok(await E.page.locator('.goal').count() === 0 && row(E.sheet, '__settings').cfg.goalHide === '2026', '«Не сейчас» прячет приглашение до следующего года');
   await E.browser.close();
 
+  // ===== «Что посмотреть дальше»
+  E = await H.setup({ sheet: new H.Sheet(items()), now: NOW });
+  const recCalls = () => H.tmdbCalls().filter(c => /recommendations/.test(c)).length;
+  await E.page.goto(H.SITE + '#watchlist');
+  await E.page.waitForSelector('.rcard:not(.wait) .rc-t');
+  const rt = await E.page.locator('.rcard:not(.wait) .rc-t').allInnerTexts();
+  console.log('  советы:', rt.join(' | '));
+  ok(rt.join('|') === 'Бегущий по лезвию 2049|Начало|Головоломка|Дюна: Часть вторая', 'первым — то, что советуют сразу два любимых тайтла');
+  ok(/Похоже на: «Интерстеллар», «Дюна»/.test(await txt(E.page, '.rcard .rc-why')), 'видно, почему советует');
+  ok(!rt.some(t => /^(Интерстеллар|Дюна|Малоизвестный|Без постера|Будущий фильм)$/.test(t)), 'без записанного, малоизвестного, без постера и не вышедшего');
+  await wait(400);
+  await E.shot('83-recs');
+  const r0 = recCalls();
+  // «+» — сразу в список
+  await E.page.hover('.rc-main[data-k="tmdb:movie/27205"]');
+  await E.page.click('.rc-add[data-k="tmdb:movie/27205"]');
+  await E.page.waitForSelector('.rc-main[data-k="tmdb:movie/27205"]', { state: 'detached' });
+  await wait(1600);
+  const inc = E.sheet.rows.find(r => r.title === 'Начало') || {};
+  ok(inc.status === 'planned' && inc.tmdb === 'movie/27205' && /inception\.jpg$/.test(inc.img) && inc.imdb === 'tt1375666' && inc.year === '2010', '«+» добавил «Начало» в «Хочу посмотреть» с постером, годом и IMDb');
+  ok(await E.page.locator('.row:has-text("Начало")').count() === 1, 'и он сразу в списке ниже');
+  // скрыть
+  await E.page.hover('.rc-main[data-k="tmdb:movie/150540"]');
+  await E.page.click('.rc-x[data-k="tmdb:movie/150540"]');
+  await E.page.waitForSelector('.rc-main[data-k="tmdb:movie/150540"]', { state: 'detached' });
+  await wait(1500);
+  ok((row(E.sheet, '__settings').cfg.recNo || []).includes('movie/150540'), '«×» — больше не советовать (запомнено в таблице)');
+  // карточка — через форму, можно сменить статус
+  await E.page.click('.rc-main[data-k="tmdb:movie/693134"]');
+  await E.page.waitForSelector('#addform');
+  ok(await E.page.inputValue('#addform select[name=status]') === 'planned' && await E.page.inputValue('#addform input[name=title]') === 'Дюна: Часть вторая', 'клик по постеру открывает форму со статусом «Хочу посмотреть»');
+  await E.page.selectOption('#addform select[name=status]', 'done');
+  await E.page.click('#addform button[type=submit]');
+  await E.page.waitForSelector('#drawer.on');
+  await wait(1500);
+  ok((E.sheet.rows.find(r => r.title === 'Дюна: Часть вторая') || {}).status === 'done', 'если уже смотрел — можно сразу отметить просмотренным');
+  await E.page.keyboard.press('Escape');
+  // кэш на сутки и «Обновить»
+  await E.page.reload();
+  await E.page.waitForSelector('.rcard:not(.wait) .rc-t');
+  ok(await E.page.locator('.rcard').count() === 1 && recCalls() === r0, 'после перезагрузки советы из памяти, без новых запросов');
+  await E.page.click('[data-act="recs-reload"]');
+  await E.page.waitForFunction(n => window.__n === undefined && document.querySelector('.rcard'), r0);
+  await wait(800);
+  ok(recCalls() > r0, '«Обновить» подбирает заново');
+  await E.browser.close();
+
   // телефон
+  E = await H.setup({ sheet: new H.Sheet(items()), now: NOW, viewport: { width: 390, height: 844 }, dpr: 2, mobile: true });
+  await E.page.goto(H.SITE + '#watchlist');
+  await E.page.waitForSelector('.rcard:not(.wait) .rc-t');
+  await wait(400);
+  ok(await E.page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'на телефоне полка советов листается внутри себя');
+  await E.shot('84-recs-mobile');
+  await E.browser.close();
   E = await H.setup({ sheet: new H.Sheet(items()), now: NOW, viewport: { width: 390, height: 844 }, dpr: 2, mobile: true });
   await E.page.goto(H.SITE + '#home');
   await E.page.waitForSelector('.goal');

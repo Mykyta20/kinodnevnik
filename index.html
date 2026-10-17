@@ -1688,7 +1688,7 @@ function viewData() {
   else h += updateGuide();
   h += '<section class="section"><div class="panel"><div class="h2">Оформление</div><div class="chips" style="margin-top:12px">' +
     [['dark', 'Кинозал'], ['light', 'Дневной сеанс'], ['auto', 'Как в системе']].map(([v, n]) => '<button class="chip" data-act="theme" data-v="' + v + '" aria-pressed="' + (theme === v) + '">' + n + '</button>').join('') + '</div></div></section>';
-  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме). Постеры для уже записанных фильмов, сериалов и мультфильмов тоже из TMDB.</p>' +
+  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме). Постеры для уже записанных фильмов, сериалов и мультфильмов тоже из TMDB. Описания, кадры, жанры и советы «Что посмотреть дальше» — из TMDB и Shikimori, оценки IMDb, Rotten Tomatoes и Metacritic — через OMDb API (omdbapi.com).</p>' +
     '<p class="faint" style="margin:8px 0 0;font-size:13px" lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div></section>';
   return h;
 }
@@ -3036,6 +3036,8 @@ function worldHTML(it) {
 }
 function repaintHero(it) {
   const box = $('#d-hero'); if (!box || UI.open !== it.id) return;
+  // пока в поиске постера печатают, блок не трогаем: свежие данные покажутся при следующей перерисовке
+  const pp = $('#ppick'); if (pp && pp.contains(document.activeElement)) return;
   const had = document.activeElement && box.contains(document.activeElement);
   box.innerHTML = heroHTML(it);
   if (had) { const t = $('#dtitle'); if (t) { try { t.focus({ preventScroll: true }); } catch (e) {} } }
@@ -3531,7 +3533,12 @@ function creditsHTML(y) {
 function openCredits(y) {
   if (!S.ready || CR.open || !y) return;
   let box = $('#credits');
-  if (!box) { document.body.insertAdjacentHTML('beforeend', '<div class="credits" id="credits" role="dialog" aria-modal="true" aria-label="Итоги года" tabindex="-1"></div>'); box = $('#credits'); }
+  if (!box) {
+    document.body.insertAdjacentHTML('beforeend', '<div class="credits" id="credits" role="dialog" aria-modal="true" aria-label="Итоги года" tabindex="-1"></div>');
+    box = $('#credits');
+    // колёсико листает титры; слушаем только здесь, чтобы не тормозить прокрутку остального сайта
+    box.addEventListener('wheel', e => { if (!CR.open) return; e.preventDefault(); crNudge(e.deltaY); }, { passive: false });
+  }
   if (UI.open) { UI.open = null; UI.pushed = false; renderDrawer(); markActiveRow(); setHash(UI.view, true); }
   CR.open = true;
   CR.pushed = location.hash !== '#credits/' + y;
@@ -4007,8 +4014,7 @@ document.addEventListener('pointermove', e => {
   if (tt && $('#tip')) { const tip = $('#tip'); tip.innerHTML = esc(tt.dataset.tip); tip.style.display = 'block'; tip.classList.remove('clickable'); tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY - tip.offsetHeight - 10) + 'px'; return; }
   const tp = $('#tip'); if (tp && tp.style.display === 'block' && !tp.classList.contains('clickable')) hideTip();
 });
-/* титры листаются колёсиком и пальцем */
-document.addEventListener('wheel', e => { if (!CR.open || !e.target.closest || !e.target.closest('#credits')) return; e.preventDefault(); crNudge(e.deltaY); }, { passive: false });
+/* титры листаются пальцем (колёсико — в openCredits) */
 let crTouch = null;
 document.addEventListener('touchstart', e => { if (CR.open && e.touches.length === 1) crTouch = e.touches[0].clientY; }, { passive: true });
 document.addEventListener('touchmove', e => { if (!CR.open || crTouch == null) return; const y = e.touches[0].clientY; crNudge(crTouch - y); crTouch = y; }, { passive: true });

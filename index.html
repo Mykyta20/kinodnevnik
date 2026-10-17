@@ -646,6 +646,42 @@ code{font-size:.92em;padding:1px 5px;border-radius:5px;background:var(--raise);b
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--raise);color:var(--ink);border:1px solid var(--rule2);border-top:2px solid var(--accent);padding:10px 16px;border-radius:12px;font-size:14px;z-index:90;opacity:0;transition:all .22s;pointer-events:none;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .loading{position:relative;z-index:1;display:grid;place-items:center;min-height:60vh;color:var(--muted);text-align:center;gap:10px}
+/* плёночный отсчёт «3, 2, 1» на загрузке */
+@property --sweep{syntax:'<angle>';inherits:false;initial-value:0deg}
+.leader{position:relative;width:136px;height:136px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#15110E;box-shadow:0 0 0 1px rgba(255,236,210,.14),0 0 70px -12px var(--lamp-glow);animation:ldFlicker 2.2s steps(1) infinite}
+.ld-sweep{position:absolute;inset:0;background:conic-gradient(rgba(240,166,64,.34) var(--sweep),transparent 0);animation:ldSweep 1s linear infinite}
+@keyframes ldSweep{from{--sweep:0deg}to{--sweep:360deg}}
+.leader::before,.leader::after{content:'';position:absolute;background:rgba(255,236,210,.22)}
+.leader::before{left:50%;top:0;bottom:0;width:1px}
+.leader::after{top:50%;left:0;right:0;height:1px}
+.ld-ring{position:absolute;inset:12px;border-radius:50%;border:2px solid rgba(255,236,210,.42);box-shadow:inset 0 0 0 9px #15110E,inset 0 0 0 10px rgba(255,236,210,.18)}
+.ld-n{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:60px;font-weight:700;line-height:1;color:#F2E9DC;text-shadow:0 0 18px rgba(240,166,64,.45)}
+.ld-n i{grid-area:1/1;font-style:normal;opacity:0;animation:ldNum 3s steps(1) infinite}
+.ld-n i:nth-child(2){animation-delay:1s}
+.ld-n i:nth-child(3){animation-delay:2s}
+@keyframes ldNum{0%{opacity:1}33.34%{opacity:0}}
+@keyframes ldFlicker{0%,100%{filter:none}47%{filter:brightness(1.15)}48%{filter:none}83%{filter:brightness(.9)}84%{filter:none}}
+@media (prefers-reduced-motion:reduce){.ld-n i:first-child{opacity:1}}
+/* билетик при отметке просмотра */
+.ticket{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));z-index:91;display:grid;grid-template-columns:minmax(0,1fr) auto;width:min(380px,calc(100% - 32px));transform:translate(-50%,24px);opacity:0;pointer-events:none;
+  color:#2A1D0E;filter:drop-shadow(0 18px 30px rgba(0,0,0,.45));transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.ticket.on{transform:translate(-50%,0);opacity:1}
+.ticket>div{background:linear-gradient(180deg,#F8D58F,#F0B85A);padding:12px 16px}
+.ticket .tk-main{border-radius:10px 0 0 10px;-webkit-mask:radial-gradient(circle 7px at 100% 0,transparent 98%,#000) top right/100% 51% no-repeat,radial-gradient(circle 7px at 100% 100%,transparent 98%,#000) bottom right/100% 51% no-repeat;mask:radial-gradient(circle 7px at 100% 0,transparent 98%,#000) top right/100% 51% no-repeat,radial-gradient(circle 7px at 100% 100%,transparent 98%,#000) bottom right/100% 51% no-repeat}
+.ticket .tk-stub{display:grid;place-items:center;align-content:center;min-width:76px;border-radius:0 10px 10px 0;border-left:2px dashed rgba(42,29,14,.35);text-align:center;transform-origin:0 50%;
+  -webkit-mask:radial-gradient(circle 7px at 0 0,transparent 98%,#000) top left/100% 51% no-repeat,radial-gradient(circle 7px at 0 100%,transparent 98%,#000) bottom left/100% 51% no-repeat;mask:radial-gradient(circle 7px at 0 0,transparent 98%,#000) top left/100% 51% no-repeat,radial-gradient(circle 7px at 0 100%,transparent 98%,#000) bottom left/100% 51% no-repeat}
+.ticket.tear .tk-stub{animation:tkTear .7s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes tkTear{to{transform:translate(18px,10px) rotate(14deg);opacity:0}}
+.tk-k{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.65}
+.tk-t{margin-top:2px;font-family:var(--display);font-size:18px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tk-s{margin-top:1px;font-size:12.5px;opacity:.75}
+.tk-d{font-family:var(--display);font-size:26px;font-weight:700;line-height:1}
+.tk-m{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.7}
+/* плавное появление раздела */
+.content.enter{animation:enter .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes enter{from{opacity:0;transform:translateY(6px)}}
+.stars button.flash10{animation:flash10 .9s ease}
+@keyframes flash10{0%{filter:brightness(2.2) saturate(1.3);box-shadow:0 0 0 2px rgba(255,214,150,.9),0 0 48px rgba(240,166,64,.9)}100%{filter:none}}
 
 /* ---------- мобильная версия ---------- */
 @media (max-width:860px){
@@ -1105,6 +1141,8 @@ function go(view) {
   UI.view = view; UI.open = null; UI.pushed = false;
   setHash(view);
   renderAll(); window.scrollTo(0, 0);
+  // раздел появляется мягко, как после смены кадра
+  const c = $('#content'); if (c) { c.classList.remove('enter'); void c.offsetWidth; c.classList.add('enter'); }
 }
 function openItem(id) {
   if (!S.byId.has(id)) return;
@@ -1667,6 +1705,7 @@ function renderDrawer() {
   const it = UI.open && S.byId.get(UI.open);
   if (!it) {
     d.classList.remove('on'); sc.classList.remove('on'); document.body.style.overflow = '';
+    if (!QR.open) document.title = 'Кинодневник';
     return;
   }
   const scroll = d.classList.contains('on') && $('.d-body', d) ? $('.d-body', d).scrollTop : 0;
@@ -1674,6 +1713,7 @@ function renderDrawer() {
   paintTint(d, it);
   d.innerHTML = drawerHTML(it);
   d.classList.add('on'); sc.classList.add('on');
+  document.title = it.title + ' — Кинодневник';
   if (matchMedia('(max-width:860px)').matches) document.body.style.overflow = 'hidden';
   const b = $('.d-body', d); if (b) b.scrollTop = scroll;
   $$('.part textarea', d).forEach(autoGrow);
@@ -2279,7 +2319,7 @@ function submitAdd(form) {
   closeModal();
   if (GROUPS[UI.view] && !GROUPS[UI.view].cats.includes(cat) || UI.view === 'search') { UI.view = cat === 'film' ? 'film' : CATS[cat].group; UI.sub = 'all'; setHash(UI.view, true); }
   renderNav(); renderMain(); openItem(it.id);
-  toast('«' + title + '» добавлен');
+  if (dates.length) ticket(title, dates[0], 'добавлен в дневник'); else toast('«' + title + '» добавлен');
 }
 function closeModal() {
   const m = $('#modal'); m.classList.remove('on'); m.innerHTML = '';
@@ -3096,6 +3136,7 @@ function openQR(filter) {
     '<div class="chips" id="qr-chips" role="group" aria-label="Что оценивать"></div><span class="qr-left" id="qr-left"></span></div>' +
     '<div class="qr-stage" id="qr-stage"></div><div class="qr-dock" id="qr-dock"></div>';
   box.classList.add('on');
+  document.title = 'Быстро оценить — Кинодневник';
   qrNext('in');
   try { box.focus({ preventScroll: true }); } catch (e) {}
 }
@@ -3103,7 +3144,7 @@ function closeQR(fromHash) {
   if (!QR.open) return;
   QR.open = false; QR.cur = null;
   const box = $('#qr'); box.classList.remove('on'); box.innerHTML = '';
-  document.body.style.overflow = '';
+  document.body.style.overflow = ''; document.title = 'Кинодневник';
   if (!fromHash) { if (QR.pushed) { try { history.back(); } catch (e) {} } else setHash(UI.view, true); }
   QR.pushed = false;
   renderNav(); renderMain();
@@ -3426,6 +3467,18 @@ function askImport(parsed) {
 }
 
 /* ================= Обработчики ================= */
+/* билетик вместо обычного сообщения, когда отмечен просмотр: сеанс состоялся */
+let ticketT = null;
+function ticket(title, iso, note) {
+  let t = $('#ticket');
+  if (!t) { document.body.insertAdjacentHTML('beforeend', '<div class="ticket" id="ticket" role="status" aria-live="polite"></div>'); t = $('#ticket'); }
+  const [y, m, d] = String(iso || today()).split('-');
+  t.innerHTML = '<div class="tk-main"><div class="tk-k">Кинодневник · сеанс</div><div class="tk-t">' + esc(title) + '</div><div class="tk-s">' + esc(note || 'просмотр отмечен') + '</div></div>' +
+    '<div class="tk-stub"><div><div class="tk-d">' + (+d) + '</div><div class="tk-m">' + MONTHS[+m - 1] + '</div><div class="tk-m">' + y + '</div></div></div>';
+  t.classList.remove('tear'); void t.offsetWidth; t.classList.add('on');
+  clearTimeout(ticketT);
+  ticketT = setTimeout(() => { t.classList.add('tear'); ticketT = setTimeout(() => t.classList.remove('on', 'tear'), 650); }, 1900);
+}
 let toastT = null;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600); }
 function cur() { return UI.open && S.byId.get(UI.open); }
@@ -3451,9 +3504,13 @@ const ACT = {
     if (it.status === 'done' && !it.dates.length && !isMulti(it)) it.dates = [today()];
     Store.touch(it); renderDrawer(); renderMain(); renderNav();
   },
-  rate(el) { const it = cur(); if (!it) return; const v = +el.dataset.v; it.rating = v || null; Store.touch(it); renderDrawer(); renderMain(); },
+  rate(el) {
+    const it = cur(); if (!it) return; const v = +el.dataset.v; it.rating = v || null; Store.touch(it); renderDrawer(); renderMain();
+    // «Шедевр» — лампочка вспыхивает
+    if (v === 10) { const b = $('#drawer .stars button.on'); if (b) b.classList.add('flash10'); }
+  },
   toggle(el) { const it = cur(); if (!it) return; const k = el.dataset.v; it[k] = !it[k]; Store.touch(it); renderDrawer(); renderMain(); },
-  'add-today'() { const it = cur(); if (!it) return; const d = today(); if (!it.dates.includes(d)) { it.dates.push(d); it.dates.sort(); } Store.touch(it); renderDrawer(); renderMain(); toast('Просмотр отмечен'); },
+  'add-today'() { const it = cur(); if (!it) return; const d = today(); if (!it.dates.includes(d)) { it.dates.push(d); it.dates.sort(); } Store.touch(it); renderDrawer(); renderMain(); ticket(it.title, d); },
   'part-dates'(el) { UI.partDates[el.dataset.pid] = !UI.partDates[el.dataset.pid]; renderDrawer(); },
   'date-del'(el) {
     const it = cur(); if (!it) return;
@@ -3573,7 +3630,7 @@ const ACT = {
     Store.touch(it, true); renderDrawer(); renderMain();
     toast('Постер убран');
   },
-  'part-today'(el) { const it = cur(), p = it && findPart(it, el.dataset.pid); if (!p) return; const d = today(); if (!p.dates.includes(d)) p.dates.push(d); p.dates.sort(); if (p.status === 'planned') p.status = 'done'; if (it.cat === 'anime') syncParts(it); Store.touch(it); renderDrawer(); renderMain(); toast('Просмотр отмечен'); },
+  'part-today'(el) { const it = cur(), p = it && findPart(it, el.dataset.pid); if (!p) return; const d = today(); if (!p.dates.includes(d)) p.dates.push(d); p.dates.sort(); if (p.status === 'planned') p.status = 'done'; if (it.cat === 'anime') syncParts(it); Store.touch(it); renderDrawer(); renderMain(); ticket(it.title + (p.label ? ', ' + p.label : ''), d); },
   'part-del'(el) { UI.confirmPart = el.dataset.pid; renderDrawer(); },
   'part-del-no'() { UI.confirmPart = null; renderDrawer(); },
   'part-del-yes'(el) {
@@ -3838,7 +3895,8 @@ async function boot() {
   S.seed = readSeed();
   if (!isGoogle() && !LS.get(KEY_REMOTE, null) && !S.seed.items.length && !(LS.get(KEY_ITEMS, null) || []).length) { connectScreen(); return; }
   if (isGoogle() || LS.get(KEY_REMOTE, null)) {
-    $('#app').innerHTML = '<div class="loading"><div class="brand"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span class="brand-name">Кинодневник</span></div><p>Загружаю записи из Google-таблицы…</p></div>';
+    $('#app').innerHTML = '<div class="loading"><div><div class="leader" aria-hidden="true"><span class="ld-sweep"></span><span class="ld-ring"></span><span class="ld-n"><i>3</i><i>2</i><i>1</i></span></div>' +
+      '<div class="brand" style="justify-content:center"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span class="brand-name">Кинодневник</span></div><p>Загружаю записи из Google-таблицы…</p></div></div>';
     let items, err;
     // Google-таблица иногда отвечает с перебоями: пробуем трижды, прежде чем сдаться
     for (let attempt = 0; attempt < 3 && !items; attempt++) {

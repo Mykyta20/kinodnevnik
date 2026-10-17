@@ -119,6 +119,36 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   ok(recCalls() > r0, '«Обновить» подбирает заново');
   await E.browser.close();
 
+  // ===== мелкие штрихи
+  E = await H.setup({ sheet: new H.Sheet(items()), now: NOW, gsDelay: 1500 });
+  await E.page.goto(H.SITE + '#home');
+  await E.page.waitForSelector('.loading .leader');
+  ok(await E.page.locator('.leader .ld-n i').count() === 3, 'пока грузится таблица — плёночный отсчёт 3, 2, 1');
+  await wait(300);
+  await E.shot('85-leader');
+  await E.page.waitForSelector('.hero', { timeout: 15000 });
+  ok(await E.page.title() === 'Кинодневник', 'во вкладке — «Кинодневник»');
+  await E.page.click('#nav a[data-v="film"]');
+  ok(await E.page.locator('#content.enter').count() === 1, 'раздел появляется плавно');
+  await E.page.click('.row[data-id="g1"]');
+  await E.page.waitForSelector('#drawer.on');
+  ok(await E.page.title() === 'Беги, Лола, беги — Кинодневник', 'открытый тайтл виден в названии вкладки');
+  await E.page.click('#drawer .stars button[data-v="10"]');
+  ok(await E.page.locator('#drawer .stars button.on.flash10').count() === 1, 'оценка 10 — лампочка вспыхивает');
+  await E.page.click('#drawer [data-act="add-today"]');
+  await E.page.waitForSelector('#ticket.on');
+  const tk = (await E.page.locator('#ticket').innerText()).replace(/\s+/g, ' ');
+  console.log('  билетик:', tk);
+  ok(/Беги, Лола, беги/.test(tk) && /просмотр отмечен/.test(tk) && /17 окт 2026/i.test(tk), '«Посмотрел сегодня» — билетик с названием и датой');
+  await wait(250);
+  await E.shot('86-ticket');
+  await wait(2800);
+  ok(await E.page.locator('#ticket.on').count() === 0, 'билетик отрывается и исчезает сам');
+  await E.page.keyboard.press('Escape');
+  await wait(200);
+  ok(await E.page.title() === 'Кинодневник', 'карточка закрыта — во вкладке снова «Кинодневник»');
+  await E.browser.close();
+
   // телефон
   E = await H.setup({ sheet: new H.Sheet(items()), now: NOW, viewport: { width: 390, height: 844 }, dpr: 2, mobile: true });
   await E.page.goto(H.SITE + '#watchlist');

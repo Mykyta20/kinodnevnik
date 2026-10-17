@@ -459,6 +459,47 @@ details>summary::marker{color:var(--accent-text)}
 .d-sec.ppick>.lbl{margin-bottom:0}
 .ppick .row-acts{margin-top:0}
 
+/* ---------- карточка-афиша: кадр на «экране», описание, оценки мира ---------- */
+.screen{position:relative;aspect-ratio:2.39/1;margin:4px 0 18px;border-radius:12px;overflow:hidden;background:var(--sunk);
+  box-shadow:0 0 0 1px var(--rule),0 24px 64px -26px color-mix(in srgb,var(--tint) 80%,transparent)}
+.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity .6s ease,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.screen.ok img{opacity:1;transform:none}
+.screen::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 100% at 50% 35%,transparent 55%,rgba(0,0,0,.42)),linear-gradient(180deg,transparent 62%,rgba(0,0,0,.22))}
+.screen.wait,.plot.wait i,.wt.wait .wt-v{background:linear-gradient(100deg,var(--sunk) 30%,color-mix(in srgb,var(--raise) 70%,var(--tint)) 50%,var(--sunk) 70%) var(--sunk);background-size:300% 100%;animation:shimmer 1.5s linear infinite}
+@keyframes shimmer{from{background-position:100% 0}to{background-position:-100% 0}}
+.d-head.lifted .poster{position:relative;z-index:1;margin-top:-62px;box-shadow:0 0 0 3px var(--surface),var(--lift),0 14px 38px -12px color-mix(in srgb,var(--tint) 85%,transparent)}
+.d-meta{margin-top:8px;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.d-meta span{white-space:nowrap}
+.d-meta span.g{white-space:normal}
+.d-meta i{font-style:normal;margin:0 7px;color:var(--faint)}
+.d-credit{margin-top:2px;font-size:13.5px;color:var(--muted)}
+.d-credit b{font-weight:500;color:color-mix(in srgb,var(--ink) 85%,var(--muted))}
+.plot{margin-top:16px}
+.plot .tg{margin:0 0 6px;font-family:var(--display);font-style:italic;font-size:16px;line-height:1.4;color:color-mix(in srgb,var(--ink) 78%,var(--accent))}
+.plot .ov{margin:0;font-size:14.5px;line-height:1.62;color:color-mix(in srgb,var(--ink) 86%,var(--muted))}
+.plot.clip .ov{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.plot .more-btn{border:0;background:none;padding:2px 0;margin-top:4px;color:var(--accent-text);font-size:13.5px;font-weight:500}
+.plot .more-btn:hover{text-decoration:underline;text-underline-offset:3px}
+.plot .cast,.plot .lang{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+.plot .lang{font-size:12px;color:var(--faint);margin-top:4px}
+.plot.wait i{display:block;height:11px;border-radius:6px;margin-top:9px}
+.plot.wait i:nth-child(1){width:92%}.plot.wait i:nth-child(2){width:86%}.plot.wait i:nth-child(3){width:58%}
+.wr{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:18px}
+.wt{display:grid;gap:3px;align-content:start;padding:10px 12px 9px;border:1px solid var(--rule2);border-radius:12px;background:var(--field);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .2s}
+.wt:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--rule2));transform:translateY(-1px);box-shadow:0 0 22px -10px var(--lamp-glow)}
+.wt-s{display:flex;align-items:center;gap:6px;min-height:18px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wt-s svg{width:16px;height:16px;flex:none}
+.wt-v{display:flex;align-items:baseline;min-height:28px;font-family:var(--display);font-weight:700;font-size:23px;line-height:1.15;font-variant-numeric:lining-nums tabular-nums}
+.wt-v small{font-family:var(--font);font-weight:500;font-size:12px;color:var(--faint);margin-left:2px}
+.wt-v svg{width:20px;height:20px;flex:none;align-self:center;margin-right:5px}
+.wt.wait .wt-v{width:54px;border-radius:6px;color:transparent}
+.wt-n{font-size:11.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.imdb-mark{display:inline-block;padding:1px 4px;border-radius:3px;background:#F5C518;color:#000;font-weight:800;font-size:10.5px;line-height:1.35;letter-spacing:-.01em}
+.mc-box{display:inline-grid;place-items:center;min-width:32px;height:28px;padding:0 5px;border-radius:7px;font-family:var(--font);font-size:16px;font-weight:700;color:#14110D}
+.mc-g{background:#5BCB7E}.mc-y{background:#F2C24E}.mc-r{background:#F07178}
+.wr-note{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;margin:12px 0 0;font-size:13.5px;color:var(--muted)}
+.wr-note .btn{margin-left:-6px}
+
 /* ---------- статистика ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .tile{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;overflow:hidden}
@@ -1210,7 +1251,8 @@ function sortItems(list, sort) {
     rating: (a, b) => ((b.rating || partsAvg(b) || 0) - (a.rating || partsAvg(a) || 0)) || lastDate(b).localeCompare(lastDate(a)),
     title: (a, b) => a.title.localeCompare(b.title, 'ru'),
     year: (a, b) => (year4(b.year) || '0').localeCompare(year4(a.year) || '0') || a.title.localeCompare(b.title, 'ru'),
-    world: (a, b) => (b.aod || 0) - (a.aod || 0)
+    world: (a, b) => (b.aod || 0) - (a.aod || 0),
+    imdb: (a, b) => (imdbOf(b) - imdbOf(a)) || lastDate(b).localeCompare(lastDate(a))
   };
   return list.slice().sort(by[sort] || by.date);
 }
@@ -1243,6 +1285,7 @@ function viewGroup(gid) {
     [['unrated', 'Без оценки'], ['rated', 'С оценкой'], ['fav', 'Любимое']].map(([v, n]) => '<button class="chip" data-act="extra" data-v="' + v + '" aria-pressed="' + (UI.extra === v) + '">' + esc(n) + '</button>').join('') + '</div>' +
     '<select class="select" data-act-change="sort" aria-label="Сортировка" style="margin-left:auto">' +
     [['date', 'По дате просмотра'], ['rating', 'По моей оценке'], ['title', 'По алфавиту'], ['year', 'По году выхода']].concat(gid === 'anime' ? [['world', 'По оценке аниме-баз']] : [])
+      .concat(gid !== 'anime' && S.items.some(it => G.cats.includes(it.cat) && imdbOf(it)) ? [['imdb', 'По оценке IMDb']] : [])
       .map(([v, n]) => '<option value="' + v + '"' + (UI.sort === v ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div></div>';
   h += listHTML(list, gid, UI.sort === 'date');
   return h;
@@ -1346,6 +1389,7 @@ function viewData() {
     '</div></div></div>';
   h += lookupPanel();
   h += '<section class="section" id="posters"><div class="panel">' + postersInner() + '</div></section>';
+  h += '<section class="section" id="omdb"><div class="panel">' + omdbPanel() + '</div></section>';
   if (Store.remote) h += '<section class="section"><div class="panel"><div class="h2">Открыть дневник на другом устройстве</div>' +
     '<p class="muted" style="margin:6px 0 0">Скопируй ссылку подключения и открой её на телефоне (например, отправь себе в «Заметки» или через AirDrop). Она один раз запомнит, где лежат записи. Никому её не отправляй: в ней твой ключ.</p>' +
     '<div class="row-acts"><button class="btn primary" data-act="copy-connect">' + I('copy') + 'Скопировать ссылку подключения</button><button class="btn ghost" data-act="disconnect">Отключить это устройство</button></div></div></section>';
@@ -1438,18 +1482,15 @@ function renderDrawer() {
   if (matchMedia('(max-width:860px)').matches) document.body.style.overflow = 'hidden';
   const b = $('.d-body', d); if (b) b.scrollTop = scroll;
   $$('.part textarea', d).forEach(autoGrow);
+  ensureInfo(it); ensureRatings(it);
 }
 function drawerHTML(it) {
   const g = groupOf(it);
   const multi = isMulti(it);
   let h = '<div class="d-bar"></div><div class="d-top"><span class="crumb">' + esc(CATS[it.cat].one) + (it.year ? ', ' + esc(it.year) : '') + '</span>' +
     '<button class="btn icon ghost" data-act="close" aria-label="Закрыть">' + I('close') + '</button></div><div class="d-body">';
-  h += '<div class="d-head"><div><h2 class="d-title" id="dtitle" tabindex="-1">' + esc(it.title) + '</h2>' +
-    (it.orig ? '<div class="d-orig">' + esc(it.orig) + '</div>' : '') +
-    ((it.tags || []).length ? '<div class="chips" style="margin-top:8px">' + it.tags.map(t => '<span class="chip" style="cursor:default">' + esc(t) + '</span>').join('') + '</div>' : '') + '</div>' +
-    (it.img ? '<img class="poster" src="' + esc(it.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">'
-      : canPickPoster(it) && UI.pp !== it.id ? '<button class="poster poster-ph" data-act="poster-find">' + I('search') + '<span>Найти постер</span></button>' : '') + '</div>';
-  if (UI.pp === it.id) h += posterPickHTML(it);
+  // афиша: кадр, название, описание и оценки мира перерисовываются отдельно, когда приходят данные из баз
+  h += '<div id="d-hero">' + heroHTML(it) + '</div>';
   // статус
   h += '<div class="d-sec"><div class="lbl">Статус' + (multi ? '<small>меняется сам, когда отмечаешь сезоны</small>' : '') + '</div><div class="seg" role="group" aria-label="Статус">' +
     STATUS_ORDER.map(s => '<button data-act="set-status" data-v="' + s + '" aria-pressed="' + (it.status === s) + '">' + I(STATUS[s].icon) + esc(STATUS[s].label) + '</button>').join('') + '</div></div>';
@@ -1457,7 +1498,7 @@ function drawerHTML(it) {
   const avg = partsAvg(it);
   h += '<div class="d-sec"><div class="lbl">' + (multi ? 'Общая оценка' : 'Моя оценка') + (avg ? '<small>средняя по сезонам ' + avg.toFixed(1).replace('.', ',') + '</small>' : '') + '</div>' +
     '<div class="stars" role="group" aria-label="Оценка от 1 до 10">' + Array.from({ length: 10 }, (_, i) => i + 1).map(n =>
-      '<button data-act="rate" data-v="' + n + '" aria-pressed="' + (it.rating === n) + '"' + (it.rating === n ? ' class="on"' : it.rating > n ? ' class="lit"' : '') + ' title=""' + n + ', ' + WORDS[n].toLowerCase() + '">' + n + '</button>').join('') + '</div>' +
+      '<button data-act="rate" data-v="' + n + '" aria-pressed="' + (it.rating === n) + '"' + (it.rating === n ? ' class="on"' : it.rating > n ? ' class="lit"' : '') + ' title="' + n + ', ' + WORDS[n].toLowerCase() + '">' + n + '</button>').join('') + '</div>' +
     '<div class="rword">' + (it.rating ? '<b>' + esc(WORDS[it.rating]) + '</b><button class="btn ghost small" data-act="rate" data-v="0">Убрать оценку</button>' : '<span class="faint">Ещё без оценки</span>') + '</div></div>';
   // отзыв
   h += '<div class="d-sec"><label class="field"><span>Вердикт одной фразой</span><input class="input" data-f="verdict" value="' + esc(it.verdict || '') + '" placeholder="' + (isSeriesLike(it) ? 'Например: смотреть обязательно, хотя последние сезоны слабее' : 'Например: красиво, но второй раз смотреть не буду') + '"></label></div>';
@@ -1468,8 +1509,8 @@ function drawerHTML(it) {
     toggle('fav', it.fav, it.fav ? 'heartF' : 'heart', 'Любимое') + toggle('rewatch', it.rewatch, 'repeat', 'Пересмотрел бы') + toggle('rec', it.rec, 'thumb', 'Советую') + '</div></div>';
   // сезоны
   if (multi || isSeriesLike(it)) h += partsHTML(it);
-  // оценки в мире
-  h += '<div class="d-sec"><div class="lbl">Оценки и ссылки</div>' + extHTML(it) + '</div>';
+  // ссылки на базы и оценки, которые вписываются вручную
+  h += '<div class="d-sec"><div class="lbl">Ссылки</div><div id="d-links">' + extHTML(it) + '</div></div>';
   // просмотры
   h += '<div class="d-sec"><div class="lbl">Просмотры' + (it.dates.length ? '<small>' + it.dates.length + ' ' + plural(it.dates.length, ['дата', 'даты', 'дат']) + '</small>' : '') + '</div>';
   if (multi && it.cat === 'anime') h += '<p class="muted" style="margin:0;font-size:14px">Даты отмечаются у каждого сезона выше (кнопка «Даты»). Первый просмотр: ' + esc(fmtDate(it.dates[0]) || 'неизвестно') + ', последний: ' + esc(fmtDate(lastDate(it)) || 'неизвестно') + '.</p>';
@@ -1506,32 +1547,33 @@ function datesEditor(dates, pid) {
 const toggle = (k, on, icon, label) => '<button class="chip" data-act="toggle" data-v="' + k + '" aria-pressed="' + !!on + '">' + I(icon) + label + '</button>';
 function extHTML(it) {
   const q = encodeURIComponent, y = year4(it.year), e = it.ext || {};
-  const sc = (name, v, tip) => '<span class="score" title="' + tip + '"><span class="muted">' + name + '</span><b>' + fmtScore(v) + '</b></span>';
   let h = '<div class="ext">';
-  if (it.mal || it.cat === 'anime' || it.cat === 'animefilm') {
-    if (it.aod) h += sc('Аниме-базы', it.aod, 'Средняя оценка по MyAnimeList, AniList и другим базам, июль 2026');
-    if (+e.shiki) h += sc('Shikimori', e.shiki, 'Оценка на Shikimori, когда тайтл добавлялся');
-    if (+e.tmdb) h += sc('TMDB', e.tmdb, 'Оценка на TMDB, когда тайтл добавлялся');
+  if (isAnimeLike(it)) {
     h += it.mal
       ? link(SHIKI + '/animes/' + it.mal, 'Shikimori') + link('https://myanimelist.net/anime/' + it.mal, 'MyAnimeList')
       : link(SHIKI + '/animes?search=' + q(it.title), 'Найти на Shikimori');
+    if (it.imdb) h += link('https://www.imdb.com/title/' + it.imdb + '/', 'IMDb');
     if (it.tmdb) h += link(TMDB_SITE + it.tmdb + '?language=ru-RU', 'TMDB');
   } else {
-    if (+e.tmdb) h += sc('TMDB', e.tmdb, 'Оценка на TMDB, когда тайтл добавлялся');
-    const name = it.orig || it.title;
-    h += link(it.imdb ? 'https://www.imdb.com/title/' + it.imdb + '/' : 'https://www.imdb.com/find/?s=tt&q=' + q(name + (y ? ' ' + y : '')), 'IMDb') +
+    h += link(imdbHref(it), 'IMDb') +
       link('https://www.kinopoisk.ru/index.php?kp_query=' + q(it.title + (y ? ' ' + y : '')), 'Кинопоиск') +
-      link('https://www.rottentomatoes.com/search?search=' + q(name), 'Rotten Tomatoes') +
+      link(rtHref(it), 'Rotten Tomatoes') + link(mcHref(it), 'Metacritic') +
       (it.tmdb ? link(TMDB_SITE + it.tmdb + '?language=ru-RU', 'TMDB') : '');
   }
   h += '</div>';
-  if (!(it.mal || it.cat === 'anime' || it.cat === 'animefilm')) {
-    const e = it.ext || {};
-    h += '<div class="two" style="margin-top:10px"><label class="field"><span>IMDb</span><input class="input" data-f="ext.imdb" inputmode="decimal" value="' + esc(e.imdb || '') + '" placeholder="например, 8,6"></label>' +
-      '<label class="field"><span>Кинопоиск</span><input class="input" data-f="ext.kp" inputmode="decimal" value="' + esc(e.kp || '') + '" placeholder="например, 8,4"></label></div>';
+  if (!isAnimeLike(it)) {
+    // IMDb вписывается руками, только пока оценка не пришла сама из OMDb
+    const auto = e.omdb && e.omdb.imdb;
+    h += '<div class="two" style="margin-top:10px">' + (auto ? '' : '<label class="field"><span>IMDb, вручную</span><input class="input" data-f="ext.imdb" inputmode="decimal" value="' + esc(e.imdb || '') + '" placeholder="например, 8,6"></label>') +
+      '<label class="field"><span>Кинопоиск, вручную</span><input class="input" data-f="ext.kp" inputmode="decimal" value="' + esc(e.kp || '') + '" placeholder="например, 8,4"></label></div>';
   }
   return h;
 }
+const isAnimeLike = it => !!it.mal || it.cat === 'anime' || it.cat === 'animefilm';
+const nameYear = it => { const y = year4(it.year); return (it.orig || it.title) + (y ? ' ' + y : ''); };
+const imdbHref = it => it.imdb ? 'https://www.imdb.com/title/' + it.imdb + '/' : 'https://www.imdb.com/find/?s=tt&q=' + encodeURIComponent(nameYear(it));
+const rtHref = it => 'https://www.rottentomatoes.com/search?search=' + encodeURIComponent(it.orig || it.title);
+const mcHref = it => 'https://www.metacritic.com/search/' + encodeURIComponent(it.orig || it.title) + '/';
 const link = (href, label) => '<a class="btn small" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + I('ext') + esc(label) + '</a>';
 function partsHTML(it) {
   const multi = isMulti(it);
@@ -1607,6 +1649,8 @@ async function getJSON(url, opt, signal, who, ms) {
   catch (e) { if (signal && signal.aborted) throw e; throw lookErr('net', who + ' не отвечает'); }
   finally { clearTimeout(t); if (signal) signal.removeEventListener('abort', stop); }
   if (r.status === 401 && who === 'TMDB') throw lookErr('badkey', 'ключ TMDB не подходит');
+  // OMDb и на неверный ключ, и на кончившийся лимит отвечает 401: различаем по тексту ошибки
+  if (r.status === 401 && who === 'OMDb') { let j = {}; try { j = await r.json(); } catch (e) {} throw /limit/i.test(j.Error || '') ? lookErr('limit', 'OMDb: запросы на сегодня кончились') : lookErr('badkey', 'ключ OMDb не подходит'); }
   if (r.status === 429) throw lookErr('busy', who + ' просит немного подождать');
   if (!r.ok) throw lookErr('http', who + ' ответил ошибкой ' + r.status);
   try { return await r.json(); } catch (e) { throw lookErr('http', who + ' ответил непонятно'); }
@@ -2487,6 +2531,354 @@ function paintTint(d, it) {
   });
 }
 
+/* ================= Афиша: подробности о тайтле и оценки мира ================= */
+const OMDB_API = 'https://www.omdbapi.com/';
+const omdbKey = () => String(S.cfg.omdb || '').trim();
+const KEY_PLOT = 'kinodnevnik:plot';
+/* описание, слоган и актёры живут в браузере, чтобы не раздувать таблицу; в записи — только короткое it.info */
+const PLOT = (() => { const t = LS.get(KEY_PLOT, null); return t && typeof t === 'object' && !Array.isArray(t) ? t : {}; })();
+let plotT = null;
+function plotSave() {
+  clearTimeout(plotT);
+  plotT = setTimeout(() => {
+    const k = Object.keys(PLOT); k.slice(0, Math.max(0, k.length - 400)).forEach(x => delete PLOT[x]);
+    // место в браузере кончилось: оставляем свежую половину
+    if (!LS.set(KEY_PLOT, PLOT)) { Object.keys(PLOT).slice(0, 200).forEach(x => delete PLOT[x]); LS.set(KEY_PLOT, PLOT); }
+  }, 700);
+}
+const infoKey = it => it.tmdb ? 'tmdb:' + it.tmdb : it.mal ? 'mal:' + it.mal : '';
+const canInfo = it => it.tmdb ? !!tmdbKey() : !!it.mal;
+const INFO_WAIT = new Map(), INFO_FAIL = new Set();
+const needInfo = it => canInfo(it) && !INFO_FAIL.has(infoKey(it)) && !(it.info && it.info.at && PLOT[infoKey(it)]);
+const bgUrl = (bg, size) => !bg ? '' : /^https?:/.test(bg) ? bg : TMDB_IMG + (size || 'w1280') + bg;
+const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+const fmtRuntime = m => m < 60 ? m + ' мин' : Math.floor(m / 60) + ' ч' + (m % 60 ? ' ' + (m % 60) + ' мин' : '');
+const fmtVotes = n => n >= 1e6 ? String(Math.round(n / 1e5) / 10).replace('.', ',') + ' млн голосов' : n >= 1000 ? Math.round(n / 1000) + ' тыс. голосов' : n + ' ' + plural(n, ['голос', 'голоса', 'голосов']);
+
+async function tmdbInfo(ref) {
+  const [kind, id] = ref.split('/');
+  const d = await retry(() => tmdb('/' + kind + '/' + id, { append_to_response: 'credits,external_ids' }, null, null, 10000));
+  const cr = d.credits || {};
+  const dir = kind === 'movie' ? (cr.crew || []).filter(c => c.job === 'Director').map(c => c.name) : (d.created_by || []).map(c => c.name);
+  const rt = kind === 'movie' ? d.runtime : (d.episode_run_time || [])[0] || (d.last_episode_to_air || {}).runtime;
+  const info = { bg: d.backdrop_path || '', g: (d.genres || []).map(x => x.name).filter(Boolean).slice(0, 3), at: today() };
+  if (rt) info.rt = rt;
+  if (dir.length) info.dir = dir.slice(0, 2).join(', ');
+  if (kind === 'tv' && d.number_of_seasons) info.ns = d.number_of_seasons;
+  let ov = String(d.overview || '').trim(), en = false;
+  // русского описания нет: берём английское
+  if (!ov) { try { ov = String((await tmdb('/' + kind + '/' + id, { language: 'en-US' }, null, null, 8000)).overview || '').trim(); en = !!ov; } catch (e) {} }
+  return { info, plot: { ov, tg: String(d.tagline || '').trim(), cast: (cr.cast || []).slice(0, 4).map(c => c.name), en }, imdb: d.imdb_id || (d.external_ids || {}).imdb_id || '' };
+}
+/* Shikimori не любит частых запросов: не чаще раза в 220 мс */
+let shikiNext = 0;
+async function shikiSlot() { const now = Date.now(), at = Math.max(now, shikiNext); shikiNext = at + 220; if (at > now) await sleep(at - now); }
+const SHIKI_INFO = ['description genres { russian } studios { name } duration episodes screenshots { originalUrl }', 'description genres { russian }'];
+const shikiText = s => String(s || '').replace(/\[\[([^\]]*)\]\]/g, '$1').replace(/\[\/?[a-z_]+(=[^\]]*)?\]/gi, '').replace(/[ \t]+\n/g, '\n').trim();
+async function shikiInfo(mal) {
+  let a = null;
+  // если Shikimori не знает какое-то поле, спрашиваем проще
+  for (const f of SHIKI_INFO) {
+    await shikiSlot();
+    try { a = ((await shiki('query($ids:String){animes(ids:$ids,limit:1){id ' + f + '}}', { ids: String(mal) }, null, 10000)).animes || [])[0] || null; break; }
+    catch (e) { if (e.code !== 'http') throw e; }
+  }
+  if (!a) return null;
+  const shot = ((a.screenshots || [])[0] || {}).originalUrl || '';
+  const info = { bg: !shot ? '' : /^https?:/.test(shot) ? shot : SHIKI + shot, g: (a.genres || []).map(x => x.russian).filter(Boolean).slice(0, 3), at: today() };
+  if (a.duration) info.rt = a.duration;
+  if (a.episodes > 1) info.ne = a.episodes;
+  if ((a.studios || []).length) info.dir = a.studios.map(s => s.name).slice(0, 2).join(', ');
+  return { info, plot: { ov: shikiText(a.description), tg: '', cast: [] } };
+}
+function loadInfo(it) {
+  const key = infoKey(it);
+  if (!INFO_WAIT.has(key)) INFO_WAIT.set(key, (it.tmdb ? tmdbInfo(it.tmdb) : shikiInfo(it.mal)).finally(() => INFO_WAIT.delete(key)));
+  return INFO_WAIT.get(key);
+}
+/* переносит свежие подробности в запись; true — если что-то поменялось и запись надо сохранить */
+function applyInfo(it, r) {
+  let ch = false;
+  const a = Object.assign({}, it.info), b = Object.assign({}, r.info); delete a.at; delete b.at;
+  if (!it.info || !it.info.at || JSON.stringify(a) !== JSON.stringify(b)) { it.info = r.info; ch = true; }
+  if (r.imdb && !it.imdb) { it.imdb = r.imdb; ch = true; }
+  return ch;
+}
+async function ensureInfo(it) {
+  if (!needInfo(it)) return;
+  const key = infoKey(it);
+  let r = null;
+  try { r = await loadInfo(it); } catch (e) { r = null; }
+  const x = S.byId.get(it.id);
+  if (!r) { INFO_FAIL.add(key); if (x) repaintHero(x); return; }
+  PLOT[key] = r.plot; plotSave();
+  if (!x) return;
+  if (applyInfo(x, r)) Store.touch(x, true);
+  repaintHero(x);
+  ensureRatings(x);
+}
+
+/* ---- OMDb: оценки IMDb, Rotten Tomatoes и Metacritic ---- */
+async function omdb(params, key, ms) {
+  key = key || omdbKey();
+  if (!key) throw lookErr('nokey', 'нет ключа OMDb');
+  const u = new URL(OMDB_API);
+  Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
+  u.searchParams.set('apikey', key);
+  const j = await getJSON(u.toString(), {}, null, 'OMDb', ms || 9000);
+  if (j && j.Response === 'False') {
+    const m = String(j.Error || '');
+    if (/limit/i.test(m)) throw lookErr('limit', 'OMDb: запросы на сегодня кончились');
+    if (/key/i.test(m)) throw lookErr('badkey', 'OMDb не принял ключ');
+    return null; // такого тайтла в OMDb нет
+  }
+  return j;
+}
+function omdbParse(j) {
+  const r = {}, int = v => { const n = parseInt(String(v || '').replace(/[^\d]/g, ''), 10); return isFinite(n) ? n : null; };
+  const imdb = parseFloat(j.imdbRating); if (imdb > 0) r.imdb = imdb;
+  const votes = int(j.imdbVotes); if (votes) r.votes = votes;
+  (j.Ratings || []).forEach(x => {
+    const v = int(String(x.Value || '').split('/')[0]); if (v == null) return;
+    if (/rotten/i.test(x.Source)) r.rt = v; else if (/metacritic/i.test(x.Source)) r.mc = v;
+  });
+  if (r.mc == null && int(j.Metascore) != null) r.mc = int(j.Metascore);
+  r.d = today();
+  return r;
+}
+/* bad — ключ не принят, limit — день, когда кончились запросы; net — тайтлы, до которых не достучались */
+const OMDB_STATE = { bad: false, limit: '' }, OMDB_WAIT = new Set(), OMDB_FAIL = new Set();
+const omdbStale = it => { const o = it.ext && it.ext.omdb; return !o || !o.d || (Date.now() - Date.parse(o.d)) / 864e5 > 30; };
+const needRatings = it => !!(omdbKey() && /^tt\d+$/.test(it.imdb || '') && omdbStale(it) && !OMDB_STATE.bad && OMDB_STATE.limit !== today() && !OMDB_FAIL.has(it.imdb));
+async function fetchRatings(it) { const j = await omdb({ i: it.imdb }); return j ? omdbParse(j) : { d: today() }; }
+function omdbTrouble(e) { if (e.code === 'badkey') OMDB_STATE.bad = true; else if (e.code === 'limit') OMDB_STATE.limit = today(); }
+async function ensureRatings(it) {
+  if (!needRatings(it) || OMDB_WAIT.has(it.imdb)) return;
+  const ref = it.imdb;
+  OMDB_WAIT.add(ref);
+  try {
+    const r = await fetchRatings(it);
+    const x = S.byId.get(it.id);
+    if (x) { x.ext = Object.assign({}, x.ext, { omdb: r }); Store.touch(x, true); }
+  } catch (e) { if (e.code === 'badkey' || e.code === 'limit') omdbTrouble(e); else OMDB_FAIL.add(ref); }
+  finally {
+    OMDB_WAIT.delete(ref);
+    const x = S.byId.get(it.id);
+    if (x) {
+      repaintHero(x);
+      // поле «IMDb, вручную» прячется, когда оценка пришла сама; пока в блоке что-то печатают, не трогаем
+      const lb = UI.open === x.id && $('#d-links');
+      if (lb && !lb.contains(document.activeElement)) lb.innerHTML = extHTML(x);
+    }
+  }
+}
+
+/* ---- верх карточки: экран с кадром, название, подробности, описание, оценки ---- */
+function heroHTML(it) {
+  const inf = it.info || {}, waiting = needInfo(it), bg = bgUrl(inf.bg, 'w1280');
+  let h = '';
+  if (bg) h += '<div class="screen"><img src="' + esc(bg) + '" alt="" referrerpolicy="no-referrer" onload="this.parentNode.classList.add(\'ok\')" onerror="var s=this.parentNode;s.nextElementSibling.classList.remove(\'lifted\');s.remove()"></div>';
+  else if (waiting) h += '<div class="screen wait" aria-hidden="true"></div>';
+  h += '<div class="d-head' + (bg || waiting ? ' lifted' : '') + '"><div><h2 class="d-title" id="dtitle" tabindex="-1">' + esc(it.title) + '</h2>' +
+    (it.orig ? '<div class="d-orig">' + esc(it.orig) + '</div>' : '') + metaHTML(it) +
+    ((it.tags || []).length ? '<div class="chips" style="margin-top:8px">' + it.tags.map(t => '<span class="chip" style="cursor:default">' + esc(t) + '</span>').join('') + '</div>' : '') + '</div>' +
+    (it.img ? '<img class="poster" src="' + esc(it.img) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">'
+      : canPickPoster(it) && UI.pp !== it.id ? '<button class="poster poster-ph" data-act="poster-find">' + I('search') + '<span>Найти постер</span></button>' : '') + '</div>';
+  if (UI.pp === it.id) h += posterPickHTML(it);
+  return h + plotHTML(it, PLOT[infoKey(it)], waiting) + worldHTML(it);
+}
+function metaHTML(it) {
+  const inf = it.info || {}, bits = [];
+  if (isAnimeLike(it)) { if (inf.ne && inf.rt) bits.push(inf.ne + ' эп. по ' + inf.rt + ' мин'); else if (inf.rt) bits.push(fmtRuntime(inf.rt)); }
+  else if (isSeriesLike(it)) { if (inf.ns) bits.push(inf.ns + ' ' + plural(inf.ns, ['сезон', 'сезона', 'сезонов'])); if (inf.rt) bits.push('серия ~' + fmtRuntime(inf.rt)); }
+  else if (inf.rt) bits.push(fmtRuntime(inf.rt));
+  let h = bits.map(b => '<span>' + b + '</span>');
+  // жанры могут переноситься, длительность и сезоны — нет; разделитель не уезжает в начало строки
+  if ((inf.g || []).length) h.push('<span class="g">' + esc(cap1(inf.g.map(s => String(s).toLowerCase()).join(', '))) + '</span>');
+  h = h.length ? '<div class="d-meta">' + h.join('<i>·</i> ') + '</div>' : '';
+  if (inf.dir) {
+    const many = inf.dir.includes(',');
+    h += '<div class="d-credit">' + (isAnimeLike(it) ? 'Студия' : isSeriesLike(it) ? (many ? 'Создатели' : 'Создатель') : (many ? 'Режиссёры' : 'Режиссёр')) + ': <b>' + esc(inf.dir) + '</b></div>';
+  }
+  return h;
+}
+function plotHTML(it, pl, waiting) {
+  if (!pl) return waiting ? '<div class="plot wait" aria-hidden="true"><i></i><i></i><i></i></div>' : '';
+  if (!pl.ov && !pl.tg && !(pl.cast || []).length) return '';
+  const long = (pl.ov || '').length > 300, open = UI.plotOpen === it.id;
+  return '<div class="plot' + (long && !open ? ' clip' : '') + '">' +
+    (pl.tg ? '<p class="tg">«' + esc(pl.tg.replace(/^[«"“„]+|[»"”]+$/g, '')) + '»</p>' : '') +
+    (pl.ov ? '<p class="ov">' + esc(pl.ov) + '</p>' : '') +
+    (long ? '<button class="more-btn" data-act="plot-more">' + (open ? 'Свернуть' : 'Читать полностью') + '</button>' : '') +
+    (pl.en ? '<p class="lang">Описание на английском: по-русски его в TMDB пока нет</p>' : '') +
+    ((pl.cast || []).length ? '<p class="cast">В ролях: ' + esc(pl.cast.join(', ')) + '</p>' : '') + '</div>';
+}
+const TOMATO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.6" r="7.8" fill="#FA320A"/><path d="M12 7.6c-1.6-1.9-3.6-2.4-5-1.6 1.5.4 2.7 1.3 3.3 2.4-1.6-.2-3 .3-3.9 1.4 1.7-.2 3.2.1 4.4.9-.2.9-.1 1.8.4 2.6.4-1 1-1.8 1.9-2.3 1.2.8 2.6 1.1 4.2.8-1-.8-2-1.4-3.1-1.6 1-.9 2.2-1.3 3.6-1.2-1.3-.9-2.9-.9-4.4-.2-.2-1-.6-1.9-1.3-2.6z" fill="#00912D"/></svg>';
+const SPLAT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 1.8 4.3 4.5-1.4-2.2 4.1 4.4 1.9-4.4 1.7 1.6 4.4-4.3-1.9-1.6 4.4-1.6-4.4-4.3 1.9 1.6-4.4-4.4-1.7 4.4-1.9-2.2-4.1 4.5 1.4z" fill="#0AC855"/></svg>';
+const wtile = (href, src, val, unit, note, tip) => '<a class="wt" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" title="' + esc(tip) + '"><span class="wt-s">' + src + '</span><span class="wt-v">' + val + (unit ? '<small>' + unit + '</small>' : '') + '</span>' + (note ? '<span class="wt-n">' + esc(note) + '</span>' : '') + '</a>';
+const numOf = v => parseFloat(String(v == null ? '' : v).replace(',', '.')) || 0;
+const imdbOf = it => { const e = it.ext || {}; return (e.omdb && e.omdb.imdb) || numOf(e.imdb); };
+function worldHTML(it) {
+  const e = it.ext || {}, o = e.omdb || {}, anime = isAnimeLike(it), t = [];
+  const imdb = imdbOf(it);
+  if (imdb) t.push(wtile(imdbHref(it), '<span class="imdb-mark">IMDb</span>', fmtScore(imdb), '/10', o.imdb ? (o.votes ? fmtVotes(o.votes) : '') : 'вписано вручную', 'Оценка зрителей на IMDb'));
+  if (o.rt != null) t.push(wtile(rtHref(it), 'Rotten Tomatoes', (o.rt >= 60 ? TOMATO : SPLAT) + o.rt + '%', '', o.rt >= 60 ? '«свежий»' : '«гнилой»', 'Доля положительных рецензий критиков на Rotten Tomatoes: от 60% помидор «свежий»'));
+  if (o.mc != null) t.push(wtile(mcHref(it), 'Metacritic', '<span class="mc-box ' + (o.mc >= 61 ? 'mc-g' : o.mc >= 40 ? 'mc-y' : 'mc-r') + '">' + o.mc + '</span>', '', 'критики, из 100', 'Средняя оценка критиков на Metacritic'));
+  if (anime && it.aod) t.push(wtile(it.mal ? 'https://myanimelist.net/anime/' + it.mal : SHIKI + '/animes?search=' + encodeURIComponent(it.title), 'Аниме-базы', fmtScore(it.aod), '/10', 'MAL и AniList', 'Средняя оценка по MyAnimeList, AniList и другим базам, июль 2026'));
+  if (+e.shiki) t.push(wtile(it.mal ? SHIKI + '/animes/' + it.mal : SHIKI + '/animes?search=' + encodeURIComponent(it.title), 'Shikimori', fmtScore(e.shiki), '/10', '', 'Оценка на Shikimori'));
+  if (+e.tmdb && it.tmdb) t.push(wtile(TMDB_SITE + it.tmdb + '?language=ru-RU', 'TMDB', fmtScore(e.tmdb), '/10', '', 'Оценка зрителей TMDB'));
+  if (numOf(e.kp)) t.push(wtile('https://www.kinopoisk.ru/index.php?kp_query=' + encodeURIComponent(it.title + (year4(it.year) ? ' ' + year4(it.year) : '')), 'Кинопоиск', fmtScore(numOf(e.kp)), '/10', 'вписано вручную', 'Оценка на Кинопоиске'));
+  // оценки OMDb вот-вот придут: показываем места под них
+  const wait = needRatings(it) && !o.d;
+  const ph = '<span class="wt wait" aria-hidden="true"><span class="wt-s">…</span><span class="wt-v">0</span></span>';
+  let h = t.length || wait ? '<div class="wr">' + (wait ? (imdb ? '' : ph) + ph : '') + t.join('') + '</div>' : '';
+  if (!anime && !o.imdb && !wait) {
+    if (!omdbKey()) h += '<p class="wr-note">Оценки IMDb, Rotten Tomatoes и Metacritic появятся здесь, когда подключишь бесплатный ключ OMDb.<button class="btn small ghost" data-act="go-omdb">Как подключить</button></p>';
+    else if (OMDB_STATE.bad) h += '<p class="wr-note">OMDb не принимает ключ, поэтому оценок IMDb нет.<button class="btn small ghost" data-act="go-omdb">Проверить ключ</button></p>';
+    else if (OMDB_STATE.limit === today() && it.imdb) h += '<p class="wr-note">OMDb дал все запросы на сегодня. Оценки IMDb подтянутся завтра.</p>';
+    else if (!it.imdb && !it.tmdb && canPickPoster(it) && !needInfo(it)) h += '<p class="wr-note">Оценки появятся, когда тайтл будет связан с TMDB: найди ему постер.<button class="btn small ghost" data-act="poster-find">Найти постер</button></p>';
+  }
+  return h;
+}
+function repaintHero(it) {
+  const box = $('#d-hero'); if (!box || UI.open !== it.id) return;
+  const had = document.activeElement && box.contains(document.activeElement);
+  box.innerHTML = heroHTML(it);
+  if (had) { const t = $('#dtitle'); if (t) { try { t.focus({ preventScroll: true }); } catch (e) {} } }
+}
+
+/* ---- «Данные» → «Описания и оценки»: ключ OMDb и обновление всего сразу ---- */
+const srcHTML = (ok, title, sub, extra) => '<div class="src"><span class="dotl' + (ok ? ' ok' : '') + '"></span><div><b>' + title + '</b><span>' + sub + '</span></div>' + (extra || '') + '</div>';
+function omdbPanel() {
+  const key = omdbKey(), tk = !!tmdbKey();
+  let h = '<div class="h2">Описания и оценки</div>' +
+    '<p class="muted" style="margin:6px 0 0">В карточке каждого тайтла — кадр из фильма, описание сюжета, жанры, длительность и оценки IMDb, Rotten Tomatoes и Metacritic. Описания и кадры сайт берёт сам из TMDB и Shikimori, а для оценок нужен ещё один бесплатный ключ — от сайта OMDb.</p>' +
+    '<div class="srcs">' +
+      srcHTML(tk, 'Описания и кадры фильмов и сериалов: TMDB', tk ? 'Работает через твой ключ TMDB' : 'Нужен ключ TMDB из блока «Поиск при добавлении»') +
+      srcHTML(true, 'Описания аниме: Shikimori', 'Работает без ключа') +
+      srcHTML(!!key, 'Оценки IMDb, Rotten Tomatoes, Metacritic: OMDb', key ? 'Подключено, ключ …' + esc(key.slice(-4)) : 'Нужен бесплатный ключ, настраивается один раз',
+        key ? (UI.omdbOff ? '<span class="confirm"><span>Отключить?</span><button class="btn small danger" data-act="omdb-off-yes">Да</button><button class="btn small ghost" data-act="omdb-off-no">Нет</button></span>' : '<button class="btn small ghost" data-act="omdb-off">Отключить</button>') : '') +
+    '</div>';
+  const form = '<form class="keyform" id="omdbform" autocomplete="off"><label class="field"><span>Ключ OMDb</span><input class="input" id="omdb-key" name="key" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="8 букв и цифр"></label>' +
+    '<button class="btn primary" type="submit">Проверить и сохранить</button></form><p class="key-msg" id="omdb-msg" role="status"></p>';
+  if (!key) {
+    h += '<ol class="steps">' +
+      '<li><div><p><b>Открой страницу ключей OMDb</b> и выбери бесплатный тариф <b>FREE</b>: 1 000 запросов в день, этого хватает с запасом.</p><a class="btn small" href="https://www.omdbapi.com/apikey.aspx" target="_blank" rel="noopener">' + I('ext') + 'Открыть OMDb</a></div></li>' +
+      '<li><div><p><b>Заполни три поля:</b> почту, имя и фамилию, а в поле <b>Use</b> напиши «Личный дневник фильмов». Нажми <b>Submit</b>.</p></div></li>' +
+      '<li><div><p><b>Открой письмо от OMDb</b> (если его нет, загляни в «Спам»). В нём ключ из 8 букв и цифр и ссылка активации.</p><p class="note"><b>Обязательно нажми ссылку активации</b>, иначе ключ не заработает.</p></div></li>' +
+      '<li><div><p><b>Вставь ключ сюда.</b> Можно вставить и всю ссылку из письма: сайт сам найдёт в ней ключ.</p>' + form + '</div></li>' +
+      '</ol>';
+  } else h += '<details class="more-d"><summary>Заменить ключ</summary>' + form + '</details>';
+  h += '<div id="en-box">' + enInner() + '</div>';
+  h += '<p class="faint" style="margin:12px 0 0;font-size:13.5px">' + (Store.mode === 'google' ? 'Ключ хранится в твоей Google-таблице, на iPhone вводить его не придётся.' : 'Ключ хранится в этом браузере.') + ' Описания хранятся в браузере, чтобы таблица оставалась лёгкой.</p>';
+  return h;
+}
+async function saveOmdbKey(form) {
+  const inp = $('#omdb-key'), msg = $('#omdb-msg'), btn = form.querySelector('button[type=submit]');
+  // из письма часто копируют целую ссылку: вынимаем из неё apikey
+  const key = String(inp.value || '').replace(/[\s"'«»]/g, '').replace(/^.*[?&]apikey=/i, '').replace(/&.*$/, '');
+  if (!key) { msg.className = 'key-msg err'; msg.textContent = 'Вставь ключ в поле выше.'; inp.focus(); return; }
+  btn.disabled = true; msg.className = 'key-msg'; msg.textContent = 'Проверяю ключ в OMDb…';
+  let note = 'OMDb подключён: оценки IMDb и Rotten Tomatoes появятся в карточках';
+  try {
+    const j = await omdb({ i: 'tt0111161' }, key, 10000);
+    if (!j || !j.Title) throw lookErr('badkey', '');
+  } catch (e) {
+    // кончившийся лимит значит, что ключ верный
+    if (e.code === 'limit') note = 'Ключ OMDb сохранён. Запросы на сегодня кончились, оценки появятся завтра';
+    else {
+      btn.disabled = false; msg.className = 'key-msg err';
+      msg.textContent = e.code === 'badkey'
+        ? 'OMDb не принял этот ключ. Проверь, что нажал ссылку активации в письме от OMDb (без неё ключ не работает) и что ключ скопирован целиком: 8 букв и цифр.'
+        : 'Не получилось связаться с OMDb (' + (e.message || 'нет сети') + '). Проверь интернет и попробуй ещё раз.';
+      return;
+    }
+  }
+  S.cfg.omdb = key; saveCfg();
+  OMDB_STATE.bad = false; OMDB_STATE.limit = ''; OMDB_FAIL.clear(); UI.omdbOff = false;
+  renderMain();
+  const s = $('#omdb'); if (s) { try { s.scrollIntoView({ block: 'start' }); } catch (e) {} }
+  toast(note);
+}
+
+/* обновление в фоне: для каждого тайтла — подробности из TMDB или Shikimori, потом оценки из OMDb */
+const EN = { st: 'idle', queue: [], total: 0, done: 0, info: 0, rate: 0, errs: 0, msg: '', gen: 0, tries: {}, fails: 0 };
+const enNeed = it => needInfo(it) || needRatings(it);
+function enStart() {
+  if (EN.st === 'run') return;
+  const ids = S.items.filter(enNeed).sort((a, b) => lastDate(b).localeCompare(lastDate(a))).map(it => it.id);
+  Object.assign(EN, { st: 'run', queue: ids, total: ids.length, done: 0, info: 0, rate: 0, errs: 0, msg: '', tries: {}, fails: 0 });
+  enRender(); enLoop();
+}
+function enHalt(msg) { if (EN.st !== 'run') return; EN.st = 'pause'; EN.msg = msg; enRender(); }
+async function enLoop() {
+  const gen = ++EN.gen, live = () => EN.st === 'run' && EN.gen === gen;
+  const worker = async () => {
+    while (live() && EN.queue.length) {
+      const id = EN.queue.shift();
+      let it = S.byId.get(id);
+      if (!it) { EN.done++; continue; }
+      try {
+        if (needInfo(it)) {
+          const r = await loadInfo(it);
+          it = S.byId.get(id) || it;
+          if (r) { PLOT[infoKey(it)] = r.plot; plotSave(); if (applyInfo(it, r)) Store.touch(it, true); EN.info++; }
+          else INFO_FAIL.add(infoKey(it));
+        }
+        if (needRatings(it)) {
+          try {
+            const r = await fetchRatings(it);
+            it = S.byId.get(id) || it;
+            it.ext = Object.assign({}, it.ext, { omdb: r }); Store.touch(it, true);
+            if (r.imdb || r.rt != null || r.mc != null) EN.rate++;
+          } catch (e) {
+            if (e.code !== 'badkey' && e.code !== 'limit') throw e;
+            omdbTrouble(e);
+            EN.msg = e.code === 'limit' ? 'OMDb дал все 1 000 запросов на сегодня: оценки для остальных подтянутся, если нажать кнопку завтра.' : 'OMDb не принял ключ, поэтому оценки пропущены. Проверь ключ выше.';
+          }
+        }
+        EN.fails = 0; EN.done++;
+      } catch (e) {
+        if (e.code === 'badkey' || e.code === 'nokey') { EN.queue.unshift(id); enHalt('TMDB не принял ключ. Проверь его в блоке «Поиск при добавлении» и нажми «Продолжить».'); break; }
+        EN.tries[id] = (EN.tries[id] || 0) + 1;
+        if (EN.tries[id] < 2) EN.queue.push(id); else { EN.errs++; EN.done++; }
+        if (++EN.fails >= 5) { enHalt('Базы перестали отвечать (' + (e.message || 'нет связи') + '). Найденное уже сохранено, продолжить можно чуть позже.'); break; }
+      }
+      if (EN.st === 'run') enPaint(); else enRender();
+      if (Store.dirty.size >= 20) Store.flush();
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  if (EN.gen !== gen) return;
+  if (EN.st === 'run') { EN.st = 'done'; enRender(); toast('Готово: описаний ' + EN.info + ', оценок ' + EN.rate); }
+}
+const enCountText = () => 'Проверено ' + EN.done + ' из ' + EN.total + '. Описаний добавлено: ' + EN.info + (omdbKey() ? ', оценок: ' + EN.rate : '') + (EN.errs ? ', не удалось: ' + EN.errs : '') + '.';
+function enInner() {
+  const infoPool = S.items.filter(it => it.tmdb || it.mal), infoHave = infoPool.filter(it => it.info && it.info.at).length;
+  const ratePool = S.items.filter(it => it.imdb), rateHave = ratePool.filter(it => it.ext && it.ext.omdb && it.ext.omdb.d).length;
+  const need = S.items.filter(enNeed).length, run = EN.st === 'run', pause = EN.st === 'pause';
+  let h = '<p class="faint ps-note">Описания есть у ' + infoHave + ' из ' + infoPool.length + ' тайтлов' + (omdbKey() ? ', оценки — у ' + rateHave + ' из ' + ratePool.length + ' со ссылкой на IMDb' : '') + '.</p>';
+  if (run || pause) {
+    h += '<div class="ps-prog"><div class="meter ps-meter" aria-hidden="true"><i id="en-meter" style="width:' + (EN.total ? EN.done / EN.total * 100 : 0).toFixed(1) + '%"></i></div>' +
+      '<p class="ps-count" id="en-count" role="status">' + esc(enCountText()) + '</p>' + (EN.msg ? '<p class="key-msg' + (pause ? ' err' : '') + '">' + esc(EN.msg) + '</p>' : '') +
+      '<div class="row-acts">' + (run ? '<button class="btn" data-act="en-pause">' + I('pause') + 'Пауза</button>' : '<button class="btn primary" data-act="en-resume">' + I('play') + 'Продолжить</button>') + '</div></div>';
+    return h;
+  }
+  if (EN.st === 'done') h += '<p class="ps-sum">Готово. Описаний добавлено: ' + EN.info + (omdbKey() ? ', оценок: ' + EN.rate : '') + '.' + (EN.msg ? ' ' + esc(EN.msg) : '') + '</p>';
+  if (need && (tmdbKey() || omdbKey() || S.items.some(it => it.mal))) {
+    const min = Math.round(need * .2 / 60);
+    h += '<div class="row-acts"><button class="btn" data-act="en-start">' + I('download') + 'Обновить всё сразу</button></div>' +
+      '<p class="faint ps-note">Карточки и так подтягивают всё сами, когда их открываешь. Кнопка нужна, чтобы сразу появились сортировка по IMDb и жанры в «Итогах года». Займёт ' + (min < 1 ? 'меньше минуты' : 'около ' + min + ' ' + plural(min, ['минуты', 'минут', 'минут'])) + '.</p>';
+  }
+  return h;
+}
+function enRender() { const b = $('#en-box'); if (b) b.innerHTML = enInner(); }
+function enPaint() {
+  const m = $('#en-meter'); if (!m) return;
+  m.style.width = (EN.total ? EN.done / EN.total * 100 : 0).toFixed(1) + '%';
+  const c = $('#en-count'); if (c) c.textContent = enCountText();
+}
+
 /* ================= Экспорт / импорт ================= */
 function exportJSON() {
   const data = JSON.stringify({ app: 'kinodnevnik', version: 1, exported: new Date().toISOString(), items: S.items }, null, 1);
@@ -2655,6 +3047,17 @@ const ACT = {
     S.items.forEach(it => { if (it.noimg && POSTER_CATS.includes(it.cat)) { delete it.noimg; Store.touch(it, true); n++; } });
     psRender(); toast('Вернул в подбор: ' + n);
   },
+  'go-omdb'() {
+    closeModal(); if (UI.open) closeItem(); go('data');
+    setTimeout(() => { const s = $('#omdb'); if (s) s.scrollIntoView({ block: 'start', behavior: 'smooth' }); const k = $('#omdb-key'); if (k) k.focus({ preventScroll: true }); }, 80);
+  },
+  'omdb-off'() { UI.omdbOff = true; renderMain(); },
+  'omdb-off-no'() { UI.omdbOff = false; renderMain(); },
+  'omdb-off-yes'() { delete S.cfg.omdb; UI.omdbOff = false; saveCfg(); renderMain(); toast('OMDb отключён'); },
+  'plot-more'() { const it = cur(); if (!it) return; UI.plotOpen = UI.plotOpen === it.id ? null : it.id; repaintHero(it); },
+  'en-start'() { enStart(); },
+  'en-pause'() { if (EN.st !== 'run') return; EN.st = 'pause'; enRender(); },
+  'en-resume'() { if (EN.st !== 'pause') return; EN.st = 'run'; EN.msg = ''; EN.fails = 0; enRender(); enLoop(); },
   'poster-find'() { const it = cur(); if (it) psLookup(it); },
   'poster-cancel'() { UI.pp = null; renderDrawer(); },
   'poster-remove'() {
@@ -2709,6 +3112,7 @@ document.addEventListener('click', e => {
 document.addEventListener('submit', e => {
   if (e.target.id === 'addform') { e.preventDefault(); submitAdd(e.target); }
   else if (e.target.id === 'tmdbform') { e.preventDefault(); saveTmdbKey(e.target); }
+  else if (e.target.id === 'omdbform') { e.preventDefault(); saveOmdbKey(e.target); }
   else if (e.target.classList.contains('pc-q')) { e.preventDefault(); psSearch(e.target); }
 });
 document.addEventListener('change', e => {
@@ -2829,7 +3233,7 @@ let rz = null;
 window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (UI.view === 'home') mountReel(); }, 200); });
 document.addEventListener('visibilitychange', async () => {
   // во время подбора постеров не подменяем записи свежими из таблицы: подбор правит их прямо сейчас
-  if (Store.mode !== 'google' || document.visibilityState !== 'visible' || !S.ready || Store.pending() || PS.st === 'run') return;
+  if (Store.mode !== 'google' || document.visibilityState !== 'visible' || !S.ready || Store.pending() || PS.st === 'run' || EN.st === 'run') return;
   const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return;
   try {
     const fresh = (await Store.load()).map(norm).filter(Boolean);

@@ -40,7 +40,11 @@ const SH = {};
   A(16498, 'Атака титанов', 'Shingeki no Kyojin', 'tv', 2013, 2013, 'released', 8.58, 'shingeki_no_kyojin', [])
 ].forEach(a => { SH[a.id] = a; });
 const fold = s => String(s || '').toLowerCase().replace(/ё/g, 'е');
-let shikiDown = false, shikiCalls = 0;
+let shikiDown = false, shikiCalls = 0, shikiOldSchema = false;
+const SHD = {
+  '40748': { description: '[character=164471]Юдзи Итадори[/character] — школьник с невероятной физической силой. Однажды он съедает палец [character=164470]Рёмена Сукуны[/character], и его жизнь меняется навсегда.', genres: [{ russian: 'Сёнэн' }, { russian: 'Экшен' }, { russian: 'Сверхъестественное' }, { russian: 'Школа' }], studios: [{ name: 'MAPPA' }], duration: 24, episodes: 24, screenshots: [{ originalUrl: 'https://shikimori.io/system/screenshots/original/jjk1.jpg' }] },
+  '20': { description: 'История о юном [[ниндзя]] Наруто Узумаки, который мечтает стать хокаге.', genres: [{ russian: 'Сёнэн' }, { russian: 'Экшен' }], studios: [{ name: 'Studio Pierrot' }], duration: 23, episodes: 220, screenshots: [] }
+};
 function shikiAnswer(body) {
   shikiCalls++;
   const q = body.query, v = body.variables || {};
@@ -49,6 +53,12 @@ function shikiAnswer(body) {
     const hit = Object.values(SH).filter(a => fold(a.russian).includes(s) || fold(a.name).includes(s));
     // как настоящий Shikimori: на непохожий запрос всё равно что-то отдаёт
     return { data: { animes: (hit.length ? hit : [SH['16498'], SH['34566']]).slice(0, 8) } };
+  }
+  // подробности для карточки-афиши; «старая схема» не знает поля screenshots и отвечает ошибкой
+  if (/description/.test(q)) {
+    if (shikiOldSchema && /screenshots/.test(q)) return { errors: [{ message: "Field 'screenshots' doesn't exist on type 'Anime'" }] };
+    const ids = String(v.ids).split(',');
+    return { data: { animes: ids.filter(id => SH[id]).map(id => Object.assign({ id }, SHD[id] || { description: null, genres: [] })) } };
   }
   if (/ids:/.test(q)) {
     const ids = String(v.ids).split(',');
@@ -101,6 +111,33 @@ Object.assign(TD, {
   'movie/1100000': { id: 1100000, imdb_id: 'tt29768334', poster_path: '/train.jpg' },
   'tv/40075': { id: 40075, name: 'Гравити Фолз', first_air_date: '2012-06-15', last_air_date: '2016-02-15', status: 'Ended', number_of_seasons: 2, external_ids: { imdb_id: 'tt1865718' }, poster_path: '/gf.jpg' }
 });
+/* подробности для карточки-афиши: кадр, описание, жанры, длительность, режиссёр, актёры */
+Object.assign(TD['movie/438631'], { title: 'Дюна', backdrop_path: '/dune-bg.jpg', overview: 'Наследник знаменитого дома Атрейдесов Пол отправляется вместе с семьёй на одну из самых опасных планет во Вселенной — Арракис.', tagline: 'Начало', genres: [{ id: 878, name: 'фантастика' }, { id: 12, name: 'приключения' }], runtime: 155,
+  credits: { crew: [{ job: 'Producer', name: 'Мэри Пэрент' }, { job: 'Director', name: 'Дени Вильнёв' }], cast: ['Тимоти Шаламе', 'Ребекка Фергюсон', 'Оскар Айзек', 'Джош Бролин', 'Стеллан Скарсгард'].map(name => ({ name })) }, external_ids: { imdb_id: 'tt1160419' } });
+Object.assign(TD['tv/42009'], { backdrop_path: '/bm-bg.jpg', overview: 'Антология о тёмной стороне технологий и о том, что они делают с людьми.', genres: [{ name: 'драма' }, { name: 'НФ и Фэнтези' }], episode_run_time: [60], created_by: [{ name: 'Чарли Брукер' }], credits: { cast: [{ name: 'Брайс Даллас Ховард' }] } });
+Object.assign(TD['movie/354912'], { backdrop_path: '/coco-bg.jpg', overview: '', en: 'Despite his family’s baffling generations-old ban on music, Miguel dreams of becoming an accomplished musician.', genres: [{ name: 'мультфильм' }, { name: 'семейный' }], runtime: 105,
+  credits: { crew: [{ job: 'Director', name: 'Ли Анкрич' }, { job: 'Director', name: 'Эдриан Молина' }], cast: [{ name: 'Энтони Гонсалес' }] } });
+Object.assign(TD['movie/157336'], { backdrop_path: '/inter-bg.jpg', overview: 'Когда засуха, пыльные бури и вымирание растений приводят человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и найти планету с подходящими для человечества условиями.', tagline: 'Следующий шаг человечества станет величайшим', genres: [{ name: 'приключения' }, { name: 'драма' }, { name: 'фантастика' }], runtime: 169,
+  credits: { crew: [{ job: 'Director', name: 'Кристофер Нолан' }], cast: [{ name: 'Мэттью Макконахи' }, { name: 'Энн Хэтэуэй' }] } });
+/* ---------- подставной OMDb ---------- */
+const OMDB_KEY = 'abcd1234';
+const R = (rt, mc) => [{ Source: 'Internet Movie Database', Value: 'x' }].concat(rt ? [{ Source: 'Rotten Tomatoes', Value: rt }] : [], mc ? [{ Source: 'Metacritic', Value: mc + '/100' }] : []);
+const OM = {
+  tt0111161: { Title: 'The Shawshank Redemption', imdbRating: '9.3', imdbVotes: '3,000,000', Ratings: R() },
+  tt1160419: { Title: 'Dune', imdbRating: '8.0', imdbVotes: '1,034,567', Metascore: '74', Ratings: R('83%', 74) },
+  tt2085059: { Title: 'Black Mirror', imdbRating: '8.7', imdbVotes: '650,123', Metascore: 'N/A', Ratings: R() },
+  tt2380307: { Title: 'Coco', imdbRating: '8.4', imdbVotes: '650,000', Metascore: '81', Ratings: R('97%', 81) },
+  tt0816692: { Title: 'Interstellar', imdbRating: '8.7', imdbVotes: '2,300,000', Metascore: '74', Ratings: R('73%', 74) },
+  tt0118767: { Title: 'Brother', imdbRating: '7.9', imdbVotes: '50,000', Metascore: 'N/A', Ratings: R('40%') }
+};
+let omdbCalls = [], omdbMode = '';
+function omdbAnswer(u) {
+  omdbCalls.push(u.searchParams.get('i') || '?');
+  if (omdbMode === 'limit') return { status: 401, body: { Response: 'False', Error: 'Request limit reached!' } };
+  if (u.searchParams.get('apikey') !== OMDB_KEY) return { status: 401, body: { Response: 'False', Error: 'Invalid API key!' } };
+  const o = OM[u.searchParams.get('i')];
+  return { status: 200, body: o ? Object.assign({ Response: 'True', imdbID: u.searchParams.get('i') }, o) : { Response: 'False', Error: 'Incorrect IMDb ID.' } };
+}
 function typedSearch(kind, q, year) {
   // «Film 12» → один точный фильм 2012 года: для проверки сохранения пачками
   const gen = /^film (\d+)$/.exec(q);
@@ -118,7 +155,8 @@ function tmdbAnswer(u) {
   if (p === 'authentication') return { status: 200, body: { success: true } };
   if (p === 'search/multi') { const q = fold(u.searchParams.get('query')).trim(); return { status: 200, body: { page: 1, results: TM[q] || [] } }; }
   if (p === 'search/movie' || p === 'search/tv') return { status: 200, body: typedSearch(p.slice(7), fold(u.searchParams.get('query')).trim(), u.searchParams.get('year') || u.searchParams.get('first_air_date_year')) };
-  if (TD[p]) return { status: 200, body: TD[p] };
+  // русского описания нет — с language=en-US отдаём английское
+  if (TD[p]) return { status: 200, body: u.searchParams.get('language') === 'en-US' && TD[p].en ? Object.assign({}, TD[p], { overview: TD[p].en }) : TD[p] };
   const g = /^movie\/(5\d{5})$/.exec(p);
   if (g) return { status: 200, body: { id: +g[1], imdb_id: 'tt9' + g[1], poster_path: '/f' + (+g[1] - 500000) + '.jpg' } };
   return { status: 404, body: { success: false } };
@@ -184,6 +222,11 @@ async function setup(opts = {}) {
       await new Promise(r => setTimeout(r, opts.tmdbDelay || 120));
       return route.fulfill({ status: a.status, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(a.body) });
     }
+    if (u.host === 'www.omdbapi.com') {
+      const a = omdbAnswer(u);
+      await new Promise(r => setTimeout(r, opts.omdbDelay || 100));
+      return route.fulfill({ status: a.status, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(a.body) });
+    }
     if (u.host === 'shikimori.io' && u.pathname === '/api/graphql') {
       if (req.method() === 'OPTIONS') return route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS' } });
       if (shikiDown || opts.shikiDown) return route.abort('connectionfailed');
@@ -207,4 +250,5 @@ async function setup(opts = {}) {
   if (!opts.local) await context.addInitScript(([url]) => { try { if (!localStorage.getItem('kinodnevnik:remote')) localStorage.setItem('kinodnevnik:remote', JSON.stringify({ url, key: 'k' })); } catch (e) {} }, [GS]);
   return { browser, context, page, sheet, errors, shot: async (name, o) => page.screenshot(Object.assign({ path: path.join(OUT, name + '.png') }, o || {})) };
 }
-module.exports = { setup, Sheet, seedItems, SITE, VALID, tmdbCalls: () => tmdbCalls, setShikiDown: v => { shikiDown = v; }, shikiCalls: () => shikiCalls, setTmdbRevoked: v => { tmdbRevoked = v; }, imgCalls: () => corsImg };
+module.exports = { setup, Sheet, seedItems, SITE, VALID, tmdbCalls: () => tmdbCalls, setShikiDown: v => { shikiDown = v; }, shikiCalls: () => shikiCalls, setTmdbRevoked: v => { tmdbRevoked = v; }, imgCalls: () => corsImg,
+  OMDB_KEY, omdbCalls: () => omdbCalls, setOmdbMode: v => { omdbMode = v; }, setShikiOldSchema: v => { shikiOldSchema = v; } };

@@ -102,7 +102,7 @@ const done = page => page.waitForSelector('#posters .ps-sum', { timeout: 30000 }
   ok(await page.locator('.row .pic img[src*="myanimelist"]').count() === 2, 'аниме показывают свои постеры с MyAnimeList');
   await page.goto(H.SITE + '#home');
   await page.waitForSelector('.hero');
-  ok(await page.locator('.section .row .pic img').count() >= 4, 'в «Обзоре» у недавних тоже постеры');
+  ok(await page.locator('#hshelf .ptile img').count() >= 4, 'в «Обзоре» недавние — полкой постеров');
   await page.click('#nav a[data-v="data"]');
   await page.waitForSelector('#posters');
 
@@ -267,8 +267,8 @@ const done = page => page.waitForSelector('#posters .ps-sum', { timeout: 30000 }
   await E.page.locator('#ps-cards').scrollIntoViewIfNeeded();
   await E.shot('47-light-posters');
   await E.page.goto(H.SITE + '#home');
-  await E.page.waitForSelector('.section .row .pic img');
-  await E.page.locator('.section .row').first().scrollIntoViewIfNeeded();
+  await E.page.waitForSelector('#hshelf .ptile img');
+  await E.page.locator('#hshelf').scrollIntoViewIfNeeded();
   await wait(400);
   await E.shot('51-light-home');
   await E.page.goto(H.SITE + '#film/i/fe5160313');

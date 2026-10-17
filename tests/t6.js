@@ -76,11 +76,11 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   E = await H.setup({ sheet: new H.Sheet(items()), now: NOW });
   const recCalls = () => H.tmdbCalls().filter(c => /recommendations/.test(c)).length;
   await E.page.goto(H.SITE + '#watchlist');
-  await E.page.waitForSelector('.rcard:not(.wait) .rc-t');
-  const rt = await E.page.locator('.rcard:not(.wait) .rc-t').allInnerTexts();
+  await E.page.waitForSelector('#recs .rcard:not(.wait) .rc-t');
+  const rt = await E.page.locator('#recs .rcard:not(.wait) .rc-t').allInnerTexts();
   console.log('  советы:', rt.join(' | '));
   ok(rt.join('|') === 'Бегущий по лезвию 2049|Начало|Головоломка|Дюна: Часть вторая', 'первым — то, что советуют сразу два любимых тайтла');
-  ok(/Похоже на: «Интерстеллар», «Дюна»/.test(await txt(E.page, '.rcard .rc-why')), 'видно, почему советует');
+  ok(/Похоже на: «Интерстеллар», «Дюна»/.test(await txt(E.page, '#recs .rcard .rc-why')), 'видно, почему советует');
   ok(!rt.some(t => /^(Интерстеллар|Дюна|Малоизвестный|Без постера|Будущий фильм)$/.test(t)), 'без записанного, малоизвестного, без постера и не вышедшего');
   await wait(400);
   await E.shot('83-recs');
@@ -111,10 +111,10 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   await E.page.keyboard.press('Escape');
   // кэш на сутки и «Обновить»
   await E.page.reload();
-  await E.page.waitForSelector('.rcard:not(.wait) .rc-t');
-  ok(await E.page.locator('.rcard').count() === 1 && recCalls() === r0, 'после перезагрузки советы из памяти, без новых запросов');
+  await E.page.waitForSelector('#recs .rcard:not(.wait) .rc-t');
+  ok(await E.page.locator('#recs .rcard').count() === 1 && recCalls() === r0, 'после перезагрузки советы из памяти, без новых запросов');
   await E.page.click('[data-act="recs-reload"]');
-  await E.page.waitForFunction(n => window.__n === undefined && document.querySelector('.rcard'), r0);
+  await E.page.waitForFunction(n => window.__n === undefined && document.querySelector('#recs .rcard'), r0);
   await wait(800);
   ok(recCalls() > r0, '«Обновить» подбирает заново');
   await E.browser.close();
@@ -152,7 +152,7 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   // телефон
   E = await H.setup({ sheet: new H.Sheet(items()), now: NOW, viewport: { width: 390, height: 844 }, dpr: 2, mobile: true });
   await E.page.goto(H.SITE + '#watchlist');
-  await E.page.waitForSelector('.rcard:not(.wait) .rc-t');
+  await E.page.waitForSelector('#recs .rcard:not(.wait) .rc-t');
   await wait(400);
   ok(await E.page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'на телефоне полка советов листается внутри себя');
   await E.shot('84-recs-mobile');
@@ -185,7 +185,7 @@ const txt = async (page, sel) => (await page.locator(sel).first().innerText()).r
   E = await H.setup({ sheet: new H.Sheet(yearItems()), now: JAN });
   await E.page.goto(H.SITE + '#home');
   await E.page.waitForSelector('.banner [data-act="cr-open"]');
-  ok(/Итоги 2025 года готовы/.test(await txt(E.page, '.banner')), 'в январе на «Обзоре» — приглашение на итоги прошлого года');
+  ok(/Итоги 2025 года готовы/.test(await txt(E.page, '.banner:has([data-act="cr-open"])')), 'в январе на «Обзоре» — приглашение на итоги прошлого года');
   await E.page.click('.banner [data-act="cr-open"]');
   await E.page.waitForSelector('#credits.on .cr-title');
   ok(await E.page.evaluate(() => location.hash) === '#credits/2025' && await E.page.title() === 'Итоги 2025 — Кинодневник', 'титры открылись (#credits/2025)');

@@ -563,6 +563,53 @@ details>summary::marker{color:var(--accent-text)}
 .rcard.wait .rc-t{height:12px;width:80%;border-radius:6px;background:var(--sunk)}
 .recs-note{margin:0;font-size:14px;color:var(--muted)}
 
+/* ---------- стена постеров: тот же список плиткой обложек ---------- */
+.viewsw{display:inline-flex;gap:2px;padding:3px;background:var(--sunk);border:1px solid var(--rule);border-radius:10px;flex:none}
+.viewsw button{display:inline-flex;align-items:center;gap:6px;border:0;background:none;border-radius:7px;padding:5px 11px 5px 9px;color:var(--muted);font-size:13.5px;font-weight:500;white-space:nowrap}
+.viewsw button svg.i{width:16px;height:16px}
+.viewsw button[aria-pressed="true"]{background:var(--raise);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.2),0 0 0 1px var(--rule2)}
+.sh-r{display:flex;align-items:center;gap:12px}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:24px 18px;padding:6px 0 8px}
+.wallbox .ygroup{padding-bottom:10px}
+.ptile{position:relative;display:grid;gap:3px;align-content:start;min-width:0;padding:0;border:0;background:none;text-align:left;color:inherit}
+.pt-img{position:relative;display:block;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--sunk);box-shadow:0 0 0 1px var(--rule),0 8px 18px -12px rgba(0,0,0,.75);transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s}
+.pt-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* без постера — «типографская» обложка: название на фоне цвета раздела */
+.pt-ph{position:absolute;inset:0;display:grid;place-items:center;padding:18px 14px;text-align:center;font-family:var(--display);font-weight:700;font-size:17px;line-height:1.2;overflow-wrap:break-word;hyphens:auto;
+  color:color-mix(in srgb,var(--c,var(--faint)) 50%,var(--ink));
+  background:radial-gradient(120% 70% at 50% 0%,color-mix(in srgb,var(--c,var(--faint)) 30%,transparent),transparent 70%),linear-gradient(165deg,color-mix(in srgb,var(--c,var(--faint)) 20%,var(--sunk)),var(--sunk) 85%)}
+.pt-ph::after{content:'';position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--c,var(--faint)) 26%,transparent);border-radius:6px}
+.pt-t{margin-top:6px;font-size:14px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.pt-m{font-size:12.5px;color:var(--muted)}
+.pt-v{font-family:var(--display);font-style:italic;font-weight:420;font-size:13.5px;line-height:1.3;color:color-mix(in srgb,var(--ink) 78%,var(--accent));display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.pt-v::before{content:'«'}.pt-v::after{content:'»'}
+.ptile .badge{position:absolute;right:7px;bottom:7px;min-width:32px;height:32px;font-size:15px;border-radius:9px}
+.ptile .badge.avg{background:rgba(12,10,9,.76);color:#F2E9DC;border-color:rgba(242,233,220,.25)}
+.pt-st{position:absolute;left:7px;top:7px;display:inline-flex;align-items:center;gap:4px;max-width:calc(100% - 14px);padding:3px 9px 3px 7px;border-radius:999px;background:rgba(12,10,9,.76);color:#F2E9DC;font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-st svg.i{width:12px;height:12px;flex:none}
+.pt-fav{position:absolute;right:7px;top:7px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(12,10,9,.72);color:var(--c-film)}
+.pt-fav svg.i{width:14px;height:14px}
+.ptile[aria-current="true"] .pt-img{box-shadow:0 0 0 2px var(--accent),0 0 24px -6px var(--lamp-glow)}
+.ptile:focus-visible{outline:none}
+.ptile:focus-visible .pt-img{box-shadow:0 0 0 2px var(--accent),0 0 0 5px color-mix(in srgb,var(--accent) 25%,transparent)}
+@media (hover:hover){
+  /* постер приподнимается и светится своим цветом (если он уже известен), иначе — янтарём */
+  .ptile:hover .pt-img{transform:translateY(-4px);box-shadow:0 0 0 1px color-mix(in srgb,var(--glow,#F0A640) 50%,var(--rule)),var(--lift),0 18px 38px -14px color-mix(in srgb,var(--glow,#F0A640) 70%,transparent)}
+  .ptile:hover .badge{transform:scale(1.08)}
+}
+.ptile:active .pt-img{transform:scale(.985)}
+.hshelf{grid-auto-columns:146px}
+.hcard{scroll-snap-align:start}
+@media (max-width:860px){
+  .wall{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:18px 12px}
+  .pt-t{font-size:13px}
+  .pt-ph{font-size:13.5px;padding:14px 9px}
+  .ptile .badge{min-width:28px;height:28px;font-size:13.5px;right:5px;bottom:5px}
+  .viewsw button span{display:none}
+  .viewsw button{padding:6px 9px}
+  .hshelf{grid-auto-columns:118px}
+}
+
 /* ---------- итоги года: финальные титры (всегда тёмный зал) ---------- */
 .credits{position:fixed;inset:0;z-index:66;display:none;overflow:hidden;background:#080706;color:#EEE5D7;outline:none;--amber:#F0A640;--dim:rgba(238,229,215,.56)}
 .credits.on{display:block;animation:enter .5s ease}
@@ -935,6 +982,8 @@ const LS = {
 };
 const KEY_REMOTE = 'kinodnevnik:remote';
 const KEY_ITEMS = 'kinodnevnik:items', KEY_META = 'kinodnevnik:meta', KEY_THEME = 'kinodnevnik:theme', KEY_CFG = 'kinodnevnik:cfg';
+/* вид разделов: строки или стена постеров — запоминается в этом браузере */
+const KEY_WALL = 'kinodnevnik:wall';
 /* служебная запись с настройками (ключ TMDB): лежит в той же таблице, но в списки не попадает */
 const CFG_ID = '__settings';
 const SHIKI = 'https://shikimori.io';
@@ -993,7 +1042,9 @@ const P = {
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   star: '<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>',
   back: '<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>',
-  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  rows: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>',
+  posters: '<rect x="4" y="4" width="6.5" height="10" rx="1.3"/><rect x="13.5" y="4" width="6.5" height="10" rx="1.3"/><path d="M4 18.5h6.5M13.5 18.5h6.5"/>'
 };
 const I = (n, cls) => '<svg class="i' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[n] || '') + '</svg>';
 
@@ -1062,7 +1113,8 @@ function norm(it) {
 const S = { items: [], byId: new Map(), seed: { items: [] }, meta: {}, cfg: {}, ready: false };
 const UI = {
   view: 'home', open: null, q: '', sub: 'all', status: 'all', extra: '', sort: 'date',
-  showAll: {}, partDates: {}, editBasics: false, addPart: false, confirmDel: false, confirmPart: null, pushed: false, pendingImport: null
+  showAll: {}, partDates: {}, editBasics: false, addPart: false, confirmDel: false, confirmPart: null, pushed: false, pendingImport: null,
+  wall: LS.get(KEY_WALL, false) === true
 };
 function reindex() { S.byId = new Map(S.items.map(it => [it.id, it])); }
 /* отделяет служебную запись от тайтлов и запоминает настройки */
@@ -1313,7 +1365,7 @@ function renderMain() {
   const v = UI.view;
   if (v === 'home') c.innerHTML = viewHome();
   else if (GROUPS[v]) c.innerHTML = viewGroup(v);
-  else if (v === 'watchlist') { c.innerHTML = viewWatchlist(); recsEnsure(); }
+  else if (v === 'watchlist') { c.innerHTML = viewWatchlist(); recsEnsure(); arecsEnsure(); }
   else if (v === 'stats') c.innerHTML = viewStats();
   else if (v === 'data') c.innerHTML = viewData();
   else if (v === 'search') c.innerHTML = viewSearch();
@@ -1321,8 +1373,8 @@ function renderMain() {
   markActiveRow();
 }
 function markActiveRow() {
-  $$('.row[aria-current]').forEach(r => r.removeAttribute('aria-current'));
-  if (UI.open) { const r = $('.row[data-id="' + UI.open + '"]'); if (r) r.setAttribute('aria-current', 'true'); }
+  $$('.row[aria-current],.ptile[aria-current]').forEach(r => r.removeAttribute('aria-current'));
+  if (UI.open) $$('.row[data-id="' + UI.open + '"],.ptile[data-id="' + UI.open + '"]').forEach(r => r.setAttribute('aria-current', 'true'));
 }
 
 /* ================= Строка списка ================= */
@@ -1359,6 +1411,53 @@ function rowHTML(it, opts = {}) {
     badge(it) + '</button>';
 }
 
+/* ---- плитка постера: для стены постеров и полки «Недавно» ---- */
+const POSTER_SET = url => /\/w342\//.test(url) ? ' srcset="' + esc(url.replace('/w342/', '/w185/')) + ' 185w, ' + esc(url) + ' 342w" sizes="(max-width:860px) 31vw, 180px"' : '';
+const tileStyle = it => { const g = it.img && TINT.c[it.img]; return 'style="--c:var(--c-' + groupOf(it) + ')' + (/^#[0-9a-f]{6}$/i.test(g || '') ? ';--glow:' + g : '') + '"'; };
+/* картинка ложится поверх «типографской» обложки с названием: та видна, если постера нет или он не загрузился */
+function posterBox(it, inner) {
+  return '<span class="pt-img"><span class="pt-ph" aria-hidden="true">' + esc(it.title) + '</span>' +
+    (it.img ? '<img src="' + esc(it.img) + '"' + POSTER_SET(it.img) + ' alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+    (inner || '') + (it.rating || partsAvg(it) ? badge(it) : '') + '</span>';
+}
+function ptileHTML(it, watch) {
+  // в «Хочу посмотреть» пометка «Хочу посмотреть» на каждой плитке лишняя
+  const st = it.status !== 'done' && !(watch && it.status === 'planned') ? '<span class="pt-st">' + I(STATUS[it.status].icon) + esc(STATUS[it.status].label) + '</span>' : '';
+  const meta = [it.year, partsSummary(it)].filter(Boolean).join(' · ');
+  const tip = [it.title + (it.orig && fold(it.orig) !== fold(it.title) ? ' / ' + it.orig : ''), lastDate(it) ? 'просмотр ' + fmtDate(lastDate(it)) : ''].filter(Boolean).join(' · ');
+  return '<button class="ptile" data-act="open" data-id="' + esc(it.id) + '" ' + tileStyle(it) + ' title="' + esc(tip) + '">' +
+    posterBox(it, st + (it.fav ? '<span class="pt-fav">' + I('heartF') + '</span>' : '')) +
+    '<span class="pt-t">' + esc(it.title) + '</span>' + (meta ? '<span class="pt-m">' + esc(meta) + '</span>' : '') + '</button>';
+}
+function wallHTML(list, key, byYear) {
+  const shown = list.slice(0, UI.showAll[key] ? Infinity : 150), watch = key === 'watchlist';
+  let h = '<div class="wallbox">';
+  if (byYear) {
+    const yc = {}; list.forEach(it => { const y = lastDate(it).slice(0, 4) || '—'; yc[y] = (yc[y] || 0) + 1; });
+    let cy = null;
+    shown.forEach(it => {
+      const y = lastDate(it).slice(0, 4) || '—';
+      if (y !== cy) { h += (cy === null ? '' : '</div>') + '<div class="ygroup">' + (y === '—' ? 'Без даты' : y) + '<span class="n">' + yc[y] + '</span></div><div class="wall">'; cy = y; }
+      h += ptileHTML(it, watch);
+    });
+    h += '</div>';
+  } else h += '<div class="wall">' + shown.map(it => ptileHTML(it, watch)).join('') + '</div>';
+  if (list.length > shown.length) h += '<div class="more"><button class="btn" data-act="show-all" data-v="' + key + '">Показать все ' + list.length + '</button></div>';
+  return h + '</div>';
+}
+const viewSwitchHTML = () => '<div class="viewsw" role="group" aria-label="Вид">' +
+  '<button data-act="wall" data-v="0" aria-pressed="' + !UI.wall + '" title="Списком">' + I('rows') + '<span>Список</span></button>' +
+  '<button data-act="wall" data-v="1" aria-pressed="' + UI.wall + '" title="Стеной постеров">' + I('posters') + '<span>Постеры</span></button></div>';
+/* полка «Недавно» на «Обзоре»: постер, дата просмотра и вердикт */
+function hcardHTML(it) {
+  const d = lastDate(it);
+  return '<button class="ptile hcard" data-act="open" data-id="' + esc(it.id) + '" ' + tileStyle(it) + ' title="' + esc(it.title) + '">' + posterBox(it) +
+    '<span class="pt-t">' + esc(it.title) + '</span><span class="pt-m">' + esc(d ? fmtDate(d, d.slice(0, 4) !== today().slice(0, 4)) : CATS[it.cat].one) + '</span>' +
+    (it.verdict ? '<span class="pt-v">' + esc(it.verdict) + '</span>' : '') + '</button>';
+}
+const shelfArrows = id => '<button class="btn icon ghost small" data-act="recs-scroll" data-s="' + id + '" data-v="-1" aria-label="Листать назад">' + I('back') + '</button>' +
+  '<button class="btn icon ghost small" data-act="recs-scroll" data-s="' + id + '" data-v="1" aria-label="Листать вперёд">' + I('next') + '</button>';
+
 /* ================= Обзор ================= */
 function viewEvents() {
   const ev = [];
@@ -1384,7 +1483,7 @@ function viewHome() {
   const rated = seen.filter(it => it.rating).length;
   const watching = S.items.filter(it => it.status === 'watching' || it.status === 'paused')
     .sort((a, b) => lastDate(b).localeCompare(lastDate(a)));
-  const recent = seen.slice().sort((a, b) => lastDate(b).localeCompare(lastDate(a))).slice(0, 8);
+  const recent = seen.slice().sort((a, b) => lastDate(b).localeCompare(lastDate(a))).slice(0, 16);
   let h = '<section class="hero"><h1 class="h1">' + esc(head).replace('&lt;em&gt;', '<em>').replace('&lt;/em&gt;', '</em>') + '</h1>' +
     '<p class="lead">Каждая полоска — один просмотр, по дате. Наведи или нажми, чтобы увидеть, что это было.</p>' +
     '<div class="reel" id="reel"><svg id="reelsvg" role="img" aria-label="Лента просмотров по датам"></svg><span class="perf-b" aria-hidden="true"></span><div class="cursor" id="reelcur"></div><div class="years" id="reelyears"></div></div>' +
@@ -1401,8 +1500,17 @@ function viewHome() {
   if (watching.length) {
     h += '<section class="section"><div class="section-head"><h2 class="h2">Сейчас смотрю</h2><span class="faint num">' + watching.length + '</span></div><div class="list">' + watching.map(it => rowHTML(it, { showCat: true })).join('') + '</div></section>';
   }
-  h += '<section class="section"><div class="section-head"><h2 class="h2">Недавно</h2></div><div class="list">' + recent.map(it => rowHTML(it, { showCat: true, fullDate: true })).join('') + '</div></section>';
+  if (recent.length) h += '<section class="section" id="home-recent"><div class="recs-h"><h2 class="h2">Недавно</h2><span class="sub">последние просмотры</span><span class="acts">' + shelfArrows('hshelf') + '</span></div>' +
+    '<div class="shelf hshelf" id="hshelf">' + recent.map(hcardHTML).join('') + '</div></section>';
   return h;
+}
+/* ---- резервная копия: дата последней — в служебной записи (видна на всех устройствах), напоминание раз в месяц ---- */
+const isoDays = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+const backupAt = () => S.cfg.backup || (S.meta.lastBackup || '').slice(0, 10);
+const backupDue = () => { const b = S.cfg.backup, t = today(); return (!b || isoDays(b, t) >= 30) && !(S.cfg.backupLater && S.cfg.backupLater > t); };
+function markBackup() {
+  S.meta.lastBackup = new Date().toISOString(); saveMeta();
+  S.cfg.backup = today(); delete S.cfg.backupLater; saveCfg();
 }
 function banners() {
   let h = '';
@@ -1418,6 +1526,12 @@ function banners() {
     if (days === null || days >= 7) {
       h += '<div class="banner"><span>' + (days === null ? 'У твоих записей ещё нет резервной копии.' : 'Последняя резервная копия была ' + days + ' ' + plural(days, ['день', 'дня', 'дней']) + ' назад, с тех пор записи менялись.') + '</span><button class="btn small" data-act="export-json">' + I('download') + 'Скачать резервную копию</button></div>';
     }
+  }
+  // записи и так в Google, копия — страховка; раз в месяц мягко напоминаем
+  if (Store.mode === 'google' && S.items.length && backupDue()) {
+    const days = S.cfg.backup ? isoDays(S.cfg.backup, today()) : null;
+    h += '<div class="banner" id="backup-nudge"><span>' + (days === null ? 'Сохрани резервную копию дневника — файл со всеми записями на этом компьютере. Сайт будет напоминать о ней раз в месяц.' : 'Последняя резервная копия была ' + days + ' ' + plural(days, ['день', 'дня', 'дней']) + ' назад. Скачай свежую — это пара секунд.') + '</span>' +
+      '<span class="row-acts" style="margin:0"><button class="btn small primary" data-act="export-json">' + I('download') + 'Скачать копию</button><button class="btn small ghost" data-act="backup-later">Через неделю</button></span></div>';
   }
   return h;
 }
@@ -1583,7 +1697,7 @@ function viewGroup(gid) {
     '<select class="select" data-act-change="sort" aria-label="Сортировка" style="margin-left:auto">' +
     [['date', 'По дате просмотра'], ['rating', 'По моей оценке'], ['title', 'По алфавиту'], ['year', 'По году выхода']].concat(gid === 'anime' ? [['world', 'По оценке аниме-баз']] : [])
       .concat(gid !== 'anime' && S.items.some(it => G.cats.includes(it.cat) && imdbOf(it)) ? [['imdb', 'По оценке IMDb']] : [])
-      .map(([v, n]) => '<option value="' + v + '"' + (UI.sort === v ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div></div>';
+      .map(([v, n]) => '<option value="' + v + '"' + (UI.sort === v ? ' selected' : '') + '>' + n + '</option>').join('') + '</select>' + viewSwitchHTML() + '</div></div>';
   h += listHTML(list, gid, UI.sort === 'date');
   return h;
 }
@@ -1592,6 +1706,7 @@ function listHTML(list, key, byYear) {
     return '<div class="list"><div class="empty"><div class="h2">Ничего не нашлось</div><p>' + (UI.q ? 'Попробуй другое слово или сбрось фильтры.' : 'Здесь пока пусто. Нажми «Добавить», чтобы внести тайтл.') + '</p>' +
       (UI.q || UI.status !== 'all' || UI.extra ? '<button class="btn" data-act="reset-filters">Сбросить фильтры</button>' : '') + '</div></div>';
   }
+  if (UI.wall && (GROUPS[key] || key === 'watchlist')) return wallHTML(list, key, byYear);
   const limit = UI.showAll[key] ? Infinity : 150;
   const shown = list.slice(0, limit);
   let h = '<div class="list">';
@@ -1611,9 +1726,9 @@ function viewWatchlist() {
   const list = filterItems(S.items.filter(inWatchlist)).sort((a, b) => (b.updated || '').localeCompare(a.updated || '') || a.title.localeCompare(b.title, 'ru'));
   let h = '<div class="page-head"><div><h1 class="h1">Хочу посмотреть</h1><p class="lead">То, что советуют друзья, и новые сезоны любимых историй.</p></div>' +
     '<div class="row-acts" style="margin:0"><button class="btn" data-act="random-planned"' + (list.length ? '' : ' disabled') + '>' + I('dice') + 'Что посмотреть?</button><button class="btn primary" data-act="add" data-status="planned">' + I('plus') + 'Добавить в список</button></div></div>';
-  if (!UI.q) h += recsHTML();
+  if (!UI.q) h += recsHTML() + arecsHTML();
   if (!list.length && !UI.q) return h + '<div class="list"><div class="empty"><div class="h2">Список пока пуст</div><p>Добавь фильм или сериал, который хочешь посмотреть, а в аниме можно отметить сезон «в планах».</p></div></div>';
-  return h + (UI.q ? '' : '<div class="section-head"><h2 class="h2">Мой список</h2><span class="faint num">' + list.length + '</span></div>') + listHTML(list, 'watchlist', false);
+  return h + (UI.q ? '' : '<div class="section-head"><h2 class="h2">Мой список</h2><span class="sh-r"><span class="faint num">' + list.length + '</span>' + viewSwitchHTML() + '</span></div>') + listHTML(list, 'watchlist', false);
 }
 function viewSearch() {
   const list = sortItems(filterItems(S.items.slice()), 'date');
@@ -1681,7 +1796,7 @@ function viewData() {
       ? 'Это Google-версия дневника. Всё, что ты меняешь, сразу сохраняется в таблицу «Каталог» в твоём Google Диске и видно на Маке и на телефоне.'
       : 'Это офлайн-версия: работает без интернета, но записи живут только в этом браузере на этом устройстве. Если почистить данные браузера, они пропадут, поэтому время от времени скачивай резервную копию.') + '</p>' +
     '<p class="faint" style="margin:6px 0 0;font-size:13.5px">' + S.items.length + ' ' + plural(S.items.length, ['тайтл', 'тайтла', 'тайтлов']) +
-      (S.meta.lastBackup ? ', последняя резервная копия ' + esc(fmtDate(S.meta.lastBackup.slice(0, 10))) : '') + '</p>' +
+      (backupAt() ? ', последняя резервная копия ' + esc(fmtDate(backupAt())) : '') + '</p>' +
     '<div class="row-acts"><button class="btn primary" data-act="export-json">' + I('download') + 'Скачать резервную копию</button>' +
     '<button class="btn" data-act="import-json">' + I('upload') + 'Загрузить из копии</button>' +
     '<button class="btn" data-act="export-html">' + I('download') + 'Скачать офлайн-сайт с записями</button></div>' +
@@ -1697,7 +1812,7 @@ function viewData() {
   else h += updateGuide();
   h += '<section class="section"><div class="panel"><div class="h2">Оформление</div><div class="chips" style="margin-top:12px">' +
     [['dark', 'Кинозал'], ['light', 'Дневной сеанс'], ['auto', 'Как в системе']].map(([v, n]) => '<button class="chip" data-act="theme" data-v="' + v + '" aria-pressed="' + (theme === v) + '">' + n + '</button>').join('') + '</div></div></section>';
-  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме). Постеры для уже записанных фильмов, сериалов и мультфильмов тоже из TMDB. Описания, кадры, жанры и советы «Что посмотреть дальше» — из TMDB и Shikimori, оценки IMDb, Rotten Tomatoes и Metacritic — через OMDb API (omdbapi.com).</p>' +
+  h += '<section class="section"><div class="panel"><div class="h2">Откуда данные</div><p class="muted" style="margin:6px 0 0">Стартовый список собран из истории HDrezka (март 2020 — октябрь 2026). Оценки аниме — средняя по MyAnimeList, AniList и другим базам из открытой базы anime-offline-database (июль 2026). Оценки фильмов и сериалов можно посмотреть по ссылкам в карточке и вписать вручную. Новые тайтлы получают названия, годы и постеры из TMDB (фильмы, сериалы, мультфильмы) и Shikimori (аниме). Постеры для уже записанных фильмов, сериалов и мультфильмов тоже из TMDB. Описания, кадры и жанры — из TMDB и Shikimori. Советы «Что посмотреть дальше» — из TMDB, а для аниме — по рекомендациям зрителей AniList (anilist.co), с названиями и постерами из Shikimori. Оценки IMDb, Rotten Tomatoes и Metacritic — через OMDb API (omdbapi.com).</p>' +
     '<p class="faint" style="margin:8px 0 0;font-size:13px" lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div></section>';
   return h;
 }
@@ -3443,8 +3558,7 @@ function recsHTML() {
   if (!tmdbKey()) return '';
   const src = recSources();
   const head = '<div class="recs-h"><h2 class="h2">Что посмотреть дальше</h2><span class="sub">похожее на то, что ты оценил выше всего · TMDB</span>' +
-    '<span class="acts"><button class="btn icon ghost small" data-act="recs-scroll" data-v="-1" aria-label="Листать назад">' + I('back') + '</button><button class="btn icon ghost small" data-act="recs-scroll" data-v="1" aria-label="Листать вперёд">' + I('next') + '</button>' +
-    '<button class="btn ghost small" data-act="recs-reload" title="Подобрать заново">Обновить</button></span></div>';
+    '<span class="acts">' + shelfArrows('shelf') + '<button class="btn ghost small" data-act="recs-reload" title="Подобрать заново">Обновить</button></span></div>';
   let body;
   if (!src.length) return '<section class="recs" id="recs"><div class="recs-h"><h2 class="h2">Что посмотреть дальше</h2></div><p class="recs-note">Поставь оценки 8–10 любимым фильмам и сериалам (с постером из TMDB), и здесь появится похожее.</p></section>';
   if (REC.st === 'load' && !REC.list.length) body = '<div class="shelf" aria-hidden="true">' + '<div class="rcard wait"><span class="rc-img"></span><span class="rc-t"></span></div>'.repeat(6) + '</div>';
@@ -3452,18 +3566,19 @@ function recsHTML() {
   else {
     const list = recsShown();
     REC.map = new Map(list.map(r => [r.key, r]));
-    body = list.length ? '<div class="shelf" id="shelf">' + list.map(recCardHTML).join('') + '</div>' : '<p class="recs-note">Всё похожее уже в дневнике. Загляни после новых оценок.</p>';
+    body = list.length ? '<div class="shelf" id="shelf">' + list.map(r => recCardHTML(r)).join('') + '</div>' : '<p class="recs-note">Всё похожее уже в дневнике. Загляни после новых оценок.</p>';
   }
   return '<section class="recs" id="recs">' + head + body + '</section>';
 }
-function recCardHTML(r) {
-  const m = [r.y, CATS[r.cat].one.toLowerCase(), r.score ? 'TMDB ' + fmtScore(r.score) : ''].filter(Boolean).join(' · ');
+function recCardHTML(r, pre) {
+  pre = pre || 'rec';
+  const m = [r.y, CATS[r.cat].one.toLowerCase(), r.score ? (r.src === 'shiki' ? 'Shikimori ' : 'TMDB ') + fmtScore(r.score) : ''].filter(Boolean).join(' · ');
   const why = r.from && r.from.length ? 'Похоже на: ' + r.from.map(t => '«' + t + '»').join(', ') : '';
-  return '<div class="rcard"><button class="rc-main" data-act="rec-open" data-k="' + esc(r.key) + '" title="' + esc(r.title + (r.orig && fold(r.orig) !== fold(r.title) ? ' / ' + r.orig : '')) + '">' +
+  return '<div class="rcard"><button class="rc-main" data-act="' + pre + '-open" data-k="' + esc(r.key) + '" title="' + esc(r.title + (r.orig && fold(r.orig) !== fold(r.title) ? ' / ' + r.orig : '')) + '">' +
     '<span class="rc-img"><img src="' + esc(r.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>' +
     '<span class="rc-t">' + esc(r.title) + '</span><span class="rc-m">' + esc(m) + '</span>' + (why ? '<span class="rc-why">' + esc(why) + '</span>' : '') + '</button>' +
-    '<button class="rc-add" data-act="rec-add" data-k="' + esc(r.key) + '" title="В «Хочу посмотреть»" aria-label="Добавить «' + esc(r.title) + '» в «Хочу посмотреть»">' + I('plus') + '</button>' +
-    '<button class="rc-x" data-act="rec-hide" data-k="' + esc(r.key) + '" title="Не советовать" aria-label="Не советовать «' + esc(r.title) + '»">' + I('close') + '</button></div>';
+    '<button class="rc-add" data-act="' + pre + '-add" data-k="' + esc(r.key) + '" title="В «Хочу посмотреть»" aria-label="Добавить «' + esc(r.title) + '» в «Хочу посмотреть»">' + I('plus') + '</button>' +
+    '<button class="rc-x" data-act="' + pre + '-hide" data-k="' + esc(r.key) + '" title="Не советовать" aria-label="Не советовать «' + esc(r.title) + '»">' + I('close') + '</button></div>';
 }
 function recsPaint() {
   const box = $('#recs'); if (!box || UI.view !== 'watchlist') return;
@@ -3497,6 +3612,134 @@ async function recOpen(el) {
   if (card) card.classList.remove('busy');
   if (AD && AD.ctrl) AD.ctrl.abort();
   AD = { preset: { status: 'planned' }, q: r.title, seq: 0, ctrl: null, res: null, map: new Map(), active: -1, pick: r, rel: null, det: det };
+  renderAddForm();
+}
+
+/* ================= Советы для аниме: AniList (что советуют зрители) + Shikimori (русские названия и постеры) ================= */
+const ANILIST = 'https://graphql.anilist.co';
+const KEY_ARECS = 'kinodnevnik:arecs';
+/* st: idle, load, ok, err; список кэшируется в браузере на сутки, как и советы TMDB */
+const AREC = { st: 'idle', list: [], at: 0, sig: '', map: new Map(), failAt: 0 };
+(() => { const c = LS.get(KEY_ARECS, null); if (c && Array.isArray(c.list)) Object.assign(AREC, { st: 'ok', list: c.list, at: c.at || 0, sig: c.sig || '' }); })();
+/* источники — аниме и их сезоны с оценкой 8–10 или «любимые» */
+function arecSources() {
+  const m = new Map();
+  const add = (mal, rating, it) => { mal = +mal; if (!mal) return; const w = rating || 8, c = m.get(mal); if (!c || c.w < w) m.set(mal, { mal, w, title: it.title, d: lastDate(it) }); };
+  S.items.forEach(it => {
+    if (groupOf(it) !== 'anime') return;
+    if (it.mal && (it.rating >= 8 || it.fav)) add(it.mal, it.rating, it);
+    (it.parts || []).forEach(p => { if (p.mal && p.rating >= 8) add(p.mal, p.rating, it); });
+  });
+  return Array.from(m.values()).sort((a, b) => b.w - a.w || b.d.localeCompare(a.d)).slice(0, 12);
+}
+const arecSig = src => src.map(x => x.mal + ':' + x.w).join(',');
+async function anilist(query, variables) {
+  const j = await getJSON(ANILIST, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ query, variables }) }, null, 'AniList', 12000);
+  if (!j || !j.data) throw lookErr('http', 'AniList ответил ошибкой');
+  return j.data;
+}
+const AL_REC = 'query($ids:[Int]){Page(perPage:50){media(idMal_in:$ids,type:ANIME){idMal recommendations(sort:RATING_DESC,perPage:10){nodes{rating mediaRecommendation{idMal format status isAdult}}}}}}';
+const AL_OK = ['TV', 'TV_SHORT', 'MOVIE', 'OVA', 'ONA', 'SPECIAL'];
+async function loadArecs() {
+  const src = arecSources(), sig = arecSig(src);
+  if (!src.length) return { list: [], sig };
+  const by = new Map(src.map(x => [x.mal, x])), media = [];
+  let err = null;
+  // по четыре источника за запрос: слишком тяжёлые запросы AniList не любит
+  for (let i = 0; i < src.length; i += 4) {
+    try { const d = await retry(() => anilist(AL_REC, { ids: src.slice(i, i + 4).map(x => x.mal) })); media.push(...((d.Page || {}).media || [])); }
+    catch (e) { err = e; }
+  }
+  if (!media.length && err) throw err;
+  const sum = new Map();
+  media.forEach(m => {
+    const x0 = by.get(+m.idMal); if (!x0) return;
+    ((m.recommendations || {}).nodes || []).filter(n => n && n.rating > 0 && n.mediaRecommendation).forEach((n, pos) => {
+      const x = n.mediaRecommendation, id = +x.idMal;
+      if (!id || x.isAdult || !AL_OK.includes(x.format) || x.status === 'NOT_YET_RELEASED' || by.has(id)) return;
+      // чем выше оценка источника и чем выше место в его списке, тем весомее совет
+      const c = sum.get(id) || { id, w: 0, from: [] };
+      c.w += (x0.w - 6) * (1 - pos / 14);
+      if (c.from.length < 2 && !c.from.includes(x0.title)) c.from.push(x0.title);
+      sum.set(id, c);
+    });
+  });
+  const top = Array.from(sum.values()).sort((a, b) => b.w - a.w || a.id - b.id).slice(0, 40);
+  if (!top.length) return { list: [], sig };
+  // русские названия, постеры и франшизы — из Shikimori, как у остальных аниме в дневнике;
+  // заодно узнаём франшизы источников, чтобы не советовать их же продолжения
+  const ids = top.slice(0, 50 - src.length).map(c => c.id).concat(src.map(x => x.mal));
+  await shikiSlot();
+  const d = await shiki('query($ids:String){animes(ids:$ids,limit:50){' + SHIKI_F + '}}', { ids: ids.join(',') }, null, 10000);
+  const sh = new Map((d.animes || []).map(a => [+(a.malId || a.id), a]));
+  const own = new Set(src.map(x => (sh.get(x.mal) || {}).franchise).filter(Boolean));
+  const list = [];
+  top.forEach(c => {
+    const a = sh.get(c.id); if (!a || SHIKI_SKIP.includes(a.kind) || (a.franchise && own.has(a.franchise))) return;
+    const r = shikiRes(a); if (!r.img || r.future) return;
+    r.from = c.from; list.push(r);
+  });
+  return { list: list.slice(0, 30), sig };
+}
+async function arecsEnsure(force) {
+  if (AREC.st === 'load') return;
+  const sig = arecSig(arecSources());
+  if (!sig) return;
+  if (!force && AREC.st === 'ok' && AREC.sig === sig && Date.now() - AREC.at < 864e5) return;
+  // после неудачи не стучимся снова при каждой перерисовке: следующая попытка — через 10 минут или по кнопке
+  if (!force && AREC.failAt && Date.now() - AREC.failAt < 6e5) return;
+  AREC.st = 'load'; arecsPaint();
+  try {
+    const r = await loadArecs();
+    Object.assign(AREC, { st: 'ok', list: r.list, sig: r.sig, at: Date.now(), failAt: 0 });
+    LS.set(KEY_ARECS, { list: AREC.list, sig: AREC.sig, at: AREC.at });
+  } catch (e) { AREC.st = AREC.list.length ? 'ok' : 'err'; AREC.failAt = Date.now(); }
+  arecsPaint();
+}
+/* что показывать: без уже записанного (и сезонов тоже), без продолжений записанных франшиз и без скрытого */
+function arecsShown() {
+  const idx = malIndex(), hidden = new Set(S.cfg.recNo || []), fr = new Set();
+  S.items.forEach(it => { if (it.franchise) fr.add(it.franchise); (it.parts || []).forEach(p => { if (p.franchise) fr.add(p.franchise); }); });
+  return AREC.list.filter(r => !idx.has(r.mal) && !hidden.has('mal:' + r.mal) && !(r.franchise && fr.has(r.franchise))).slice(0, 16);
+}
+function arecsHTML() {
+  if (!S.items.some(it => groupOf(it) === 'anime')) return '';
+  const name = '<h2 class="h2">Аниме: что посмотреть дальше</h2>';
+  if (!arecSources().length) return '<section class="recs" id="arecs"><div class="recs-h">' + name + '</div><p class="recs-note">Поставь оценки 8–10 любимым аниме, и здесь появится похожее.</p></section>';
+  const head = '<div class="recs-h">' + name + '<span class="sub">похожее на любимые аниме · AniList и Shikimori</span>' +
+    '<span class="acts">' + shelfArrows('ashelf') + '<button class="btn ghost small" data-act="arecs-reload" title="Подобрать заново">Обновить</button></span></div>';
+  let body;
+  if ((AREC.st === 'load' || AREC.st === 'idle') && !AREC.list.length) body = '<div class="shelf" aria-hidden="true">' + '<div class="rcard wait"><span class="rc-img"></span><span class="rc-t"></span></div>'.repeat(6) + '</div>';
+  else if (AREC.st === 'err' && !AREC.list.length) body = '<p class="recs-note">AniList сейчас не отвечает, советы появятся позже. <button class="btn small ghost" data-act="arecs-reload">Попробовать снова</button></p>';
+  else {
+    const list = arecsShown();
+    AREC.map = new Map(list.map(r => [r.key, r]));
+    body = list.length ? '<div class="shelf" id="ashelf">' + list.map(r => recCardHTML(r, 'arec')).join('') + '</div>' : '<p class="recs-note">Всё похожее уже в дневнике. Загляни после новых оценок.</p>';
+  }
+  return '<section class="recs" id="arecs">' + head + body + '</section>';
+}
+function arecsPaint() {
+  const box = $('#arecs'); if (!box || UI.view !== 'watchlist') return;
+  const sh = $('#ashelf'), x = sh ? sh.scrollLeft : 0;
+  box.outerHTML = arecsHTML();
+  const n = $('#ashelf'); if (n) n.scrollLeft = x;
+}
+/* сразу в «Хочу посмотреть»: как при добавлении через поиск Shikimori */
+function arecAdd(k) {
+  const r = AREC.map.get(k); if (!r) return;
+  if (malIndex().has(r.mal)) { toast('«' + r.title + '» уже в дневнике'); return; }
+  const it = norm({ id: uid('u'), cat: r.cat, title: r.title, orig: r.orig && fold(r.orig) !== fold(r.title) ? r.orig : '', year: r.year, status: 'planned', dates: [] });
+  if (r.img) it.img = r.img;
+  it.mal = r.mal; if (r.franchise) it.franchise = r.franchise; if (r.score) it.ext = { shiki: r.score };
+  S.items.push(it); reindex(); Store.touch(it);
+  toast('«' + it.title + '» — в «Хочу посмотреть»');
+  renderNav(); renderMain();
+}
+/* карточка — через обычную форму добавления: можно поправить статус, если уже смотрел */
+function arecOpen(el) {
+  const r = AREC.map.get(el.dataset.k); if (!r) return;
+  if (AD && AD.ctrl) AD.ctrl.abort();
+  AD = { preset: { status: 'planned' }, q: r.title, seq: 0, ctrl: null, res: null, map: new Map(), active: -1, pick: r, rel: relatedInDiary(r, malIndex()), det: null };
   renderAddForm();
 }
 
@@ -3659,7 +3902,7 @@ function enPaint() {
 function exportJSON() {
   const data = JSON.stringify({ app: 'kinodnevnik', version: 1, exported: new Date().toISOString(), items: S.items }, null, 1);
   if (download('kinodnevnik-' + today() + '.json', data, 'application/json')) {
-    S.meta.lastBackup = new Date().toISOString(); saveMeta();
+    markBackup();
     toast('Резервная копия скачана');
     if (UI.view === 'home' || UI.view === 'data') renderMain();
   } else {
@@ -3683,7 +3926,7 @@ function buildPage(withData) {
 }
 function exportHTML() {
   if (download('kinodnevnik.html', buildPage(true), 'text/html')) {
-    S.meta.lastBackup = new Date().toISOString(); saveMeta();
+    markBackup();
     toast('Офлайн-сайт с записями скачан');
   } else toast('Браузер не дал скачать файл. Попробуй резервную копию .json');
 }
@@ -3748,6 +3991,11 @@ const ACT = {
   extra(el) { UI.extra = UI.extra === el.dataset.v ? '' : el.dataset.v; renderMain(); },
   'reset-filters'() { UI.status = 'all'; UI.extra = ''; UI.q = ''; $('#q').value = ''; if (UI.view === 'search') go('home'); else renderMain(); },
   'show-all'(el) { UI.showAll[el.dataset.v] = true; renderMain(); },
+  wall(el) {
+    const on = el.dataset.v === '1'; if (on === UI.wall) return;
+    UI.wall = on; LS.set(KEY_WALL, on); renderMain();
+    const c = $('#content'); if (c) { c.classList.remove('enter'); void c.offsetWidth; c.classList.add('enter'); }
+  },
   'next-unrated'() { const n = nextUnrated(); if (n) openItem(n.id); },
   'random-unrated'() { const l = S.items.filter(it => !it.rating && it.status !== 'planned'); if (l.length) openItem(l[Math.floor(Math.random() * l.length)].id); },
   'random-planned'() { const l = S.items.filter(inWatchlist); if (l.length) { const it = l[Math.floor(Math.random() * l.length)]; openItem(it.id); toast('Как насчёт «' + it.title + '»?'); } },
@@ -3851,7 +4099,19 @@ const ACT = {
     saveCfg(); recsPaint(); toast('Больше не посоветую «' + r.title + '»');
   },
   'recs-reload'() { recsEnsure(true); },
-  'recs-scroll'(el) { const s = $('#shelf'); if (s) s.scrollBy({ left: +el.dataset.v * s.clientWidth * .8, behavior: 'smooth' }); },
+  'arec-add'(el) { arecAdd(el.dataset.k); },
+  'arec-open'(el) { arecOpen(el); },
+  'arec-hide'(el) {
+    const r = AREC.map.get(el.dataset.k); if (!r) return;
+    S.cfg.recNo = (S.cfg.recNo || []).filter(x => x !== 'mal:' + r.mal).concat(['mal:' + r.mal]).slice(-300);
+    saveCfg(); arecsPaint(); toast('Больше не посоветую «' + r.title + '»');
+  },
+  'arecs-reload'() { arecsEnsure(true); },
+  'backup-later'() {
+    S.cfg.backupLater = new Date(Date.parse(today()) + 7 * 864e5).toISOString().slice(0, 10);
+    saveCfg(); renderMain(); toast('Хорошо, напомню через неделю');
+  },
+  'recs-scroll'(el) { const s = $('#' + (el.dataset.s || 'shelf')); if (s) s.scrollBy({ left: +el.dataset.v * s.clientWidth * .8, behavior: 'smooth' }); },
   'cr-open'(el) { openCredits(el.dataset.y); },
   'cr-close'() { closeCredits(); },
   'cr-play'() { crPlay(!CR.play); },

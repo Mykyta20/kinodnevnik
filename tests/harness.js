@@ -39,6 +39,14 @@ const SH = {};
   A(34566, 'Боруто: Новое поколение', 'Boruto: Naruto Next Generations', 'tv', 2017, 2023, 'released', 6.0, 'naruto', [['prequel', 1735]]),
   A(16498, 'Атака титанов', 'Shingeki no Kyojin', 'tv', 2013, 2013, 'released', 8.58, 'shingeki_no_kyojin', [])
 ].forEach(a => { SH[a.id] = a; });
+/* аниме, которые советует AniList: Shikimori знает их по номеру, но в поиске они не участвуют */
+const SHR = {};
+[
+  A(38000, 'Клинок, рассекающий демонов', 'Kimetsu no Yaiba', 'tv', 2019, 2019, 'released', 8.45, 'kimetsu_no_yaiba', []),
+  A(44511, 'Человек-бензопила', 'Chainsaw Man', 'tv', 2022, 2022, 'released', 8.47, 'chainsaw_man', []),
+  A(11061, 'Охотник х Охотник', 'Hunter x Hunter (2011)', 'tv', 2011, 2014, 'released', 9.04, 'hunter_x_hunter', []),
+  A(32182, 'Моб Психо 100', 'Mob Psycho 100', 'tv', 2016, 2016, 'released', 8.48, 'mob_psycho', [])
+].forEach(a => { SHR[a.id] = a; });
 const fold = s => String(s || '').toLowerCase().replace(/ё/g, 'е');
 let shikiDown = false, shikiCalls = 0, shikiOldSchema = false;
 const SHD = {
@@ -60,11 +68,30 @@ function shikiAnswer(body) {
     const ids = String(v.ids).split(',');
     return { data: { animes: ids.filter(id => SH[id]).map(id => Object.assign({ id }, SHD[id] || { description: null, genres: [] })) } };
   }
+  // названия и постеры по номерам (для советов AniList)
+  if (/ids:/.test(q) && !/related/.test(q)) {
+    const ids = String(v.ids).split(',');
+    return { data: { animes: ids.map(id => SH[id] || SHR[id]).filter(Boolean).map(a => Object.assign({}, a, { related: undefined })) } };
+  }
   if (/ids:/.test(q)) {
     const ids = String(v.ids).split(',');
     return { data: { animes: ids.filter(id => SH[id]).map(id => ({ id, related: SH[id].related.map(r => ({ relationKind: r.relationKind, anime: SH[r.anime.id] ? Object.assign({}, SH[r.anime.id], { related: undefined }) : null })) })) } };
   }
   return { errors: [{ message: 'unknown' }] };
+}
+
+/* ---------- подставной AniList: что советуют зрители ---------- */
+const N = (idMal, rating, extra) => ({ rating, mediaRecommendation: Object.assign({ idMal, format: 'TV', status: 'FINISHED', isAdult: false }, extra || {}) });
+const AL = {
+  // «Магическая битва»: «Наруто» уже в дневнике, «Магическая битва 0» — та же франшиза, взрослое, не вышедшее и без голосов — мимо
+  40748: [N(44511, 310), N(38000, 280), N(20, 150), N(48561, 120, { format: 'MOVIE' }), N(99001, 90, { isAdult: true }), N(99002, 80, { status: 'NOT_YET_RELEASED' }), N(32182, 60), N(99003, 0)],
+  1735: [N(11061, 200), N(38000, 140)]
+};
+let alCalls = [], alDown = false;
+function anilistAnswer(body) {
+  const ids = (body.variables || {}).ids || [];
+  alCalls.push(ids.join(','));
+  return { data: { Page: { media: ids.filter(id => AL[id]).map(id => ({ idMal: id, recommendations: { nodes: AL[id] } })) } } };
 }
 
 /* ---------- подставной TMDB ---------- */
@@ -253,6 +280,12 @@ async function setup(opts = {}) {
       await new Promise(r => setTimeout(r, opts.shikiDelay || 90));
       return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(shikiAnswer(JSON.parse(req.postData()))) });
     }
+    if (u.host === 'graphql.anilist.co') {
+      if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST,OPTIONS' } });
+      if (alDown || opts.alDown) return route.abort('connectionfailed');
+      await new Promise(r => setTimeout(r, opts.alDelay || 80));
+      return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(anilistAnswer(JSON.parse(req.postData()))) });
+    }
     // картинки TMDB, как настоящие, разрешают читать цвет (CORS); MyAnimeList и Shikimori — нет
     if (['image.tmdb.org', 'shikimori.io', 'cdn.myanimelist.net'].includes(u.host)) {
       const cors = !!req.headers().origin;
@@ -271,4 +304,5 @@ async function setup(opts = {}) {
   return { browser, context, page, sheet, errors, shot: async (name, o) => page.screenshot(Object.assign({ path: path.join(OUT, name + '.png') }, o || {})) };
 }
 module.exports = { setup, Sheet, seedItems, SITE, VALID, tmdbCalls: () => tmdbCalls, setShikiDown: v => { shikiDown = v; }, shikiCalls: () => shikiCalls, setTmdbRevoked: v => { tmdbRevoked = v; }, imgCalls: () => corsImg,
-  OMDB_KEY, omdbCalls: () => omdbCalls, setOmdbMode: v => { omdbMode = v; }, setShikiOldSchema: v => { shikiOldSchema = v; } };
+  OMDB_KEY, omdbCalls: () => omdbCalls, setOmdbMode: v => { omdbMode = v; }, setShikiOldSchema: v => { shikiOldSchema = v; },
+  alCalls: () => alCalls, setAlDown: v => { alDown = v; } };

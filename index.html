@@ -548,7 +548,7 @@ details>summary::marker{color:var(--accent-text)}
 .rc-main{display:grid;gap:5px;align-content:start;width:100%;padding:0;border:0;border-radius:10px;background:none;text-align:left;color:inherit}
 .rc-img{position:relative;display:block;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--sunk);box-shadow:0 0 0 1px var(--rule);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
 .rc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.rcard:hover .rc-img{transform:translateY(-3px);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 45%,var(--rule)),var(--lift),0 0 26px -8px var(--lamp-glow)}
+@media (hover:hover){.rcard:hover .rc-img{transform:translateY(-3px);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 45%,var(--rule)),var(--lift),0 0 26px -8px var(--lamp-glow)}}
 .rc-t{margin-top:3px;font-size:14px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .rc-m{font-size:12.5px;color:var(--muted)}
 .rc-why{font-size:12px;line-height:1.3;color:var(--faint);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -855,6 +855,31 @@ code{font-size:.92em;padding:1px 5px;border-radius:5px;background:var(--raise);b
   .ygroup{font-size:20px}
   .savestate span:last-child{display:none}
 }
+/* ---------- плавность ---------- */
+/* постеры проявляются, когда загрузились; уже показанные при перерисовке остаются как есть */
+img.fi{opacity:0;transition:opacity .35s ease}
+img.fi.ld{opacity:1}
+/* карточка сначала раскладывается за краем экрана (prep), потом выезжает; подсветку при открытии ставим сразу (fresh) */
+.drawer{will-change:transform}
+.drawer.prep{visibility:visible}
+.drawer.fresh{transition:none}
+@media (hover:none){
+  /* зерно плёнки с наложением «экраном» пересчитывается при каждой прокрутке: телефону это тяжело */
+  .hall::after{display:none}
+}
+@media (pointer:coarse){
+  /* шрифт полей не меньше 16px: иначе iPhone приближает страницу, когда нажимаешь на поле */
+  input,select,textarea{font-size:16px !important}
+}
+@media (max-width:860px){
+  /* шапка прячется, пока листаешь вниз, и возвращается, когда ведёшь вверх; полоска под часами остаётся */
+  .top{transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .2s}
+  .top.hide{transform:translateY(calc(-100% + env(safe-area-inset-top)))}
+  /* карточка закрывает весь экран: размытие под ней не видно, а считать его тяжело */
+  .scrim{-webkit-backdrop-filter:none;backdrop-filter:none}
+  /* с открытой клавиатурой iPhone показывает то, что ниже экрана: продолжаем карточку вниз её же фоном */
+  .drawer.on,.drawer.prep{box-shadow:0 100vh 0 0 var(--surface)}
+}
 @media (min-width:861px){ .only-mobile{display:none !important} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;animation:none !important} }
 @media print{ .side,.top,.drawer,.scrim,.hall{display:none} .app{display:block} }
@@ -1049,6 +1074,7 @@ const P = {
 const I = (n, cls) => '<svg class="i' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[n] || '') + '</svg>';
 
 /* ================= Утилиты ================= */
+const MOBILE = matchMedia('(max-width:860px)');
 const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const fmtDate = (iso, withYear = true) => { if (!iso) return ''; const [y, m, d] = iso.split('-'); return +d + ' ' + MONTHS[+m - 1] + (withYear ? ' ' + y : ''); };
 const plural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[(a > 10 && a < 20) ? 2 : b === 1 ? 0 : (b >= 2 && b <= 4) ? 1 : 2]; };
@@ -1352,7 +1378,13 @@ function renderNav() {
       (c[v] != null ? '<span class="n">' + c[v] + '</span>' : '') + '</a>').join('');
   $('#tabs').innerHTML = NAV.filter(n => n[0] !== 'sep').map(([v, name]) =>
     '<a href="#' + v + '" ' + act(v) + (cur === v ? ' aria-current="page"' : '') + '>' + esc(v === 'data' ? 'Данные' : v === 'rate' ? 'Оценить' : name) + '</a>').join('');
-  const cu = $('#tabs [aria-current]'); if (cu && cu.scrollIntoView) { try { cu.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }
+  // активную вкладку — в середину полосы, только когда раздел сменился; сама страница при этом не двигается
+  const tb = $('#tabs'), cu = $('#tabs [aria-current]');
+  if (tb && cu && tb.dataset.cur !== cur) {
+    const dx = cu.getBoundingClientRect().left - tb.getBoundingClientRect().left - (tb.clientWidth - cu.offsetWidth) / 2;
+    try { tb.scrollBy({ left: dx, behavior: tb.dataset.cur ? 'smooth' : 'auto' }); } catch (e) { tb.scrollLeft += dx; }
+    tb.dataset.cur = cur;
+  }
   $('#sidefoot').innerHTML = Store.mode === 'google'
     ? 'Записи хранятся в твоей Google-таблице и видны на всех устройствах.'
     : 'Записи хранятся в этом браузере. Не забывай про резервную копию в разделе «Данные».';
@@ -1360,15 +1392,46 @@ function renderNav() {
   if (q) q.placeholder = GROUPS[UI.view] ? 'Поиск в разделе «' + GROUPS[UI.view].name + '»' : 'Поиск по всем тайтлам';
 }
 function renderAll() { renderNav(); renderMain(); renderDrawer(); }
+/* ---- перерисовка без мигания ----
+   блоки с тем же html остаются на месте вместе с загруженными картинками, прокруткой и фокусом;
+   заменяется только изменившееся. В списки, стену постеров и карточку заходим внутрь */
+const DEEP = ['d-body', 'list', 'wallbox', 'wall'];
+const deepKey = n => n.id === 'd-hero' ? '#d-hero' : (DEEP.find(k => n.classList.contains(k)) || '');
+function stamp(box) { for (const n of box.children) { n.__src = n.outerHTML; if (deepKey(n)) stamp(n); } }
+function morph(box, html) {
+  const t = document.createElement('template'); t.innerHTML = html;
+  morphInto(box, Array.from(t.content.childNodes));
+}
+function morphInto(box, fresh) {
+  if (fresh.some(n => n.nodeType !== 1) || Array.from(box.childNodes).some(n => n.nodeType !== 1)) { box.replaceChildren(...fresh); stamp(box); return; }
+  const same = new Map(), deep = new Map(), used = new Set();
+  const put = (m, k, n) => { const l = m.get(k); if (l) l.push(n); else m.set(k, [n]); };
+  const take = (m, k) => { const l = m.get(k); while (l && l.length) { const o = l.shift(); if (!used.has(o)) { used.add(o); return o; } } return null; };
+  for (const o of box.children) { if (o.__src) put(same, o.__src, o); const k = deepKey(o); if (k) put(deep, k + o.tagName, o); }
+  const out = fresh.map(n => {
+    const src = n.outerHTML, o = take(same, src);
+    if (o) return o;
+    const k = deepKey(n), d = k && take(deep, k + n.tagName);
+    if (d) {
+      // контейнер остаётся (и его прокрутка), обновляется то, что внутри
+      for (const a of Array.from(d.attributes)) if (!n.hasAttribute(a.name)) d.removeAttribute(a.name);
+      for (const a of Array.from(n.attributes)) if (d.getAttribute(a.name) !== a.value) d.setAttribute(a.name, a.value);
+      morphInto(d, Array.from(n.childNodes)); d.__src = src; return d;
+    }
+    n.__src = src; if (k) stamp(n); return n;
+  });
+  for (const o of Array.from(box.children)) if (!used.has(o)) o.remove();
+  let ref = box.firstElementChild;
+  for (const n of out) { if (n === ref) ref = ref.nextElementSibling; else box.insertBefore(n, ref); }
+}
 function renderMain() {
   const c = $('#content'); if (!c) return;
   const v = UI.view;
-  if (v === 'home') c.innerHTML = viewHome();
-  else if (GROUPS[v]) c.innerHTML = viewGroup(v);
-  else if (v === 'watchlist') { c.innerHTML = viewWatchlist(); recsEnsure(); arecsEnsure(); }
-  else if (v === 'stats') c.innerHTML = viewStats();
-  else if (v === 'data') c.innerHTML = viewData();
-  else if (v === 'search') c.innerHTML = viewSearch();
+  const html = v === 'home' ? viewHome() : GROUPS[v] ? viewGroup(v) : v === 'watchlist' ? viewWatchlist() : v === 'stats' ? viewStats() : v === 'data' ? viewData() : v === 'search' ? viewSearch() : null;
+  if (html === null) return;
+  // ничего не изменилось — страницу не трогаем
+  if (c.__html !== html || !c.firstElementChild) { morph(c, html); c.__html = html; }
+  if (v === 'watchlist') { recsEnsure(); arecsEnsure(); }
   if (v === 'home') mountReel();
   markActiveRow();
 }
@@ -1387,7 +1450,7 @@ function badge(it) {
 function statusTag(s) { return '<span class="st">' + I(STATUS[s].icon) + esc(STATUS[s].label) + '</span>'; }
 /* без постера под обложкой видна первая буква названия; картинка ложится сверху */
 const coverHTML = it => '<span class="cover"><span class="spine"></span><span class="pic">' + esc((Array.from(it.title.trim())[0] || '').toUpperCase()) +
-  (it.img ? '<img src="' + esc(smallPoster(it.img, 'w92')) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</span></span>';
+  (it.img ? '<img class="fi" src="' + esc(smallPoster(it.img, 'w92')) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</span></span>';
 function rowHTML(it, opts = {}) {
   const g = groupOf(it);
   const sub = [];
@@ -1417,7 +1480,7 @@ const tileStyle = it => { const g = it.img && TINT.c[it.img]; return 'style="--c
 /* картинка ложится поверх «типографской» обложки с названием: та видна, если постера нет или он не загрузился */
 function posterBox(it, inner) {
   return '<span class="pt-img"><span class="pt-ph" aria-hidden="true">' + esc(it.title) + '</span>' +
-    (it.img ? '<img src="' + esc(it.img) + '"' + POSTER_SET(it.img) + ' alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+    (it.img ? '<img class="fi" src="' + esc(it.img) + '"' + POSTER_SET(it.img) + ' alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
     (inner || '') + (it.rating || partsAvg(it) ? badge(it) : '') + '</span>';
 }
 function ptileHTML(it, watch) {
@@ -1886,18 +1949,31 @@ function renderDrawer() {
   const d = $('#drawer'), sc = $('#scrim');
   const it = UI.open && S.byId.get(UI.open);
   if (!it) {
-    d.classList.remove('on'); sc.classList.remove('on'); document.body.style.overflow = '';
+    d.classList.remove('on', 'prep', 'fresh'); sc.classList.remove('on'); document.body.style.overflow = '';
     if (!QR.open) document.title = 'Кинодневник';
     return;
   }
-  const scroll = d.classList.contains('on') && $('.d-body', d) ? $('.d-body', d).scrollTop : 0;
+  const open = d.classList.contains('on') || d.classList.contains('prep');
+  // при открытии подсветка ставится сразу, без перетекания: оно нужно, только когда карточка сменяется
+  if (!open) d.classList.add('fresh');
+  // другая карточка — с чистого листа (и прокрутка с начала); та же — меняются только изменившиеся части
+  if (!open || d.dataset.id !== it.id) d.replaceChildren();
+  d.dataset.id = it.id;
   d.style.setProperty('--c', 'var(--c-' + groupOf(it) + ')');
   paintTint(d, it);
-  d.innerHTML = drawerHTML(it);
-  d.classList.add('on'); sc.classList.add('on');
+  morph(d, drawerHTML(it));
+  sc.classList.add('on');
+  if (open) d.classList.add('on');
+  else {
+    // сначала карточка раскладывается за краем экрана, а выезжает уже готовой — так анимация не дёргается
+    d.classList.add('prep');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!d.classList.contains('prep')) return;
+      d.classList.remove('fresh', 'prep'); d.classList.add('on');
+    }));
+  }
   document.title = it.title + ' — Кинодневник';
-  if (matchMedia('(max-width:860px)').matches) document.body.style.overflow = 'hidden';
-  const b = $('.d-body', d); if (b) b.scrollTop = scroll;
+  if (MOBILE.matches) document.body.style.overflow = 'hidden';
   $$('.part textarea', d).forEach(autoGrow);
   ensureInfo(it); ensureRatings(it);
 }
@@ -3198,7 +3274,7 @@ function repaintHero(it) {
   // пока в поиске постера печатают, блок не трогаем: свежие данные покажутся при следующей перерисовке
   const pp = $('#ppick'); if (pp && pp.contains(document.activeElement)) return;
   const had = document.activeElement && box.contains(document.activeElement);
-  box.innerHTML = heroHTML(it);
+  morph(box, heroHTML(it));
   if (had) { const t = $('#dtitle'); if (t) { try { t.focus({ preventScroll: true }); } catch (e) {} } }
 }
 
@@ -3575,7 +3651,7 @@ function recCardHTML(r, pre) {
   const m = [r.y, CATS[r.cat].one.toLowerCase(), r.score ? (r.src === 'shiki' ? 'Shikimori ' : 'TMDB ') + fmtScore(r.score) : ''].filter(Boolean).join(' · ');
   const why = r.from && r.from.length ? 'Похоже на: ' + r.from.map(t => '«' + t + '»').join(', ') : '';
   return '<div class="rcard"><button class="rc-main" data-act="' + pre + '-open" data-k="' + esc(r.key) + '" title="' + esc(r.title + (r.orig && fold(r.orig) !== fold(r.title) ? ' / ' + r.orig : '')) + '">' +
-    '<span class="rc-img"><img src="' + esc(r.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>' +
+    '<span class="rc-img"><img class="fi" src="' + esc(r.img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span>' +
     '<span class="rc-t">' + esc(r.title) + '</span><span class="rc-m">' + esc(m) + '</span>' + (why ? '<span class="rc-why">' + esc(why) + '</span>' : '') + '</button>' +
     '<button class="rc-add" data-act="' + pre + '-add" data-k="' + esc(r.key) + '" title="В «Хочу посмотреть»" aria-label="Добавить «' + esc(r.title) + '» в «Хочу посмотреть»">' + I('plus') + '</button>' +
     '<button class="rc-x" data-act="' + pre + '-hide" data-k="' + esc(r.key) + '" title="Не советовать" aria-label="Не советовать «' + esc(r.title) + '»">' + I('close') + '</button></div>';
@@ -4340,7 +4416,27 @@ document.addEventListener('click', e => {
   const reel = e.target.closest && e.target.closest('#reel');
   if (reel && e.pointerType !== 'touch' && e.pointerType !== 'pen') { const ev = showReelTip(e.clientX, e.clientY, false); if (ev) { hideTip(); openItem(ev.it.id); } }
 });
-window.addEventListener('scroll', () => { const t = $('#top'); if (t) t.classList.toggle('scrolled', scrollY > 4); hideTipIfSticky(); }, { passive: true });
+/* шапка: тонкая линия, когда страница прокручена; на телефоне прячется, пока листаешь вниз, и возвращается, когда ведёшь вверх */
+const TOPS = { y: 0, hide: false, raf: 0 };
+window.addEventListener('scroll', () => {
+  hideTipIfSticky();
+  if (TOPS.raf) return;
+  TOPS.raf = requestAnimationFrame(() => {
+    TOPS.raf = 0;
+    const t = $('#top'); if (!t) return;
+    const y = Math.max(0, scrollY), dy = y - TOPS.y;
+    t.classList.toggle('scrolled', y > 4);
+    let hide = TOPS.hide;
+    // прячется сразу, а возвращается, только когда заметно повёл вверх: мелкие движения пальца шапку не дёргают.
+    // TOPS.y — самая нижняя точка, пока шапка спрятана, и самая верхняя, пока видна
+    if (y < 90 || !MOBILE.matches || t.classList.contains('searching')) { hide = false; TOPS.y = y; }
+    else if (hide) { if (dy < -36) { hide = false; TOPS.y = y; } else if (dy > 0) TOPS.y = y; }
+    else if (dy > 12) { hide = true; TOPS.y = y; } else if (dy < 0) TOPS.y = y;
+    if (hide !== TOPS.hide) { TOPS.hide = hide; t.classList.toggle('hide', hide); }
+  });
+}, { passive: true });
+/* постеры проявляются плавно, когда загрузились */
+document.addEventListener('load', e => { const t = e.target; if (t.tagName === 'IMG' && t.classList.contains('fi')) t.classList.add('ld'); }, true);
 function hideTipIfSticky() { const t = $('#tip'); if (t && t.classList.contains('clickable')) hideTip(); }
 let rz = null;
 window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (UI.view === 'home') mountReel(); }, 200); });
@@ -4388,6 +4484,7 @@ function boot2() {
   renderShell();
   setSave('ok');
   renderNav(); renderMain();
+  const c = $('#content'); if (c) c.classList.add('enter');
   if (r.id && S.byId.has(r.id)) { UI.open = r.id; renderDrawer(); markActiveRow(); }
   if (location.hash === '#rate') openQR();
   const cm = /^#credits\/(\d{4})$/.exec(location.hash); if (cm) openCredits(cm[1]);

@@ -73,20 +73,59 @@ const same = (page, sel, name) => page.evaluate(([s, n]) => document.querySelect
   await P.evaluate(() => window.scrollTo(0, 0));
   await wait(200);
   ok(await P.locator('#top.hide').count() === 0, 'наверху страницы шапка всегда видна');
-  // карточка
-  await P.click('.row[data-id="fe5160313"]');
-  await P.waitForSelector('#drawer.on');
+  // карточка: пока она открыта, список под ней замирает
+  await P.evaluate(() => window.scrollTo(0, 700));
   await wait(300);
+  const yList = await P.evaluate(() => scrollY);
+  await P.evaluate(() => { location.hash = '#film/i/fe5160313'; });
+  await P.waitForSelector('#drawer.on');
+  await wait(450);
+  const lk = await P.evaluate(() => ({ lock: document.documentElement.classList.contains('lock'), top: document.body.style.top, y: scrollY, bottom: document.body.getBoundingClientRect().bottom, h: innerHeight,
+    bg: getComputedStyle(document.documentElement).backgroundColor, foot: getComputedStyle(document.querySelector('#drawer .d-foot')).backgroundColor }));
+  ok(lk.lock && lk.top === '-' + yList + 'px' && lk.y === 0, 'карточка выехала — список под ней замер на месте (' + lk.top + ')');
+  ok(lk.bottom <= lk.h + 1 && lk.bg === lk.foot, 'ниже экрана нет списка, только фон цвета карточки: под клавиатурой ничего не просвечивает');
+  await P.evaluate(() => window.scrollTo(0, 400));
+  await wait(100);
+  ok(await P.evaluate(() => scrollY) === 0, 'список за карточкой не прокручивается');
   const fs = await P.evaluate(() => [...document.querySelectorAll('#drawer textarea, #drawer input:not([type=checkbox]):not([type=radio])')].map(x => parseFloat(getComputedStyle(x).fontSize)));
   ok(fs.length > 0 && fs.every(v => v >= 16), 'поля в карточке — от 16px: при нажатии на поле страница не приближается (' + Array.from(new Set(fs)).join(', ') + ')');
-  const sh = await P.evaluate(() => getComputedStyle(document.querySelector('#drawer')).boxShadow);
-  ok(/ 844px 0px 0px/.test(sh), 'ниже карточки — её же фон: под клавиатурой список не просвечивает');
   ok(await P.evaluate(() => getComputedStyle(document.querySelector('#scrim')).backdropFilter || getComputedStyle(document.querySelector('#scrim')).webkitBackdropFilter) === 'none', 'под карточкой нет лишнего размытия');
   await P.click('#drawer textarea[data-f="pros"]');
   await wait(300);
   await E.shot('97-mobile-field');
   await P.keyboard.press('Escape');
-  await wait(400);
+  await wait(450);
+  const un = await P.evaluate(() => [document.documentElement.classList.contains('lock'), scrollY]);
+  ok(!un[0] && un[1] === yList, 'карточка закрылась — список там же, где был (' + un[1] + ')');
+  // свайп вправо
+  await P.evaluate(() => { location.hash = '#film/i/fe5160313'; });
+  await P.waitForSelector('#drawer.on');
+  await wait(450);
+  const cdp = await E.context.newCDPSession(P);
+  const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  const tf = () => P.evaluate(() => document.querySelector('#drawer').style.transform);
+  // медленно и недалеко — карточка возвращается
+  await touch('touchStart', 60, 420);
+  for (let i = 1; i <= 5; i++) { await touch('touchMove', 60 + i * 10, 422); await wait(90); }
+  const mid = await P.evaluate(() => [document.querySelector('#drawer').style.transform, +document.querySelector('#scrim').style.opacity]);
+  await touch('touchEnd');
+  await wait(450);
+  ok(/translateX\(50px\)/.test(mid[0]) && mid[1] < 1, 'карточка едет за пальцем, затемнение светлеет (' + mid[0] + ')');
+  ok(await P.locator('#drawer.on').count() === 1 && await tf() === '', 'отпустил рано — карточка мягко вернулась на место');
+  ok(await P.evaluate(() => document.documentElement.classList.contains('lock')), 'и список под ней снова замер');
+  // прокрутка карточки вверх-вниз — не свайп
+  await touch('touchStart', 200, 600);
+  for (let i = 1; i <= 5; i++) { await touch('touchMove', 203, 600 - i * 30); await wait(16); }
+  await touch('touchEnd');
+  await wait(300);
+  ok(await P.locator('#drawer.on').count() === 1 && await tf() === '', 'прокрутка карточки вверх-вниз свайпом не считается');
+  // дальше и быстрее — закрывается
+  await touch('touchStart', 60, 420);
+  for (let i = 1; i <= 8; i++) { await touch('touchMove', 60 + i * 25, 424); await wait(16); }
+  await touch('touchEnd');
+  await wait(500);
+  ok(await P.locator('#drawer.on, #drawer.prep').count() === 0 && await P.evaluate(() => location.hash) === '#film', 'потянул вправо — карточка закрылась');
+  ok(await P.evaluate(() => [document.documentElement.classList.contains('lock'), scrollY].join()) === 'false,' + yList, 'и список там же, где был');
   // быстро открыть и сразу закрыть — карточка не застревает
   await P.click('.row[data-id="w2"]');
   await P.keyboard.press('Escape');

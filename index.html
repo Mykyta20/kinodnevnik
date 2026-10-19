@@ -877,9 +877,12 @@ img.fi.ld{opacity:1}
   .top.hide{transform:translateY(calc(-100% + env(safe-area-inset-top)))}
   /* карточка закрывает весь экран: размытие под ней не видно, а считать его тяжело */
   .scrim{-webkit-backdrop-filter:none;backdrop-filter:none}
-  /* с открытой клавиатурой iPhone показывает то, что ниже экрана: продолжаем карточку вниз её же фоном */
-  .drawer.on,.drawer.prep{box-shadow:0 100vh 0 0 var(--surface)}
 }
+/* телефон, карточка открыта: страница под ней замирает (lockPage). iPhone не прокручивает список, пока печатаешь,
+   а ниже экрана — там, где клавиатура, — нет ничего, кроме фона цвета карточки */
+html.lock,html.lock body{overflow:hidden}
+html.lock{background:var(--surface)}
+html.lock body{position:fixed;left:0;right:0;bottom:0}
 @media (min-width:861px){ .only-mobile{display:none !important} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;animation:none !important} }
 @media print{ .side,.top,.drawer,.scrim,.hall{display:none} .app{display:block} }
@@ -1303,6 +1306,8 @@ function closeItem() {
   renderDrawer(); renderMain(); renderNav();
 }
 window.addEventListener('hashchange', () => {
+  // пока дневник загружается, адрес прочитает boot2
+  if (!S.ready || !$('#nav')) return;
   const cm = /^#credits\/(\d{4})$/.exec(location.hash);
   if (cm) { if (!CR.open) openCredits(cm[1]); return; }
   if (CR.open) closeCredits(true);
@@ -1332,6 +1337,7 @@ const inWatchlist = it => it.status === 'planned' || (isMulti(it) && it.parts.so
 const NAV = [['home', 'Обзор'], ['film', 'Фильмы'], ['series', 'Сериалы'], ['cartoon', 'Мультфильмы'], ['anime', 'Аниме'], ['sep'], ['watchlist', 'Хочу посмотреть'], ['rate', 'Быстро оценить'], ['stats', 'Статистика'], ['data', 'Данные и синхронизация']];
 
 function renderShell() {
+  unlockPage();
   $('#app').innerHTML =
     '<div class="app">' +
       '<aside class="side" aria-label="Разделы">' +
@@ -1361,12 +1367,14 @@ function renderShell() {
     '<input type="file" id="file" accept=".json,application/json" hidden>';
   const addTxt = $('.add-txt');
   if (addTxt && matchMedia('(max-width:860px)').matches) addTxt.remove();
+  bindSwipe($('#drawer'));
   setSave('ok');
 }
 function brand() {
   return '<a class="brand" href="#home" data-act="go" data-v="home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="brand-name">Кинодневник</span></a>';
 }
 function renderNav() {
+  if (!$('#nav')) return;
   const c = navCounts();
   const cur = UI.view === 'search' ? '' : UI.view;
   const color = { film: 'var(--c-film)', series: 'var(--c-series)', cartoon: 'var(--c-cartoon)', anime: 'var(--c-anime)' };
@@ -1945,10 +1953,79 @@ function updateGuide() {
 }
 
 /* ================= Карточка тайтла ================= */
+/* ---- телефон: пока карточка открыта, страница под ней замирает ----
+   иначе iPhone с открытой клавиатурой прокручивает список за карточкой и показывает его под клавиатурой */
+const LOCK = { on: false, y: 0, t: 0 };
+function lockPage() {
+  if (LOCK.on || !MOBILE.matches || !UI.open || !$('#drawer').classList.contains('on')) return;
+  LOCK.on = true; LOCK.y = scrollY;
+  document.body.style.top = -LOCK.y + 'px';
+  document.documentElement.classList.add('lock');
+}
+function unlockPage() {
+  clearTimeout(LOCK.t);
+  if (!LOCK.on) return;
+  LOCK.on = false;
+  document.documentElement.classList.remove('lock');
+  document.body.style.top = '';
+  // список возвращается туда же, где был; шапка — в том же виде
+  TOPS.y = LOCK.y;
+  window.scrollTo(0, LOCK.y);
+}
+/* ---- телефон: карточку можно закрыть, потянув вправо, как «назад» в приложениях iPhone ---- */
+const SW = { dir: '', x0: 0, y0: 0, t0: 0, dx: 0 };
+function swipeable(t, d) {
+  if (!MOBILE.matches || !UI.open || !d.classList.contains('on')) return false;
+  const a = document.activeElement;
+  if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return false;
+  // в полях — выделение текста, в полосах с прокруткой вбок — их собственная прокрутка
+  for (let el = t; el && el !== d; el = el.parentElement) {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return false;
+    if (el.scrollWidth > el.clientWidth + 2 && /auto|scroll/.test(getComputedStyle(el).overflowX)) return false;
+  }
+  return true;
+}
+function bindSwipe(d) {
+  const sc = $('#scrim');
+  d.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1 || !swipeable(e.target, d)) { SW.dir = 'no'; return; }
+    const p = e.touches[0];
+    Object.assign(SW, { dir: '', x0: p.clientX, y0: p.clientY, t0: performance.now(), dx: 0 });
+  }, { passive: true });
+  d.addEventListener('touchmove', e => {
+    if (SW.dir === 'no' || e.touches.length !== 1) return;
+    const p = e.touches[0], dx = p.clientX - SW.x0, dy = p.clientY - SW.y0;
+    if (!SW.dir) {
+      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+      // вправо и скорее вбок, чем вниз; иначе это обычная прокрутка карточки
+      SW.dir = dx > 0 && Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'no';
+      if (SW.dir !== 'x') return;
+      unlockPage();
+      d.style.transition = 'none'; sc.style.transition = 'none';
+    }
+    // пока карточку тянут, сама она не прокручивается (если браузер ещё позволяет это остановить)
+    if (e.cancelable) e.preventDefault();
+    SW.dx = Math.max(0, dx);
+    d.style.transform = 'translateX(' + SW.dx + 'px)';
+    sc.style.opacity = String(Math.max(0, 1 - SW.dx / d.offsetWidth));
+  }, { passive: false });
+  const end = () => {
+    if (SW.dir !== 'x') { SW.dir = ''; return; }
+    SW.dir = '';
+    const v = SW.dx / Math.max(1, performance.now() - SW.t0);
+    // карточка доезжает сама: из того места, где её отпустили
+    d.style.transition = ''; d.style.transform = ''; sc.style.transition = ''; sc.style.opacity = '';
+    if (SW.dx > Math.min(110, d.offsetWidth * .3) || (v > .45 && SW.dx > 30)) closeItem();
+    else LOCK.t = setTimeout(lockPage, 280);
+  };
+  d.addEventListener('touchend', end, { passive: true });
+  d.addEventListener('touchcancel', end, { passive: true });
+}
 function renderDrawer() {
   const d = $('#drawer'), sc = $('#scrim');
   const it = UI.open && S.byId.get(UI.open);
   if (!it) {
+    unlockPage();
     d.classList.remove('on', 'prep', 'fresh'); sc.classList.remove('on'); document.body.style.overflow = '';
     if (!QR.open) document.title = 'Кинодневник';
     return;
@@ -1970,6 +2047,8 @@ function renderDrawer() {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!d.classList.contains('prep')) return;
       d.classList.remove('fresh', 'prep'); d.classList.add('on');
+      // когда карточка выехала, страница под ней замирает
+      clearTimeout(LOCK.t); LOCK.t = setTimeout(lockPage, 280);
     }));
   }
   document.title = it.title + ' — Кинодневник';
@@ -4423,7 +4502,7 @@ window.addEventListener('scroll', () => {
   if (TOPS.raf) return;
   TOPS.raf = requestAnimationFrame(() => {
     TOPS.raf = 0;
-    const t = $('#top'); if (!t) return;
+    const t = $('#top'); if (!t || LOCK.on) return;
     const y = Math.max(0, scrollY), dy = y - TOPS.y;
     t.classList.toggle('scrolled', y > 4);
     let hide = TOPS.hide;
